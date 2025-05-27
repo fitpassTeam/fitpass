@@ -1,0 +1,84 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: gradlew bootJar
+        run: ./gradlew bootJar
+
+      - name: Debug paths in GitHub Actions
+        run: |
+          echo "Checking paths to be copied"
+          ls -la ./build/libs
+          ls -la ./
+
+      - name: Create .env file
+        run: |
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "SQL_PORT=${{ secrets.SQL_PORT }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+        shell: bash
+
+      - name: Debug check exact .env location
+        run: |
+          find . -name ".env" 
+
+      - name: Copy all docker-related files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: './build/libs/*.jar,./Dockerfile,./docker-compose.yml,.env'
+          target: "~/fitpass"
+
+      - name: SSH and deploy via docker-compose
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script_stop: true
+          script: |
+            cd ~/fitpass
+
+            # 중지 및 제거
+            docker-compose down || true
+            
+            # "이전 네트워크 제거 (없으면 무시)"
+            docker network rm legend-book_default || true
+
+            # 이전 이미지 삭제 (선택 사항)
+            docker rm -f mysql || true
+            docker rm -f redis || true
+            docker rm -f spring-app || true
+
+            # 재빌드 및 실행
+            docker-compose up --build -d
+
+            # 로그 확인
+            docker-compose logs --tail=30

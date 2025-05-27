@@ -1,4 +1,4 @@
-package common;
+package org.example.fitpass.common;
 
 import lombok.Builder;
 import lombok.Getter;

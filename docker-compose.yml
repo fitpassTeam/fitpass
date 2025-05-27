@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0.36
+    container_name: mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    command:
+      [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--lower_case_table_names=1' ]
+    ports:
+      - "${SQL_PORT}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  redis:
+    image: redis:alpine
+    container_name: redis-dev
+    ports:
+      - "6379:6379"
+
+# 만약 이걸 포함하면 인텔리제이 실행안시키고 도커만으로 돌릴 수 있음. 하지만 업데이트 될때마다 빌드 새로해야되서 귀찮으므로 자동배포할때만 넣으면 될 것 같아요.
+#  spring-app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: spring-app-dev
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: docker
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DB_NAME}
+#      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+#      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+#      SECRET_KEY: ${SECRET_KEY}
+#      SPRING_REDIS_HOST: redis
+#    depends_on:
+#      - mysql
+#      - redis
+
+volumes:
+  mysql-data:

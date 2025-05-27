@@ -1,4 +1,4 @@
-package common;
+package org.example.fitpass.common;
 
 import java.time.LocalDateTime;
 
