@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.ResponseMessage;
 import org.example.fitpass.domain.reservation.dto.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.ReservationResponseDto;
+import org.example.fitpass.domain.reservation.dto.TrainerReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.UpdateReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.UpdateReservationResponseDto;
 import org.example.fitpass.domain.reservation.service.ReservationService;
@@ -53,10 +54,9 @@ public class ReservationController {
     public ResponseEntity<ResponseMessage<ReservationResponseDto>> createReservation (
         @Valid @RequestBody ReservationRequestDto reservationRequestDto,
         @PathVariable Long gymId,
-        @PathVariable Long trainerId,
-        @AuthenticationPrincipal CustomUserPrincipal user) {
+        @PathVariable Long trainerId) {
         ReservationResponseDto reservationResponseDto =
-            reservationService.createReservation(reservationRequestDto, user, gymId, trainerId);
+            reservationService.createReservation(reservationRequestDto, gymId, trainerId);
 
         ResponseMessage<ReservationResponseDto> responseMessage = ResponseMessage.<ReservationResponseDto>builder()
             .statusCode(HttpStatus.CREATED.value())
@@ -105,7 +105,23 @@ public class ReservationController {
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    // 트레이너별 예약 등록
+    // 트레이너별 예약 목록 조회
+    @GetMapping("/gyms/{gymId}/trainers/{trainerId}/reservations")
+    public ResponseEntity<ResponseMessage<List<TrainerReservationResponseDto>>> getTrainerReservation (
+        @PathVariable Long gymId,
+        @PathVariable Long trainerId
+    ) {
+        List<TrainerReservationResponseDto> trainerReservationResponseDto =
+            reservationService.getTrainerReservation(gymId, trainerId);
+
+        ResponseMessage<List<TrainerReservationResponseDto>> responseMessage =
+            ResponseMessage.<List<TrainerReservationResponseDto>>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("트레이너 예약 목록 조회가 완료되었습니다.")
+                .data(trainerReservationResponseDto)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+    }
 
     // 유저별 예약 목록
 

@@ -44,4 +44,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         Long excludeId
     );
 
+    // 트레이너별 예약 목록 (최신순)
+    List<Reservation> findByTrainerOrderByReservationDateDescReservationTimeDesc(Trainer trainer);
+
 }

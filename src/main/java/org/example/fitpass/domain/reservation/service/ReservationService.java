@@ -11,6 +11,7 @@ import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.reservation.dto.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.ReservationResponseDto;
+import org.example.fitpass.domain.reservation.dto.TrainerReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.UpdateReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.UpdateReservationResponseDto;
 import org.example.fitpass.domain.reservation.entity.Reservation;
@@ -55,9 +56,9 @@ public class ReservationService {
 
     // 예약 생성
     @Transactional
-    public ReservationResponseDto createReservation (ReservationRequestDto reservationRequestDto, User user, Long gymId, Long trainerId) {
-        // 사용자 조회
-        User findUser = userRepository.findByIdOrElseThrow(user.getId());
+    public ReservationResponseDto createReservation (ReservationRequestDto reservationRequestDto, Long gymId, Long trainerId) {
+//        // 사용자 조회
+//        User findUser = userRepository.findByIdOrElseThrow(user.getId());
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
@@ -67,7 +68,7 @@ public class ReservationService {
             reservationRequestDto.getReservationDate(),
             reservationRequestDto.getReservationTime(),
             reservationRequestDto.getReservationStatus(),
-            findUser, gym, trainer);
+            null, gym, trainer);
 
         Reservation createReservation = reservationRepository.save(reservation);
 
@@ -147,6 +148,21 @@ public class ReservationService {
         }
 
         reservation.cancelReservation();
+    }
+
+    // 트레이너별 예약 목록 조회
+    @Transactional(readOnly = true)
+    public List<TrainerReservationResponseDto> getTrainerReservation(Long gymId, Long trainerId) {
+        // 체육관 조회
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        // 트레이너 조회
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
+        // 트레이너의 모든 예약 조회
+        List<Reservation> reservations = reservationRepository.findByTrainerOrderByReservationDateDescReservationTimeDesc(trainer);
+
+        return reservations.stream()
+            .map(TrainerReservationResponseDto::from)
+            .collect(Collectors.toList());
     }
 
 
