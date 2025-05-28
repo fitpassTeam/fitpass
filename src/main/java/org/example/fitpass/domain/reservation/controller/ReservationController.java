@@ -6,11 +6,13 @@ import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.ResponseMessage;
+import org.example.fitpass.domain.reservation.dto.GetReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.ReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.TrainerReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.UpdateReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.UpdateReservationResponseDto;
+import org.example.fitpass.domain.reservation.dto.UserReservationResponseDto;
 import org.example.fitpass.domain.reservation.service.ReservationService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -124,6 +126,38 @@ public class ReservationController {
     }
 
     // 유저별 예약 목록
+    @GetMapping("/users/{userId}/reservations")
+    public ResponseEntity<ResponseMessage<List<UserReservationResponseDto>>> getUserReservations(
+        @PathVariable Long userId) {
+        
+        List<UserReservationResponseDto> userReservations =
+            reservationService.getUserReservations(userId);
+        
+        ResponseMessage<List<UserReservationResponseDto>> responseMessage =
+            ResponseMessage.<List<UserReservationResponseDto>>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("사용자 예약 목록 조회가 완료되었습니다.")
+                .data(userReservations)
+                .build();
+        
+        return ResponseEntity.ok(responseMessage);
+    }
 
     // 예약 단건 조회
+    @GetMapping("/reservations/{reservationId}")
+    public ResponseEntity<ResponseMessage<GetReservationResponseDto>> getReservation(
+        @PathVariable Long reservationId) {
+
+        GetReservationResponseDto reservation =
+            reservationService.getReservation(reservationId);
+        
+        ResponseMessage<GetReservationResponseDto> responseMessage =
+            ResponseMessage.<GetReservationResponseDto>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("예약 조회가 완료되었습니다.")
+                .data(reservation)
+                .build();
+        
+        return ResponseEntity.ok(responseMessage);
+    }
 }

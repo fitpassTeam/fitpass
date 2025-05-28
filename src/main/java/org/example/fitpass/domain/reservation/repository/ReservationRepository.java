@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.entity.Reservation;
 import org.example.fitpass.domain.trainer.entity.Trainer;
+import org.example.fitpass.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -43,8 +44,17 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         LocalTime time,
         Long excludeId
     );
+    // 생성 시 중복 예약 체크 메서드
+    boolean existsByTrainerAndReservationDateAndReservationTime(
+        Trainer trainer,
+        LocalDate reservationDate,
+        LocalTime reservationTime
+    );
 
     // 트레이너별 예약 목록 (최신순)
     List<Reservation> findByTrainerOrderByReservationDateDescReservationTimeDesc(Trainer trainer);
+
+    // 사용자별 예약 목록 (최신순)
+    List<Reservation> findByUserOrderByReservationDateDescReservationTimeDesc(User user);
 
 }

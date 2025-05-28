@@ -9,11 +9,13 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
+import org.example.fitpass.domain.reservation.dto.GetReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.ReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.TrainerReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.UpdateReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.UpdateReservationResponseDto;
+import org.example.fitpass.domain.reservation.dto.UserReservationResponseDto;
 import org.example.fitpass.domain.reservation.entity.Reservation;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.repository.ReservationRepository;
@@ -64,6 +66,16 @@ public class ReservationService {
         // 트레이너 조회
         Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
 
+        // 중복 예약 검증
+        boolean isDuplicate = reservationRepository.existsByTrainerAndReservationDateAndReservationTime(
+            trainer,
+            reservationRequestDto.getReservationDate(),
+            reservationRequestDto.getReservationTime()
+        );
+        if (isDuplicate) {
+            throw new IllegalStateException("해당 시간에 이미 예약이 있습니다.");
+        }
+
         Reservation reservation = new Reservation(
             reservationRequestDto.getReservationDate(),
             reservationRequestDto.getReservationTime(),
@@ -86,7 +98,7 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
 
         // PENDING 상태만 수정 가능
-        if(!updateReservationRequestDto.getReservationStatus().equals(ReservationStatus.PENDING)){
+        if(!reservation.getReservationStatus().equals(ReservationStatus.PENDING)){
             throw new IllegalStateException("대기 상태의 예약만 변경이 가능합니다.");
         }
 
@@ -165,6 +177,24 @@ public class ReservationService {
             .collect(Collectors.toList());
     }
 
+    // 사용자별 예약 목록 조회
+    @Transactional(readOnly = true)
+    public List<UserReservationResponseDto> getUserReservations(Long userId) {
+        // 유저 조회
+        User user = userRepository.findByIdOrElseThrow(userId);
+        List<Reservation> reservations = reservationRepository.findByUserOrderByReservationDateDescReservationTimeDesc(user);
+
+        return reservations.stream()
+            .map(UserReservationResponseDto::from)
+            .collect(Collectors.toList());
+    }
+
+    // 예약 단건 조회
+    @Transactional(readOnly = true)
+    public GetReservationResponseDto getReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
+        return GetReservationResponseDto.from(reservation);
+    }
 
     // 시간 슬롯 생성 유틸리티 메서드
     private List<LocalTime> generateTimeSlots(LocalTime start, LocalTime end, int intervalMinutes) {
