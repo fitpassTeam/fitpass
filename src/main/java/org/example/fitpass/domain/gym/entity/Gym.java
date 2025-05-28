@@ -1,5 +1,6 @@
 package org.example.fitpass.domain.gym.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,14 +13,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.gym.enums.GymStatus;
+import org.example.fitpass.common.Image;
+import org.example.fitpass.domain.gym.GymStatus;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.entity.User;
 
@@ -79,5 +83,9 @@ public class Gym extends BaseEntity {
     public static Gym of(String gymImage, String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, User user) {
         return new Gym(gymImage, name, number, content, address, openTime, closeTime, user);
     }
+    private List<Trainer> trainers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL)
+    private List<Image> images = new ArrayList<>();
 
 }
