@@ -1,0 +1,63 @@
+package org.example.fitpass.domain.gym.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.domain.gym.GymStatus;
+import org.example.fitpass.domain.trainer.entity.Trainer;
+import org.example.fitpass.domain.user.entity.User;
+
+@Getter
+@Entity
+@NoArgsConstructor
+@Table(name = "gyms")
+public class Gym extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    private String gymImage;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false ,unique = true)
+    private String number;
+
+    @Column(nullable = false)
+    private String content;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false, columnDefinition = "TIME")
+    private LocalDateTime openTime;
+
+    @Column(nullable = false, columnDefinition = "TIME")
+    private LocalDateTime closeTime;
+
+    @Enumerated(EnumType.STRING)
+    private GymStatus gymStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainer_id")
+    private Trainer trainer;
+
+}

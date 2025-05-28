@@ -38,6 +38,10 @@ out/
 /gradle/wrapper/
 /src/main/resources/application.yml
 
+# QueryDSL
+**/generated/
+/src/main/generated/
+
 # 디폴트 무시된 파일
 /shelf/
 /workspace.xml
