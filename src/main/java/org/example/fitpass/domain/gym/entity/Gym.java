@@ -10,12 +10,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
-import org.example.fitpass.domain.gym.GymStatus;
+import org.example.fitpass.domain.gym.enums.GymStatus;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.entity.User;
 
@@ -27,7 +31,7 @@ public class Gym extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String gymImage;
 
@@ -44,20 +48,36 @@ public class Gym extends BaseEntity {
     private String address;
 
     @Column(nullable = false, columnDefinition = "TIME")
-    private LocalDateTime openTime;
+    private LocalTime openTime;
 
     @Column(nullable = false, columnDefinition = "TIME")
-    private LocalDateTime closeTime;
+    private LocalTime closeTime;
 
     @Enumerated(EnumType.STRING)
-    private GymStatus gymStatus;
+    private GymStatus gymStatus = GymStatus.CLOSE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "trainer_id")
-    private Trainer trainer;
+    private List <Trainer> trainers = new ArrayList<>();
+
+    private Boolean isDeleted = false;
+
+    public Gym(String gymImage, String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, User user) {
+        this.gymImage = gymImage;
+        this.name = name;
+        this.number = number;
+        this.content = content;
+        this.address = address;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+    }
+
+    public static Gym of(String gymImage, String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, User user) {
+        return new Gym(gymImage, name, number, content, address, openTime, closeTime, user);
+    }
 
 }

@@ -50,4 +50,14 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    public User(long userId, String userImage, Gender gender, UserRole userRole) {
+        this.id = userId;
+        this.userImage = userImage;
+        this.gender = gender;
+        this.userRole = userRole;
+    }
+
+    public static User of(long userId, String userImage, Gender gender, UserRole userRole) {
+        return new User(userId, userImage, gender, userRole);
+    }
 }

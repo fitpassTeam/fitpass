@@ -1,5 +1,5 @@
 ---
-name: Legend-Book-feature
+name: fitpass-feature
 about: feature(개발)
 title: "[Feature]"
 labels: feature
