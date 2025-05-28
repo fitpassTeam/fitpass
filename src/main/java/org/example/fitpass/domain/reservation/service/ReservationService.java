@@ -1,5 +1,10 @@
 package org.example.fitpass.domain.reservation.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
@@ -24,6 +29,25 @@ public class ReservationService {
     private final TrainerRepository trainerRepository;
 
     // 예약 가능 시간 조회
+    public List<LocalTime> getAvailableTimes(Long gymId, Long trainerId, LocalDate date) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
+
+        // 체육관 운영 시간 (체육관 엔티티에서 가져오기)
+        List<LocalTime> possibleTimes = generateTimeSlots(
+            gym.getOpenTime().toLocalTime(),
+            gym.getCloseTime().toLocalTime(),
+            60
+        );
+        // 해당 날짜에 이미 예약된 시간들 제외
+        List<LocalTime> reservedTimes = reservationRepository.findReservedTimesByTrainerAndDate(trainer, date);
+
+        // 예약 가능한 시간만 반환
+        return possibleTimes.stream()
+            .filter(time -> !reservedTimes.contains(time))
+            .collect(Collectors.toList());
+
+    }
 
     // 예약 생성
     @Transactional
@@ -48,4 +72,18 @@ public class ReservationService {
 
     // 예약 수정
 
+
+
+    // 시간 슬롯 생성 유틸리티 메서드
+    private List<LocalTime> generateTimeSlots(LocalTime start, LocalTime end, int intervalMinutes) {
+        List<LocalTime> timeSlots = new ArrayList<>();
+        LocalTime current = start;
+
+        while (!current.isAfter(end.minusMinutes(intervalMinutes))) {
+            timeSlots.add(current);
+            current = current.plusMinutes(intervalMinutes);
+        }
+
+        return timeSlots;
+    }
 }

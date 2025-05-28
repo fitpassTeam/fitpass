@@ -3,11 +3,15 @@ package org.example.fitpass.domain.reservation.controller;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import java.lang.management.LockInfo;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.ResponseMessage;
 import org.example.fitpass.domain.reservation.dto.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.ReservationResponseDto;
 import org.example.fitpass.domain.reservation.service.ReservationService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,6 +30,22 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     // 예약 가능 시간 조회
+    @GetMapping("/gyms/{gymId}/trainers/{trainerId}/available-times")
+    public ResponseEntity<ResponseMessage<List<LocalTime>>> getAvailableTimes(
+        @PathVariable Long gymId,
+        @PathVariable Long trainerId,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate date) {
+
+        List<LocalTime> availableTimes = reservationService.getAvailableTimes(gymId, trainerId, date);
+
+        ResponseMessage<List<LocalTime>> responseMessage = ResponseMessage.<List<LocalTime>>builder()
+            .statusCode(HttpStatus.OK.value())
+            .message("예약 가능 시간 조회가 완료되었습니다.")
+            .data(availableTimes)
+            .build();
+
+        return ResponseEntity.ok(responseMessage);
+    }
 
 
     // 예약 생성
@@ -45,9 +66,6 @@ public class ReservationController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseMessage);
     }
-
-
-
 
     // 예약 수정
 
