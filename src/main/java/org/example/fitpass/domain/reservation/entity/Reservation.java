@@ -13,22 +13,27 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.reservation.ReservationStatus;
 import org.example.fitpass.domain.trainer.entity.Trainer;
+import org.example.fitpass.domain.user.entity.User;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "reservations")
 public class Reservation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, columnDefinition = "DATE")
     private LocalDate reservationDate;
@@ -37,14 +42,29 @@ public class Reservation extends BaseEntity {
     private LocalTime reservationTime;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ReservationStatus reservationStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gym_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gym_id", nullable = false)
     private Gym gym;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trainer_id")
+    @JoinColumn(name = "trainer_id", nullable = false)
     private Trainer trainer;
+
+    public Reservation(LocalDate reservationDate, LocalTime reservationTime, ReservationStatus reservationStatus, User user,  Gym gym, Trainer trainer) {
+        this.reservationDate = reservationDate;
+        this.reservationTime = reservationTime;
+        this.reservationStatus = reservationStatus;
+        this.user = user;
+        this.gym = gym;
+        this.trainer = trainer;
+    }
+
 
 }
