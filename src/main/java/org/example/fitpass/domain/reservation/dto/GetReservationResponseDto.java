@@ -8,15 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.entity.Reservation;
+import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReservationResponseDto {
-
+public class GetReservationResponseDto {
     private Long reservationId;
     private Long userId;
     private Long gymId;
@@ -33,8 +32,11 @@ public class ReservationResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
-    public static ReservationResponseDto from(Reservation reservation) {
-        return ReservationResponseDto.builder()
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updatedAt;
+
+    public static GetReservationResponseDto from(Reservation reservation) {
+        return GetReservationResponseDto.builder()
             .reservationId(reservation.getId())
             .userId(reservation.getUser().getId())
             .gymId(reservation.getGym().getId())
@@ -43,6 +45,7 @@ public class ReservationResponseDto {
             .reservationTime(reservation.getReservationTime())
             .reservationStatus(reservation.getReservationStatus())
             .createdAt(reservation.getCreatedAt())
+            .updatedAt(reservation.getUpdatedAt())
             .build();
     }
 

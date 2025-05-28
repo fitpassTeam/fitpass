@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.reservation;
+package org.example.fitpass.domain.reservation.enums;
 
 import java.util.Arrays;
 

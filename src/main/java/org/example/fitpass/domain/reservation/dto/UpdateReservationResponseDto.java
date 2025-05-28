@@ -15,7 +15,7 @@ import org.example.fitpass.domain.reservation.entity.Reservation;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReservationResponseDto {
+public class UpdateReservationResponseDto {
 
     private Long reservationId;
     private Long userId;
@@ -31,10 +31,10 @@ public class ReservationResponseDto {
     private ReservationStatus reservationStatus;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public static ReservationResponseDto from(Reservation reservation) {
-        return ReservationResponseDto.builder()
+    public static UpdateReservationResponseDto from(Reservation reservation) {
+        return UpdateReservationResponseDto.builder()
             .reservationId(reservation.getId())
             .userId(reservation.getUser().getId())
             .gymId(reservation.getGym().getId())
@@ -42,8 +42,7 @@ public class ReservationResponseDto {
             .reservationDate(reservation.getReservationDate())
             .reservationTime(reservation.getReservationTime())
             .reservationStatus(reservation.getReservationStatus())
-            .createdAt(reservation.getCreatedAt())
+            .updatedAt(reservation.getUpdatedAt())
             .build();
     }
-
 }
