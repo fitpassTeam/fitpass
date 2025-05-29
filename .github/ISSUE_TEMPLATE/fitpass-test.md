@@ -1,5 +1,5 @@
 ---
-name: Legend-Book-Test
+name: fitpass-Test
 about: 테스트
 title: "[Test]"
 labels: test

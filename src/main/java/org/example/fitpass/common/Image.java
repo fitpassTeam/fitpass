@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.Getter;
 import org.example.fitpass.domain.gym.entity.Gym;
 
@@ -23,5 +24,18 @@ public class Image {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gym_id")
     private Gym gym;
+
+    public void assignToGym(Gym gym){
+        this.gym = gym;
+    }
+
+    private Image(String url, Gym gym) {
+        this.url = url;
+        this.gym = null;
+    }
+
+    public static Image from(String url, Gym gym) {
+        return new Image(url, gym);
+    }
 
 }
