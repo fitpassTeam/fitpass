@@ -9,7 +9,6 @@ import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
 import org.example.fitpass.domain.point.dto.response.PointCashOutResponseDto;
 import org.example.fitpass.domain.point.dto.response.PointResponseDto;
-import org.example.fitpass.domain.point.dto.request.PointUseRequestDto;
 import org.example.fitpass.domain.point.entity.Point;
 import org.example.fitpass.domain.point.service.PointService;
 import org.springframework.http.HttpStatus;

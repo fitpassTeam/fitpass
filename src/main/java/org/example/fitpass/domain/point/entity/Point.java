@@ -62,7 +62,7 @@ public class Point extends BaseEntity {
         this.description = description;
         this.balance = balance;
         this.pointType = pointType;
-        this.pointStatus = pointStatus.COMPLETED;
+        this.pointStatus = PointStatus.COMPLETED;
     }
 
     // 포인트 상태 변경

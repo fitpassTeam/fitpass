@@ -12,6 +12,7 @@ import org.example.fitpass.domain.point.repository.PointRepository;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class PointService {
     private final UserRepository userRepository;
 
     // 포인트 충전
+    @Transactional
     public int chargePoint(Long userId, PointChargeRequestDto pointChargeRequestDto, String description ) {
         User user = userRepository.findByIdOrElseThrow(userId);
         // 현재 잔액에서 충전될 포인트 추가
@@ -37,6 +39,7 @@ public class PointService {
     }
 
     // 포인트 사용
+    @Transactional
     public int usePoint (Long userId, PointUseRefundRequestDto pointUseRefundRequestDto) {
         User user = userRepository.findByIdOrElseThrow(userId);
         // 잔액 부족 검증
@@ -55,6 +58,7 @@ public class PointService {
     }
 
     // 포인트 100% 환불
+    @Transactional
     public int refundPoint (Long userId, PointUseRefundRequestDto pointUseRefundRequestDto) {
         User user = userRepository.findByIdOrElseThrow(userId);
 
@@ -69,6 +73,7 @@ public class PointService {
     }
 
     // 사용자 현금화용 - 90% 환불
+    @Transactional
     public PointCashOutResponseDto cashOutPoint (Long userId, PointCashOutRequestDto pointCashOutRequestDto) {
         User user = userRepository.findByIdOrElseThrow(userId);
 
@@ -96,12 +101,14 @@ public class PointService {
     }
 
     // 포인트 잔액 조회
+    @Transactional
     public int getPointBalance(Long userId) {
         User user = userRepository.findByIdOrElseThrow(userId);
         return user.getPointBalance();
     }
 
     // 포인트 이력 조회
+    @Transactional
     public List<Point> getPointHistory(Long userId) {
         return pointRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
