@@ -2,8 +2,10 @@ package org.example.fitpass.domain.point.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.domain.point.dto.request.PointCashOutRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
-import org.example.fitpass.domain.point.dto.request.PointUseRequestDto;
+import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
+import org.example.fitpass.domain.point.dto.response.PointCashOutResponseDto;
 import org.example.fitpass.domain.point.entity.Point;
 import org.example.fitpass.domain.point.enums.PointType;
 import org.example.fitpass.domain.point.repository.PointRepository;
@@ -35,21 +37,62 @@ public class PointService {
     }
 
     // 포인트 사용
-    public int usePoint (Long userId, PointUseRequestDto  pointUseRequestDto) {
+    public int usePoint (Long userId, PointUseRefundRequestDto pointUseRefundRequestDto) {
         User user = userRepository.findByIdOrElseThrow(userId);
         // 잔액 부족 검증
-        if (user.getPointBalance() < pointUseRequestDto.getAmount()) {
+        if (user.getPointBalance() < pointUseRefundRequestDto.getAmount()) {
             throw new IllegalArgumentException("포인트 잔액이 부족합니다.");
         }
         // 현재 잔액에서 사용한 포인트 차감
-        int newBalance = user.getPointBalance() - pointUseRequestDto.getAmount();
+        int newBalance = user.getPointBalance() - pointUseRefundRequestDto.getAmount();
         // 포인트 이력 저장
-        Point point = new Point(user, pointUseRequestDto.getAmount(), pointUseRequestDto.getDescription(), newBalance, PointType.USE);
+        Point point = new Point(user, pointUseRefundRequestDto.getAmount(), pointUseRefundRequestDto.getDescription(), newBalance, PointType.USE);
         pointRepository.save(point);
         // 사용자 잔액 업데이트
         user.updatePointBalance(newBalance);
 
         return newBalance;
+    }
+
+    // 포인트 100% 환불
+    public int refundPoint (Long userId, PointUseRefundRequestDto pointUseRefundRequestDto) {
+        User user = userRepository.findByIdOrElseThrow(userId);
+
+        int newBalance = user.getPointBalance() + pointUseRefundRequestDto.getAmount();
+
+        Point point = new Point(user, pointUseRefundRequestDto.getAmount(), pointUseRefundRequestDto.getDescription(), newBalance, PointType.REFUND);
+        pointRepository.save(point);
+        // 사용자 잔액 업데이트
+        user.updatePointBalance(newBalance);
+
+        return newBalance;
+    }
+
+    // 사용자 현금화용 - 90% 환불
+    public PointCashOutResponseDto cashOutPoint (Long userId, PointCashOutRequestDto pointCashOutRequestDto) {
+        User user = userRepository.findByIdOrElseThrow(userId);
+
+        // 잔액 부족 검증
+        if (user.getPointBalance() < pointCashOutRequestDto.getAmount()) {
+            throw new IllegalArgumentException("포인트 잔액이 부족합니다.");
+        }
+
+        int requestedAmount = pointCashOutRequestDto.getAmount();
+        int cashAmount = (int)  (requestedAmount * 0.9);
+        int newBalance = user.getPointBalance() - requestedAmount;
+
+        String description = pointCashOutRequestDto.getDescription() != null ?
+            pointCashOutRequestDto.getDescription() : "포인트 현금화";
+        Point point = new Point(user, requestedAmount, description, newBalance, PointType.CASH_OUT);
+        pointRepository.save(point);
+
+        user.updatePointBalance(newBalance);
+
+        return PointCashOutResponseDto.builder()
+            .requestedAmount(requestedAmount)
+            .cashAmount(cashAmount)
+            .newBalance(newBalance)
+            .build();
     }
 
     // 포인트 잔액 조회
