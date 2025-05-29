@@ -1,9 +1,9 @@
-package org.example.fitpass.domain.point;
+package org.example.fitpass.domain.point.enums;
 
 import java.util.Arrays;
 
 public enum PointType {
-    CHARGE, USE, REFUND;
+    CHARGE, USE, REFUND, CASH_OUT;
 
     public static PointType of(String type){
         return Arrays.stream(PointType.values())

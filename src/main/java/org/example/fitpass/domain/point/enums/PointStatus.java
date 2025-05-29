@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.point;
+package org.example.fitpass.domain.point.enums;
 
 import java.util.Arrays;
 
