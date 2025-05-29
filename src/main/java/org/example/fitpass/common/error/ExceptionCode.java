@@ -11,7 +11,7 @@ public enum ExceptionCode implements BaseCode {
 
     // 400 Bad Request
     JWT_TOKEN_REQUIRED(HttpStatus.BAD_REQUEST,"400", "JWT 토큰이 필요합니다."),
-
+    VALID_ERROR(HttpStatus.BAD_REQUEST,"400", "Validation 이 유효하지 않습니다"),
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED,"401", "유효하지 않는 JWT 서명입니다."),

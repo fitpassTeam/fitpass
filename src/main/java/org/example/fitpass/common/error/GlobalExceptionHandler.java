@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("status", errorCode.getHttpStatus().value());
         body.put("error", errorCode.getHttpStatus().getReasonPhrase());
-        body.put("code", errorCode.getErrorCode());
+        body.put("code", errorCode.getBaseCode());
         body.put("message", errorCode.getMessage());
         body.put("path", path);
         body.put("timestamp", LocalDateTime.now());
