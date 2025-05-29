@@ -24,4 +24,8 @@ public class Image {
     @JoinColumn(name = "gym_id")
     private Gym gym;
 
+    public void assignToGym(Gym gym){
+        this.gym = gym;
+    }
+
 }
