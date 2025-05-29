@@ -11,13 +11,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jdk.jshell.Snippet.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.gym.entity.Gym;
-import org.example.fitpass.domain.post.PostStatus;
-import org.example.fitpass.domain.post.PostType;
+import org.example.fitpass.domain.post.enums.PostStatus;
+import org.example.fitpass.domain.post.enums.PostType;
 import org.example.fitpass.domain.user.entity.User;
 
 @Getter
@@ -28,7 +27,13 @@ public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private PostStatus postStatus;
+
+    @Enumerated(EnumType.STRING)
+    private PostType postType;
 
     private String postImage;
 
@@ -38,12 +43,6 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    private PostType postType;
-
-    @Enumerated(EnumType.STRING)
-    private PostStatus postStatus;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private User user;
@@ -52,4 +51,19 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "gym_id")
     private Gym gym;
 
+    public Post(PostStatus postStatus, PostType postType, String postImage, String title, String content, User user, Gym gym) {
+        this.postStatus = postStatus;
+        this.postType = postType;
+        this.postImage = postImage;
+        this.title = title;
+        this.content = content;
+        this.user = user;
+        this.gym = gym;
+    }
+
+    public void  update(String title, String content, String postImage) {
+        this.title = title;
+        this.content = content;
+        this.postImage = postImage;
+    }
 }

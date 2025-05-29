@@ -1,8 +1,9 @@
-package org.example.fitpass.domain.post;
+package org.example.fitpass.domain.post.enums;
 
 import java.util.Arrays;
 
 public enum PostType {
+
     NOTICE, GENERAL;
 
     public static PostType of(String type){

@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.gym.entity.Gym;
-import org.example.fitpass.domain.reservation.ReservationStatus;
+import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.entity.User;
 
@@ -66,5 +66,20 @@ public class Reservation extends BaseEntity {
         this.trainer = trainer;
     }
 
+    // 수정 기능
+    public void updateReservation(LocalDate reservationDate, LocalTime reservationTime, ReservationStatus reservationStatus) {
+       this.reservationDate = reservationDate;
+        this.reservationTime = reservationTime;
+        this.reservationStatus = reservationStatus;
+    }
 
+    // 취소 상태 변환
+    public void cancelReservation() {
+        if (this.reservationStatus == ReservationStatus.PENDING
+            || this.reservationStatus == ReservationStatus.CONFIRMED) {
+            this.reservationStatus = ReservationStatus.CANCELLED;
+        } else {
+            throw new IllegalStateException("대기 중이거나 확정된 예약만 취소할 수 있습니다.");
+        }
+    }
 }

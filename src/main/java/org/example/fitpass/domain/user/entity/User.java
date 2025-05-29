@@ -44,12 +44,20 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String address;
 
+    @Column(nullable = false)
+    private int pointBalance = 0;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+
+    // 포인트 잔액 업데이트
+    public void updatePointBalance(int newBalance) {
+        this.pointBalance = newBalance;
+    }
     public User(long userId, String userImage, Gender gender, UserRole userRole) {
         this.id = userId;
         this.userImage = userImage;
