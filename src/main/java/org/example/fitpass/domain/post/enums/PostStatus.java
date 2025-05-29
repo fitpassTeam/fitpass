@@ -1,8 +1,9 @@
-package org.example.fitpass.domain.post;
+package org.example.fitpass.domain.post.enums;
 
 import java.util.Arrays;
 
 public enum PostStatus {
+
     ACTIVE, HOLIDAY, DELETED;
 
     public static PostStatus of(String type){

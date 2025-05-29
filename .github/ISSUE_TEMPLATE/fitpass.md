@@ -1,5 +1,5 @@
 ---
-name: Legend-Book-fix
+name: fitpass-fix
 about: 수정사항
 title: "[Fix]"
 labels: fix

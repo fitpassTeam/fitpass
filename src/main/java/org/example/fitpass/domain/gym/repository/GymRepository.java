@@ -2,6 +2,8 @@ package org.example.fitpass.domain.gym.repository;
 
 import java.util.Optional;
 import org.example.fitpass.domain.gym.entity.Gym;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GymRepository extends JpaRepository<Gym, Long> {
@@ -14,5 +16,8 @@ public interface GymRepository extends JpaRepository<Gym, Long> {
             return gym;
         }
 
+        Optional<Gym> findByIdAndIsDeletedFalse(Long gymId);
+
+        Page<Gym> findAllAndIsDeletedFalse(Pageable pageable);
 
 }

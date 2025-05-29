@@ -1,5 +1,5 @@
 ---
-name: Legend-Book-bug
+name: fitpass-bug
 about: 버그 발생
 title: "[Bug]"
 labels: bug

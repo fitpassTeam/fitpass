@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.gym;
+package org.example.fitpass.domain.gym.enums;
 
 import java.util.Arrays;
 

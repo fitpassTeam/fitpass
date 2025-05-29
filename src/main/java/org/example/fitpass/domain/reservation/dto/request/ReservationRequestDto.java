@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.reservation.dto;
+package org.example.fitpass.domain.reservation.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
