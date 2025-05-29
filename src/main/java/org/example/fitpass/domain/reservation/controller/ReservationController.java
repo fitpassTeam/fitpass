@@ -52,13 +52,14 @@ public class ReservationController {
 
 
     // 예약 생성
-    @PostMapping("/gyms/{gymId}/trainers/{trainerId}/reservations")
+    @PostMapping("/users/{userId}/gyms/{gymId}/trainers/{trainerId}/reservations")
     public ResponseEntity<ResponseMessage<ReservationResponseDto>> createReservation (
         @Valid @RequestBody ReservationRequestDto reservationRequestDto,
+        @PathVariable Long userId,
         @PathVariable Long gymId,
         @PathVariable Long trainerId) {
         ReservationResponseDto reservationResponseDto =
-            reservationService.createReservation(reservationRequestDto, gymId, trainerId);
+            reservationService.createReservation(reservationRequestDto, userId, gymId, trainerId);
 
         ResponseMessage<ReservationResponseDto> responseMessage = ResponseMessage.<ReservationResponseDto>builder()
             .statusCode(HttpStatus.CREATED.value())
@@ -90,17 +91,18 @@ public class ReservationController {
     }
 
     // 예약 취소
-    @DeleteMapping("/gyms/{gymId}/trainers/{trainerId}/reservations/{reservationId}")
+    @DeleteMapping("/users/{userId}/gyms/{gymId}/trainers/{trainerId}/reservations/{reservationId}")
     public ResponseEntity<ResponseMessage<Void>> cancelReservation (
+        @PathVariable Long userId,
         @PathVariable Long gymId,
         @PathVariable Long trainerId,
         @PathVariable Long reservationId
     ) {
-        reservationService.cancelReservation(gymId, trainerId, reservationId);
+        reservationService.cancelReservation(userId, gymId, trainerId, reservationId);
 
         ResponseMessage<Void> responseMessage = ResponseMessage.<Void>builder()
             .statusCode(HttpStatus.OK.value())
-            .message("예약 삭제가 완료되었습니다.")
+            .message("예약 취소가 완료되었습니다. 포인트가 환불되었습니다.")
             .data(null)
             .build();
 
