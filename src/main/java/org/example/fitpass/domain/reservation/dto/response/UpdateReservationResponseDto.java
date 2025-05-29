@@ -34,15 +34,15 @@ public class UpdateReservationResponseDto {
     private LocalDateTime updatedAt;
 
     public static UpdateReservationResponseDto from(Reservation reservation) {
-        return UpdateReservationResponseDto.builder()
-            .reservationId(reservation.getId())
-            .userId(reservation.getUser().getId())
-            .gymId(reservation.getGym().getId())
-            .trainerId(reservation.getTrainer().getId())
-            .reservationDate(reservation.getReservationDate())
-            .reservationTime(reservation.getReservationTime())
-            .reservationStatus(reservation.getReservationStatus())
-            .updatedAt(reservation.getUpdatedAt())
-            .build();
+        return new UpdateReservationResponseDto(
+                reservation.getId(),
+                reservation.getUser().getId(),
+                reservation.getGym().getId(),
+                reservation.getTrainer().getId(),
+                reservation.getReservationDate(),
+                reservation.getReservationTime(),
+                reservation.getReservationStatus(),
+                reservation.getUpdatedAt()
+        );
     }
 }

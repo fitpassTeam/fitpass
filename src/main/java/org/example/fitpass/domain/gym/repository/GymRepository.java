@@ -8,16 +8,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GymRepository extends JpaRepository<Gym, Long> {
 
-        Optional<Gym> findById (Long gymId);
+    Optional<Gym> findById(Long gymId);
 
-        default Gym findByIdOrElseThrow(Long gymId) {
-            Gym gym = findById(gymId).orElseThrow(
+    default Gym findByIdOrElseThrow(Long gymId) {
+        Gym gym = findById(gymId).orElseThrow(
                 () -> new RuntimeException("존재하지 않은 체육관 id입니다."));
-            return gym;
-        }
+        return gym;
+    }
 
-        Optional<Gym> findByIdAndIsDeletedFalse(Long gymId);
+    Optional<Gym> findByIdAndIsDeletedFalse(Long gymId);
 
-        Page<Gym> findAllAndIsDeletedFalse(Pageable pageable);
+    Page<Gym> findAllAndIsDeletedFalse(Pageable pageable);
 
 }

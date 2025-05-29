@@ -2,7 +2,7 @@ package org.example.fitpass.domain.post.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.ResponseMessage;
+import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
 import org.example.fitpass.domain.post.dto.request.PostUpdateRequestDto;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;

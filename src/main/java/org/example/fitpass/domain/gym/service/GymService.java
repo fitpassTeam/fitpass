@@ -1,13 +1,9 @@
 package org.example.fitpass.domain.gym.service;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.Image;
-import org.example.fitpass.domain.gym.dto.request.GymPhotoUpdateRequestDto;
-import org.example.fitpass.domain.gym.dto.request.GymRequestDto;
-import org.example.fitpass.domain.gym.dto.request.GymUpdateRequestDto;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.gym.entity.Gym;
@@ -20,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor

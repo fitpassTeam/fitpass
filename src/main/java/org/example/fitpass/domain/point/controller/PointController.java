@@ -3,7 +3,7 @@ package org.example.fitpass.domain.point.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.ResponseMessage;
+import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.point.dto.request.PointCashOutRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
@@ -27,7 +27,7 @@ public class PointController {
 
     private final PointService pointService;
 
-    // 포인트 충전
+    // 포인트 충전 - 관리자만 충전할 수 있게
     @PostMapping("/charge")
     public ResponseEntity<ResponseMessage<Integer>> chargePoint(
         @RequestBody PointChargeRequestDto pointChargeRequestDto,

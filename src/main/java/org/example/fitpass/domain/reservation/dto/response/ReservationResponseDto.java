@@ -14,7 +14,7 @@ import org.example.fitpass.domain.reservation.entity.Reservation;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+
 public class ReservationResponseDto {
 
     private Long reservationId;
@@ -34,16 +34,17 @@ public class ReservationResponseDto {
     private LocalDateTime createdAt;
 
     public static ReservationResponseDto from(Reservation reservation) {
-        return ReservationResponseDto.builder()
-            .reservationId(reservation.getId())
-            .userId(reservation.getUser().getId())
-            .gymId(reservation.getGym().getId())
-            .trainerId(reservation.getTrainer().getId())
-            .reservationDate(reservation.getReservationDate())
-            .reservationTime(reservation.getReservationTime())
-            .reservationStatus(reservation.getReservationStatus())
-            .createdAt(reservation.getCreatedAt())
-            .build();
+        return new ReservationResponseDto(
+                reservation.getId(),
+                reservation.getUser().getId(),
+                reservation.getGym().getId(),
+                reservation.getTrainer().getId(),
+                reservation.getReservationDate(),
+                reservation.getReservationTime(),
+                reservation.getReservationStatus(),
+                reservation.getCreatedAt()
+        );
+
     }
 
 }

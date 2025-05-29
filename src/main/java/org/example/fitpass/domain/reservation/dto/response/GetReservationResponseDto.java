@@ -36,17 +36,17 @@ public class GetReservationResponseDto {
     private LocalDateTime updatedAt;
 
     public static GetReservationResponseDto from(Reservation reservation) {
-        return GetReservationResponseDto.builder()
-            .reservationId(reservation.getId())
-            .userId(reservation.getUser().getId())
-            .gymId(reservation.getGym().getId())
-            .trainerId(reservation.getTrainer().getId())
-            .reservationDate(reservation.getReservationDate())
-            .reservationTime(reservation.getReservationTime())
-            .reservationStatus(reservation.getReservationStatus())
-            .createdAt(reservation.getCreatedAt())
-            .updatedAt(reservation.getUpdatedAt())
-            .build();
+        return new GetReservationResponseDto(
+                reservation.getId(),
+                reservation.getUser().getId(),
+                reservation.getGym().getId(),
+                reservation.getTrainer().getId(),
+                reservation.getReservationDate(),
+                reservation.getReservationTime(),
+                reservation.getReservationStatus(),
+                reservation.getCreatedAt(),
+                reservation.getUpdatedAt()
+        );
     }
 
 }
