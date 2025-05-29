@@ -27,7 +27,7 @@ public class PointController {
 
     private final PointService pointService;
 
-    // 포인트 충전
+    // 포인트 충전 - 관리자만 충전할 수 있게
     @PostMapping("/charge")
     public ResponseEntity<ResponseMessage<Integer>> chargePoint(
         @RequestBody PointChargeRequestDto pointChargeRequestDto,
