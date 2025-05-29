@@ -61,7 +61,9 @@ public class Post extends BaseEntity {
         this.gym = gym;
     }
 
-    public void  update(String title, String content, String postImage) {
+    public void  update(PostStatus postStatus, PostType postType,String title, String content, String postImage) {
+        this.postStatus = postStatus;
+        this.postType = postType;
         this.title = title;
         this.content = content;
         this.postImage = postImage;
