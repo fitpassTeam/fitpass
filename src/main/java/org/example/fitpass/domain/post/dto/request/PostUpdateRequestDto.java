@@ -30,6 +30,4 @@ public class PostUpdateRequestDto {
 
     private String postImage;
 
-
-
 }

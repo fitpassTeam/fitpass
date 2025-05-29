@@ -48,23 +48,28 @@ public class TrainerReservationResponseDto {
 
     // Entity -> Dto 변환 메서드
     public static TrainerReservationResponseDto from(Reservation reservation) {
-        return TrainerReservationResponseDto.builder()
-            .reservationId(reservation.getId())
-            .reservationDate(reservation.getReservationDate())
-            .reservationTime(reservation.getReservationTime())
-            .status(reservation.getReservationStatus())
-            .createdAt(reservation.getCreatedAt())
-            .gym(GymInfo.builder()
-                .gymId(reservation.getGym().getId())
-                .name(reservation.getGym().getName())
-                .address(reservation.getGym().getAddress())
-                .number(reservation.getGym().getNumber()).build())
-            .user(UserInfo.builder()
-                .userId(reservation.getUser().getId())
-                .name(reservation.getUser().getName())
-                .email(reservation.getUser().getEmail())
-                .phone(reservation.getUser().getPhone())
-                .build())
-            .build();
+        GymInfo gymInfo = new GymInfo(
+                reservation.getGym().getId(),
+                reservation.getGym().getName(),
+                reservation.getGym().getAddress(),
+                reservation.getGym().getNumber()
+        );
+
+        UserInfo userInfo = new UserInfo(
+                reservation.getUser().getId(),
+                reservation.getUser().getName(),
+                reservation.getUser().getEmail(),
+                reservation.getUser().getPhone()
+        );
+
+        return new TrainerReservationResponseDto(
+                reservation.getId(),
+                reservation.getReservationDate(),
+                reservation.getReservationTime(),
+                reservation.getReservationStatus(),
+                reservation.getCreatedAt(),
+                gymInfo,
+                userInfo
+        );
     }
 }

@@ -28,18 +28,18 @@ public class PostResponseDto {
     private LocalDateTime updatedAt;
 
     public static PostResponseDto from(Post post) {
-        return PostResponseDto.builder()
-                .postId(post.getId())
-                .status(post.getPostStatus())
-                .postType(post.getPostType())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .postImage(post.getPostImage())
-                .userId(post.getUser().getId())
-                .gymId(post.getGym().getId())
-                .createdAt(post.getCreatedAt())
-                .updatedAt(post.getUpdatedAt())
-                .build();
+        return new PostResponseDto(
+                post.getId(),
+                post.getPostStatus(),
+                post.getPostType(),
+                post.getTitle(),
+                post.getContent(),
+                post.getPostImage(),
+                post.getUser().getId(),
+                post.getGym().getId(),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
+        );
     }
 
 }
