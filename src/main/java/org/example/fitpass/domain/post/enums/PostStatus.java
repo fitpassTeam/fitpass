@@ -10,6 +10,6 @@ public enum PostStatus {
         return Arrays.stream(PostStatus.values())
             .filter(r -> r.name().equalsIgnoreCase(type))
             .findFirst()
-            .orElseThrow(() -> new RuntimeException());
+            .orElseThrow(() -> new RuntimeException("정확한 상태를 기입해주세요."));
     }
 }

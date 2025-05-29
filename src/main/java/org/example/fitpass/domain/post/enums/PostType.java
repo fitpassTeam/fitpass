@@ -10,6 +10,6 @@ public enum PostType {
         return Arrays.stream(PostType.values())
             .filter(r -> r.name().equalsIgnoreCase(type))
             .findFirst()
-            .orElseThrow(() -> new RuntimeException());
+            .orElseThrow(() -> new RuntimeException("정확한 종류를 선택해주세요."));
     }
 }
