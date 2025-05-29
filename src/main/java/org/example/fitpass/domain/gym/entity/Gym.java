@@ -23,7 +23,6 @@ import org.example.fitpass.domain.gym.enums.GymStatus;
 import org.example.fitpass.common.Image;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.entity.User;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Entity
@@ -89,4 +88,42 @@ public class Gym extends BaseEntity {
         return new Gym(gymImage, name, number, content, address, openTime, closeTime, user);
     }
 
+    public void isOwner(Long userId) {
+        if (!this.user.getId().equals(userId)) {
+            throw new RuntimeException("사진 수정 권한이 없습니다.");
+        }
+    }
+
+    public void updatePhoto(List<String> imageUrls, Gym gym) {
+        this.images.clear();
+        List<Image> convertedImages = imageUrls.stream()
+                                       .map( url -> Image.from(url,gym))
+                                       .toList();
+        this.images.addAll(convertedImages);
+    }
+
+    public void update(String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime) {
+        if (name != null) {
+            this.name = name;
+        }
+        if (number != null) {
+            this.number = number;
+        }
+        if (content != null) {
+            this.content = content;
+        }
+        if (address != null) {
+            this.address = address;
+        }
+        if (openTime != null) {
+            this.openTime = openTime;
+        }
+        if (closeTime != null) {
+            this.closeTime = closeTime;
+        }
+    }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
 }
