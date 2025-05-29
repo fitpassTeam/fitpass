@@ -1,5 +1,5 @@
 ---
-name: Legend-Book-refactoring
+name: fitpass-refactoring
 about: 리펙토링
 title: "[Refactoring]"
 labels: refactoring

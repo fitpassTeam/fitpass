@@ -22,7 +22,7 @@ public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String userImage;
 
@@ -57,5 +57,15 @@ public class User extends BaseEntity {
     // 포인트 잔액 업데이트
     public void updatePointBalance(int newBalance) {
         this.pointBalance = newBalance;
+    }
+    public User(long userId, String userImage, Gender gender, UserRole userRole) {
+        this.id = userId;
+        this.userImage = userImage;
+        this.gender = gender;
+        this.userRole = userRole;
+    }
+
+    public static User of(long userId, String userImage, Gender gender, UserRole userRole) {
+        return new User(userId, userImage, gender, userRole);
     }
 }
