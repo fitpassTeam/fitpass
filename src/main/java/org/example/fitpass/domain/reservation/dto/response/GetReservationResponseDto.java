@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.reservation.dto;
+package org.example.fitpass.domain.reservation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
@@ -8,15 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.entity.Reservation;
+import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateReservationResponseDto {
-
+public class GetReservationResponseDto {
     private Long reservationId;
     private Long userId;
     private Long gymId;
@@ -31,10 +30,13 @@ public class UpdateReservationResponseDto {
     private ReservationStatus reservationStatus;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    public static UpdateReservationResponseDto from(Reservation reservation) {
-        return UpdateReservationResponseDto.builder()
+    public static GetReservationResponseDto from(Reservation reservation) {
+        return GetReservationResponseDto.builder()
             .reservationId(reservation.getId())
             .userId(reservation.getUser().getId())
             .gymId(reservation.getGym().getId())
@@ -42,7 +44,9 @@ public class UpdateReservationResponseDto {
             .reservationDate(reservation.getReservationDate())
             .reservationTime(reservation.getReservationTime())
             .reservationStatus(reservation.getReservationStatus())
+            .createdAt(reservation.getCreatedAt())
             .updatedAt(reservation.getUpdatedAt())
             .build();
     }
+
 }

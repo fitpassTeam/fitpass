@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.reservation.dto;
+package org.example.fitpass.domain.reservation.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainerReservationResponseDto {
+public class UserReservationResponseDto {
     private Long reservationId;
     private LocalDate reservationDate;
     private LocalTime reservationTime;
@@ -22,7 +22,7 @@ public class TrainerReservationResponseDto {
     private LocalDateTime createdAt;
 
     private GymInfo gym;
-    private UserInfo user;
+    private TrainerInfo trainer;
 
     @Getter
     @Builder
@@ -39,16 +39,16 @@ public class TrainerReservationResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserInfo {
-        private Long userId;
+    public static class TrainerInfo {
+        private Long trainerId;
         private String name;
-        private String email;
-        private String phone;
+        private String content;
+        private int price;
     }
 
     // Entity -> Dto 변환 메서드
-    public static TrainerReservationResponseDto from(Reservation reservation) {
-        return TrainerReservationResponseDto.builder()
+    public static UserReservationResponseDto from(Reservation reservation) {
+        return UserReservationResponseDto.builder()
             .reservationId(reservation.getId())
             .reservationDate(reservation.getReservationDate())
             .reservationTime(reservation.getReservationTime())
@@ -59,12 +59,13 @@ public class TrainerReservationResponseDto {
                 .name(reservation.getGym().getName())
                 .address(reservation.getGym().getAddress())
                 .number(reservation.getGym().getNumber()).build())
-            .user(UserInfo.builder()
-                .userId(reservation.getUser().getId())
-                .name(reservation.getUser().getName())
-                .email(reservation.getUser().getEmail())
-                .phone(reservation.getUser().getPhone())
+            .trainer(TrainerInfo.builder()
+                .trainerId(reservation.getTrainer().getId())
+                .name(reservation.getTrainer().getName())
+                .content(reservation.getTrainer().getContent())
+                .price(reservation.getTrainer().getPrice())
                 .build())
             .build();
     }
+
 }

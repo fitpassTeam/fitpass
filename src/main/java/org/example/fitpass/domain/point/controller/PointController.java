@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.ResponseMessage;
-import org.example.fitpass.domain.point.dto.PointChargeRequestDto;
-import org.example.fitpass.domain.point.dto.PointResponseDto;
+import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
+import org.example.fitpass.domain.point.dto.response.PointResponseDto;
+import org.example.fitpass.domain.point.dto.request.PointUseRequestDto;
 import org.example.fitpass.domain.point.entity.Point;
 import org.example.fitpass.domain.point.service.PointService;
 import org.springframework.http.HttpStatus;
@@ -26,16 +27,32 @@ public class PointController {
 
     // 포인트 충전
     @PostMapping("/charge")
-    public ResponseEntity<ResponseMessage<Void>> chargePoint(
+    public ResponseEntity<ResponseMessage<Integer>> chargePoint(
         @RequestBody PointChargeRequestDto pointChargeRequestDto,
         @PathVariable Long userId
     ) {
-        pointService.chargePoint(userId, pointChargeRequestDto, "포인트 충전");
+        int newBalance = pointService.chargePoint(userId, pointChargeRequestDto, "포인트 충전");
 
-        ResponseMessage<Void> responseMessage = ResponseMessage.<Void>builder()
+        ResponseMessage<Integer> responseMessage = ResponseMessage.<Integer>builder()
             .statusCode(HttpStatus.OK.value())
             .message("포인트 충전이 완료되었습니다.")
-            .data(null)
+            .data(newBalance)
+            .build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+    }
+
+    // 포인트 사용
+    @PostMapping("/use")
+    public ResponseEntity<ResponseMessage<Integer>> usePoint(
+        @RequestBody PointUseRequestDto pointUseRequestDto,
+        @PathVariable Long userId
+    ) {
+        int newBalance = pointService.usePoint(userId, pointUseRequestDto);
+
+        ResponseMessage<Integer> responseMessage = ResponseMessage.<Integer>builder()
+            .statusCode(HttpStatus.OK.value())
+            .message("포인트가 사용되었습니다.")
+            .data(newBalance)
             .build();
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }

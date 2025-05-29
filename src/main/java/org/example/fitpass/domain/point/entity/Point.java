@@ -32,9 +32,11 @@ public class Point extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 충전하는 양, 사용하는 양 등
     @Column(nullable = false)
     private int amount;
 
+    // 설명 (사용한 곳 설명)
     @Column(nullable = false)
     private String description;
 

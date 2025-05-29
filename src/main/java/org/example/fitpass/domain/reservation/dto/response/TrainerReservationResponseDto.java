@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.reservation.dto;
+package org.example.fitpass.domain.reservation.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,17 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.domain.reservation.dto.TrainerReservationResponseDto.GymInfo;
-import org.example.fitpass.domain.reservation.dto.TrainerReservationResponseDto.UserInfo;
 import org.example.fitpass.domain.reservation.entity.Reservation;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
-import org.example.fitpass.domain.trainer.entity.Trainer;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserReservationResponseDto {
+public class TrainerReservationResponseDto {
     private Long reservationId;
     private LocalDate reservationDate;
     private LocalTime reservationTime;
@@ -25,7 +22,7 @@ public class UserReservationResponseDto {
     private LocalDateTime createdAt;
 
     private GymInfo gym;
-    private TrainerInfo trainer;
+    private UserInfo user;
 
     @Getter
     @Builder
@@ -42,16 +39,16 @@ public class UserReservationResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class TrainerInfo {
-        private Long trainerId;
+    public static class UserInfo {
+        private Long userId;
         private String name;
-        private String content;
-        private int price;
+        private String email;
+        private String phone;
     }
 
     // Entity -> Dto 변환 메서드
-    public static UserReservationResponseDto from(Reservation reservation) {
-        return UserReservationResponseDto.builder()
+    public static TrainerReservationResponseDto from(Reservation reservation) {
+        return TrainerReservationResponseDto.builder()
             .reservationId(reservation.getId())
             .reservationDate(reservation.getReservationDate())
             .reservationTime(reservation.getReservationTime())
@@ -62,13 +59,12 @@ public class UserReservationResponseDto {
                 .name(reservation.getGym().getName())
                 .address(reservation.getGym().getAddress())
                 .number(reservation.getGym().getNumber()).build())
-            .trainer(TrainerInfo.builder()
-                .trainerId(reservation.getTrainer().getId())
-                .name(reservation.getTrainer().getName())
-                .content(reservation.getTrainer().getContent())
-                .price(reservation.getTrainer().getPrice())
+            .user(UserInfo.builder()
+                .userId(reservation.getUser().getId())
+                .name(reservation.getUser().getName())
+                .email(reservation.getUser().getEmail())
+                .phone(reservation.getUser().getPhone())
                 .build())
             .build();
     }
-
 }
