@@ -2,6 +2,8 @@ package org.example.fitpass.domain.point.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.point.dto.request.PointCashOutRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
@@ -44,7 +46,7 @@ public class PointService {
         User user = userRepository.findByIdOrElseThrow(userId);
         // 잔액 부족 검증
         if (user.getPointBalance() < pointUseRefundRequestDto.getAmount()) {
-            throw new IllegalArgumentException("포인트 잔액이 부족합니다.");
+            throw new BaseException(ExceptionCode.INSUFFICIENT_POINT_BALANCE);
         }
         // 현재 잔액에서 사용한 포인트 차감
         int newBalance = user.getPointBalance() - pointUseRefundRequestDto.getAmount();
@@ -79,7 +81,7 @@ public class PointService {
 
         // 잔액 부족 검증
         if (user.getPointBalance() < pointCashOutRequestDto.getAmount()) {
-            throw new IllegalArgumentException("포인트 잔액이 부족합니다.");
+            throw new BaseException(ExceptionCode.INSUFFICIENT_POINT_BALANCE);
         }
 
         int requestedAmount = pointCashOutRequestDto.getAmount();

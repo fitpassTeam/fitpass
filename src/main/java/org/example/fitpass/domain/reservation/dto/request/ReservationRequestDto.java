@@ -28,16 +28,15 @@ public class ReservationRequestDto {
 
     private ReservationStatus reservationStatus;
 
-    public Reservation toEntity(User user, Gym gym, Trainer trainer) {
-        return Reservation.builder()
-            .reservationDate(this.reservationDate)
-            .reservationTime(this.reservationTime)
-            .reservationStatus(this.reservationStatus !=null
-                ? this.reservationStatus : ReservationStatus.PENDING) // 기본값 설정
-            .user(user)
-            .gym(gym)
-            .trainer(trainer)
-            .build();
+    public static Reservation from(ReservationRequestDto dto, User user, Gym gym, Trainer trainer) {
+        return new Reservation(
+            dto.reservationDate,
+            dto.reservationTime,
+            dto.reservationStatus != null ? dto.reservationStatus : ReservationStatus.PENDING,
+            user,
+            gym,
+            trainer
+        );
     }
 
 }
