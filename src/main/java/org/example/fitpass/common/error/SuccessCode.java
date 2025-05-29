@@ -21,7 +21,6 @@ public enum SuccessCode implements BaseCode {
     USER_UPDATE_SUCCESS(HttpStatus.OK, "2004", "유저 수정 성공"),
     USER_LIKED_LIST_SUCCESS(HttpStatus.OK, "2005", "좋아요한 도서 목록 조회 성공"),
 
-
     // 3000: Point 성공 코드
     POINT_CHARGE_SUCCESS(HttpStatus.OK, "3001", "포인트 충전이 완료되었습니다."),
     POINT_USE_SUCCESS(HttpStatus.OK, "3002", "포인트 사용이 완료되었습니다."),
@@ -37,7 +36,24 @@ public enum SuccessCode implements BaseCode {
     RESERVATION_GET_SUCCESS(HttpStatus.OK, "4004", "예약 조회가 완료되었습니다."),
     AVAILABLE_TIMES_GET_SUCCESS(HttpStatus.OK, "4005", "예약 가능 시간 조회가 완료되었습니다."),
     TRAINER_RESERVATION_LIST_SUCCESS(HttpStatus.OK, "4006", "트레이너 예약 목록 조회가 완료되었습니다."),
-    USER_RESERVATION_LIST_SUCCESS(HttpStatus.OK, "4007", "사용자 예약 목록 조회가 완료되었습니다.");
+    USER_RESERVATION_LIST_SUCCESS(HttpStatus.OK, "4007", "사용자 예약 목록 조회가 완료되었습니다."),
+
+    // 5000: Gym 성공 코드
+    GYM_POST_SUCCESS(HttpStatus.OK, "5001", "체육관 등록 완료되었습니다."),
+    GYM_FIND_SUCCESS(HttpStatus.OK, "5002", "체육관 상세조회 완료되었습니다."),
+    GYM_FIND_ALL_SUCCESS(HttpStatus.OK, "5003", "체육관 전체조회 완료되었습니다."),
+    GYM_EDIT_PHOTO_SUCCESS(HttpStatus.OK, "5004", "체육관 사진 수정 완료되었습니다."),
+    GYM_EDIT_INFO_SUCCESS(HttpStatus.OK, "5005", "체육관 정보 수정 완료되었습니다."),
+    GYM_DELETE_SUCCESS(HttpStatus.OK, "5006", "체육관 등록 삭제 처리되었습니다."),
+
+    // 6000 keyword
+    GET_FAVORITE_KEYWORD_SUCCESS(HttpStatus.OK, "5001", "키워드 조회가 왼료되었습니다."),
+
+    // 7000: ADMIN 성공 코드
+    BOOK_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "책 등록이 완료되었습니다."),
+    BOOK_UPDATE_SUCCESS(HttpStatus.OK, "7002", "책 정보 수정이 완료되었습니다."),
+    GET_ALL_BOOKS_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 책이 조회되었습니다."),
+    BOOK_DELETE_SUCCESS(HttpStatus.OK, "7004", "등록된 책이 삭제되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

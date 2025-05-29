@@ -7,6 +7,7 @@ import org.example.fitpass.common.error.SuccessCode;
 @Builder
 @Getter
 public class ResponseMessage<T> {
+
 	private int statusCode;
 	private String message;
 	private T data;

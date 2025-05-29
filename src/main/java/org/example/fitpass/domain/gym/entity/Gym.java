@@ -19,6 +19,8 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.enums.GymStatus;
 import org.example.fitpass.common.Image;
 import org.example.fitpass.domain.trainer.entity.Trainer;
@@ -90,7 +92,7 @@ public class Gym extends BaseEntity {
 
     public void isOwner(Long userId) {
         if (!this.user.getId().equals(userId)) {
-            throw new RuntimeException("사진 수정 권한이 없습니다.");
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
         }
     }
 
