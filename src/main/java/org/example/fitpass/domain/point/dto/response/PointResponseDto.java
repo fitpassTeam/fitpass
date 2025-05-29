@@ -10,7 +10,7 @@ import org.example.fitpass.domain.point.enums.PointType;
 @Builder
 public class PointResponseDto {
 
-    private Long id;
+    private Long pointId;
     private int amount;
     private String description;
     private int balance;
@@ -19,7 +19,7 @@ public class PointResponseDto {
 
     public static PointResponseDto from(Point point) {
         return PointResponseDto.builder()
-            .id(point.getId())
+            .pointId(point.getId())
             .amount(point.getAmount())
             .description(point.getDescription())
             .balance(point.getBalance())
