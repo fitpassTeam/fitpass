@@ -8,6 +8,7 @@ import org.example.fitpass.domain.trainer.TrainerStatus;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class TrainerReqeustDto {
     private String trainerImage;
     private String name;

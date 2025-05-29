@@ -9,7 +9,7 @@ import org.example.fitpass.domain.trainer.entity.Trainer;
 
 @Getter
 @AllArgsConstructor
-@Builder
+
 public class TrainerResponseDto {
     private long id;
     private String trainerImage;
@@ -20,14 +20,14 @@ public class TrainerResponseDto {
     private LocalDateTime createdAt;
 
     public static TrainerResponseDto fromEntity(Trainer trainer){
-        return TrainerResponseDto.builder()
-            .id(trainer.getId())
-            .trainerImage(trainer.getTrainerImage())
-            .name(trainer.getName())
-            .price(trainer.getPrice())
-            .content(trainer.getContent())
-            .trainerStatus(trainer.getTrainerStatus())
-            .createdAt(trainer.getCreatedAt())
-            .build();
+        return new TrainerResponseDto(
+                trainer.getId(),
+                trainer.getTrainerImage(),
+                trainer.getName(),
+                trainer.getPrice(),
+                trainer.getContent(),
+                trainer.getTrainerStatus(),
+                trainer.getCreatedAt()
+        );
     }
 }

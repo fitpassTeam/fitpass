@@ -21,7 +21,6 @@ import org.example.fitpass.domain.trainer.TrainerStatus;
 
 @Getter
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "trainers")

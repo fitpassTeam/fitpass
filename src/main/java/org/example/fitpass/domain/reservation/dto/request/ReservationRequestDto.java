@@ -16,6 +16,7 @@ import org.example.fitpass.domain.user.entity.User;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class ReservationRequestDto {
 
     @NotBlank(message = "날짜를 입력해주세요.")
