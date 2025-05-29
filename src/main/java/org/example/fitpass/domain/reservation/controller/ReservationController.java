@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.ResponseMessage;
+import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.reservation.dto.response.GetReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.request.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.response.ReservationResponseDto;

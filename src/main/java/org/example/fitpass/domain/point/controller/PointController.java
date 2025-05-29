@@ -3,7 +3,7 @@ package org.example.fitpass.domain.point.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.ResponseMessage;
+import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.point.dto.request.PointCashOutRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
