@@ -31,6 +31,14 @@ public enum SuccessCode implements BaseCode {
     BOOK_RENT_SUCCESS(HttpStatus.OK, "4002", "도서가 대여되었습니다."),
     BOOK_RETURN_SUCCESS(HttpStatus.OK, "4003", "도서가 반납되었습니다."),
 
+    // 5000: Gym 성공 코드
+    GYM_POST_SUCCESS(HttpStatus.OK, "5001", "체육관 등록 완료되었습니다."),
+    GYM_FIND_SUCCESS(HttpStatus.OK, "5002", "체육관 상세조회 완료되었습니다."),
+    GYM_FIND_ALL_SUCCESS(HttpStatus.OK, "5003", "체육관 전체조회 완료되었습니다."),
+    GYM_EDIT_PHOTO_SUCCESS(HttpStatus.OK, "5004", "체육관 사진 수정 완료되었습니다."),
+    GYM_EDIT_INFO_SUCCESS(HttpStatus.OK, "5005", "체육관 정보 수정 완료되었습니다."),
+    GYM_DELETE_SUCCESS(HttpStatus.OK, "5006", "체육관 등록 삭제 처리되었습니다."),
+
     // 6000 keyword
     GET_FAVORITE_KEYWORD_SUCCESS(HttpStatus.OK, "5001", "키워드 조회가 왼료되었습니다."),
 

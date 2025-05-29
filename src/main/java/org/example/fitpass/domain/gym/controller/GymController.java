@@ -2,6 +2,8 @@ package org.example.fitpass.domain.gym.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.error.SuccessCode;
+import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.gym.dto.request.GymPhotoUpdateRequestDto;
 import org.example.fitpass.domain.gym.dto.request.GymRequestDto;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
@@ -22,14 +24,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/gym")
+@RequestMapping("/gym")
 @RequiredArgsConstructor
 public class GymController {
 
     private final GymService gymService;
 
     @PostMapping
-    public ResponseEntity<GymResponseDto> postGym(
+    public ResponseEntity<ResponseMessage<GymResponseDto>> postGym(
         @Valid @RequestBody GymRequestDto request){
         GymResponseDto response = gymService.post(
             request.getAddress(),
@@ -40,33 +42,41 @@ public class GymController {
             request.getOpenTime(),
             request.getCloseTime()
         );
-        return ResponseEntity.ok(response);
+        ResponseMessage<GymResponseDto> responseMessage =
+            ResponseMessage.success(SuccessCode.GYM_POST_SUCCESS,response);
+        return ResponseEntity.status(SuccessCode.GYM_POST_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     @GetMapping("/{gymId}")
-    public ResponseEntity<GymDetailResponDto> getGym(@PathVariable Long gymId){
+    public ResponseEntity<ResponseMessage<GymDetailResponDto>> getGym(@PathVariable Long gymId){
         GymDetailResponDto response = gymService.getGym(gymId);
-        return ResponseEntity.ok(response);
+        ResponseMessage<GymDetailResponDto> responseMessage =
+            ResponseMessage.success(SuccessCode.GYM_FIND_SUCCESS,response);
+        return ResponseEntity.status(SuccessCode.GYM_FIND_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     @GetMapping
-    public ResponseEntity<Page<GymResponseDto>> getAllGyms(
+    public ResponseEntity<ResponseMessage<Page<GymResponseDto>>> getAllGyms(
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ){
         Page<GymResponseDto> response = gymService.getAllGyms(pageable);
-        return ResponseEntity.ok(response);
+        ResponseMessage<Page<GymResponseDto>> responseMessage =
+            ResponseMessage.success(SuccessCode.GYM_FIND_ALL_SUCCESS,response);
+        return ResponseEntity.status(SuccessCode.GYM_FIND_ALL_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     @PutMapping("/{gymId}/photo")
-    public ResponseEntity<Void> updatePhoto(
+    public ResponseEntity<ResponseMessage<Void>> updatePhoto(
         @Valid @RequestBody GymPhotoUpdateRequestDto request,
         @PathVariable Long gymId){
         gymService.updatePhoto(request.getPhotoUrls(), gymId);
-        return ResponseEntity.ok().build();
+        ResponseMessage<Void> responseMessage =
+            ResponseMessage.success(SuccessCode.GYM_EDIT_PHOTO_SUCCESS);
+        return ResponseEntity.status(SuccessCode.GYM_EDIT_PHOTO_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     @PatchMapping("/{gymId}")
-    public ResponseEntity<GymResponseDto> updateGym(
+    public ResponseEntity<ResponseMessage<GymResponseDto>> updateGym(
         @RequestBody GymRequestDto request,
         @PathVariable Long gymId){
         GymResponseDto response = gymService.updateGym(
@@ -78,12 +88,16 @@ public class GymController {
             request.getCloseTime(),
             gymId
         );
-        return ResponseEntity.ok(response);
+        ResponseMessage<GymResponseDto> responseMessage =
+            ResponseMessage.success(SuccessCode.GYM_EDIT_INFO_SUCCESS, response);
+        return ResponseEntity.status(SuccessCode.GYM_EDIT_INFO_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     @DeleteMapping("/{gymId}")
-    public ResponseEntity<Void> deleteGym(@PathVariable Long gymId){
+    public ResponseEntity<ResponseMessage<Void>> deleteGym(@PathVariable Long gymId){
         gymService.delete(gymId);
-        return ResponseEntity.ok().build();
+        ResponseMessage<Void> responseMessage =
+            ResponseMessage.success(SuccessCode.GYM_DELETE_SUCCESS);
+        return ResponseEntity.status(SuccessCode.GYM_DELETE_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 }
