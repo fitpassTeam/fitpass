@@ -7,7 +7,9 @@ import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
 import org.example.fitpass.domain.post.dto.request.PostUpdateRequestDto;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.post.entity.Post;
+import org.example.fitpass.domain.post.enums.PostType;
 import org.example.fitpass.domain.post.repository.PostRepository;
+import org.example.fitpass.domain.user.UserRole;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,10 @@ public class PostService {
         User finduser = userRepository.findByIdOrElseThrow(user.getId());
 
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+
+        if(postRequestDto.getPostType() == PostType.NOTICE && finduser.getUserRole() != UserRole.OWNER){
+            throw new IllegalArgumentException("공지사항은 관리자만 작성할 수 있습니다.");
+        }
 
         Post post = new Post(
                 postRequestDto.getStatus(),
@@ -72,15 +78,34 @@ public class PostService {
         return PostResponseDto.from(post);
     }
 
+    //게시물 수정
     @Transactional
     public PostResponseDto updatePost (PostUpdateRequestDto requestDto, User user, Long gymId, Long postId){
+
+        Post post = postRepository.findByIdOrElseThrow(postId);
 
         User finduser = userRepository.findByIdOrElseThrow(user.getId());
 
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
 
-        Post post = postRepository.findByIdOrElseThrow(postId);
+        if(!finduser.equals(post.getUser().getId())){
+            throw new IllegalArgumentException("게시물 작성자만 수정이 가능 합니다");
+        }
 
-        return PostResponseDto.from(post);
+        post.update(
+          requestDto.getStatus(),
+          requestDto.getPostType(),
+          requestDto.getTitle(),
+          requestDto.getContent(),
+          requestDto.getPostImage()
+        );
+
+        if(requestDto.getPostType() == PostType.NOTICE && finduser.getUserRole() != UserRole.OWNER){
+            throw new IllegalArgumentException("공지사항은 관리자만 작성할 수 있습니다.");
+        }
+
+        Post updatePost = postRepository.save(post);
+
+        return PostResponseDto.from(updatePost);
     }
 }
