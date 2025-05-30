@@ -41,7 +41,7 @@ public class TrainerController {
             request.getContent(),
             request.getTrainerStatus(),
             request.getTrainerImage()
-            );
+        );
         ResponseMessage<TrainerResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.POST_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.POST_TRAINER_SUCCESS.getHttpStatus())
@@ -51,8 +51,7 @@ public class TrainerController {
     //전체 조회
     @GetMapping
     public ResponseEntity<ResponseMessage<Page<TrainerResponseDto>>> getAllTrainer(
-        @PageableDefault(page = 0, size = 10) Pageable pageable)
-    {
+        @PageableDefault(page = 0, size = 10) Pageable pageable) {
         Page<TrainerResponseDto> response = trainerService.getAllTrainers(pageable);
         ResponseMessage<Page<TrainerResponseDto>> responseMessage =
             ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response);
@@ -87,7 +86,7 @@ public class TrainerController {
     @PutMapping("/{id}/photo")
     public ResponseEntity<Void> updatePhoto(
         @Valid @RequestBody GymPhotoUpdateRequestDto request,
-        @PathVariable Long id){
+        @PathVariable Long id) {
         trainerService.updatePhoto(request.getPhotoUrls(), id);
         return ResponseEntity.ok().build();
     }

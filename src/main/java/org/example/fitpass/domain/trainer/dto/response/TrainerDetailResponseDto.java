@@ -10,14 +10,16 @@ import org.example.fitpass.domain.trainer.enums.TrainerStatus;
 @Getter
 @NoArgsConstructor
 public class TrainerDetailResponseDto {
+
     private String name;
     private int price;
     private String content;
     private TrainerStatus trainerStatus;
-    private List<Image>  trainerImage;
+    private List<Image> trainerImage;
     private LocalDateTime createdAt;
 
-    public TrainerDetailResponseDto(String name, int price, String content, TrainerStatus trainerStatus, List<Image> trainerImage, LocalDateTime createdAt){
+    public TrainerDetailResponseDto(String name, int price, String content,
+        TrainerStatus trainerStatus, List<Image> trainerImage, LocalDateTime createdAt) {
         this.name = name;
         this.price = price;
         this.content = content;
@@ -26,7 +28,9 @@ public class TrainerDetailResponseDto {
         this.createdAt = createdAt;
     }
 
-    public static TrainerDetailResponseDto from(String name, int price, String content, TrainerStatus trainerStatus, List<Image> trainerImage, LocalDateTime createdAt){
-        return new TrainerDetailResponseDto(name, price, content, trainerStatus,trainerImage,createdAt);
+    public static TrainerDetailResponseDto from(String name, int price, String content,
+        TrainerStatus trainerStatus, List<Image> trainerImage, LocalDateTime createdAt) {
+        return new TrainerDetailResponseDto(name, price, content, trainerStatus, trainerImage,
+            createdAt);
     }
 }

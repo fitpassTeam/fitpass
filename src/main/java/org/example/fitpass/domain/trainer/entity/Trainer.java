@@ -54,7 +54,8 @@ public class Trainer extends BaseEntity {
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL)
     private List<Image> images = new ArrayList<>();
 
-    public Trainer(List<Image> trainerImage,String name, int price, String content, TrainerStatus trainerStatus) {
+    public Trainer(List<Image> trainerImage, String name, int price, String content,
+        TrainerStatus trainerStatus) {
         Trainer trainer = new Trainer();
         this.name = name;
         this.price = price;
@@ -67,14 +68,15 @@ public class Trainer extends BaseEntity {
         }
     }
 
-    public static Trainer of(List<Image> trainerImage, String name, int price, String content, TrainerStatus trainerStatus) {
+    public static Trainer of(List<Image> trainerImage, String name, int price, String content,
+        TrainerStatus trainerStatus) {
         return new Trainer(trainerImage, name, price, content, trainerStatus);
     }
 
     public void updatePhoto(List<String> imageUrls, Trainer trainer) {
         this.images.clear();
         List<Image> convertedImages = imageUrls.stream()
-            .map( url ->   Image.from(url,trainer))
+            .map(url -> Image.from(url, trainer))
             .toList();
         this.images.addAll(convertedImages);
     }

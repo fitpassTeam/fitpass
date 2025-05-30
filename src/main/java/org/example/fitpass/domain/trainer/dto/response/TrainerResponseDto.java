@@ -25,7 +25,8 @@ public class TrainerResponseDto {
         );
     }
 
-    public static TrainerResponseDto of(String name, int price, String content, TrainerStatus trainerStatus) {
+    public static TrainerResponseDto of(String name, int price, String content,
+        TrainerStatus trainerStatus) {
         return new TrainerResponseDto(name, price, content, trainerStatus);
     }
 }

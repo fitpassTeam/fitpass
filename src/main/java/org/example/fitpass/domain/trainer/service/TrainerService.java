@@ -23,8 +23,9 @@ public class TrainerService {
 
     private final TrainerRepository trainerRepository;
 
-    public TrainerResponseDto createTrainer(String name, int price, String content, TrainerStatus trainerStatus, List<Image> trainerImage) {
-        Trainer trainer = Trainer.of(trainerImage, name, price,content, trainerStatus);
+    public TrainerResponseDto createTrainer(String name, int price, String content,
+        TrainerStatus trainerStatus, List<Image> trainerImage) {
+        Trainer trainer = Trainer.of(trainerImage, name, price, content, trainerStatus);
         trainerRepository.save(trainer);
         return TrainerResponseDto.of(
             trainer.getName(),
