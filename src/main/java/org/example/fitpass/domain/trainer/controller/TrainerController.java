@@ -84,11 +84,14 @@ public class TrainerController {
 
     //사진 수정
     @PutMapping("/{id}/photo")
-    public ResponseEntity<Void> updatePhoto(
+    public ResponseEntity<ResponseMessage<Void>> updatePhoto(
         @Valid @RequestBody GymPhotoUpdateRequestDto request,
         @PathVariable Long id) {
         trainerService.updatePhoto(request.getPhotoUrls(), id);
-        return ResponseEntity.ok().build();
+        ResponseMessage<Void> responseMessage =
+            ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS);
+        return ResponseEntity.status(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS.getHttpStatus())
+            .body(responseMessage);
     }
 
     //삭제

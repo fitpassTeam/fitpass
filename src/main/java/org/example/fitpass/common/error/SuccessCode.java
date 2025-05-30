@@ -51,6 +51,7 @@ public enum SuccessCode implements BaseCode {
     GET_TRAINER_SUCCESS(HttpStatus.OK, "6002", "트레이너 조회"),
     PATCH_TRAINER_SUCCESS(HttpStatus.OK, "6003", "트레이너 정보 수정이 완료되었습니다."),
     DELETE_TRAINER_SUCCESS(HttpStatus.OK, "6004", "트레이너가 삭제되었습니다"),
+    PATCH_TRAINER_IMAGE_SUCCESS(HttpStatus.OK, "6005", "트레이너 정보 수정이 완료되었습니다."),
 
     // 7000: ADMIN 성공 코드
     BOOK_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "책 등록이 완료되었습니다."),
