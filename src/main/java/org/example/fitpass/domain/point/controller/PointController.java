@@ -3,6 +3,7 @@ package org.example.fitpass.domain.point.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.point.dto.request.PointCashOutRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
@@ -11,7 +12,6 @@ import org.example.fitpass.domain.point.dto.response.PointCashOutResponseDto;
 import org.example.fitpass.domain.point.dto.response.PointResponseDto;
 import org.example.fitpass.domain.point.entity.Point;
 import org.example.fitpass.domain.point.service.PointService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,12 +35,9 @@ public class PointController {
     ) {
         int newBalance = pointService.chargePoint(userId, pointChargeRequestDto, "포인트 충전");
 
-        ResponseMessage<Integer> responseMessage = ResponseMessage.<Integer>builder()
-            .statusCode(HttpStatus.OK.value())
-            .message("포인트 충전이 완료되었습니다.")
-            .data(newBalance)
-            .build();
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        ResponseMessage<Integer> responseMessage =
+            ResponseMessage.success(SuccessCode.POINT_CHARGE_SUCCESS, newBalance);
+        return ResponseEntity.status(SuccessCode.POINT_CHARGE_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     // 포인트 사용
@@ -51,12 +48,9 @@ public class PointController {
     ) {
         int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto);
 
-        ResponseMessage<Integer> responseMessage = ResponseMessage.<Integer>builder()
-            .statusCode(HttpStatus.OK.value())
-            .message("포인트가 사용되었습니다.")
-            .data(newBalance)
-            .build();
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        ResponseMessage<Integer> responseMessage =
+            ResponseMessage.success(SuccessCode.POINT_USE_SUCCESS, newBalance);
+        return ResponseEntity.status(SuccessCode.POINT_USE_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     // 포인트 100% 환불 (PT 취소)
@@ -67,12 +61,9 @@ public class PointController {
     ) {
         int newBalance = pointService.refundPoint(userId, pointUseRefundRequestDto);
 
-        ResponseMessage<Integer> responseMessage = ResponseMessage.<Integer>builder()
-            .statusCode(HttpStatus.OK.value())
-            .message("포인트가 환불되었습니다.")
-            .data(newBalance)
-            .build();
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        ResponseMessage<Integer> responseMessage =
+            ResponseMessage.success(SuccessCode.POINT_REFUND_SUCCESS, newBalance);
+        return ResponseEntity.status(SuccessCode.POINT_REFUND_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     // 포인트 현금화 (90% 현금 환불)
@@ -83,12 +74,9 @@ public class PointController {
     ) {
         PointCashOutResponseDto pointCashOutResponseDto = pointService.cashOutPoint(userId, pointCashOutRequestDto);
 
-        ResponseMessage<PointCashOutResponseDto> responseMessage = ResponseMessage.<PointCashOutResponseDto>builder()
-            .statusCode(HttpStatus.OK.value())
-            .message("포인트 현금화가 완료되었습니다.")
-            .data(pointCashOutResponseDto)
-            .build();
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        ResponseMessage<PointCashOutResponseDto> responseMessage =
+            ResponseMessage.success(SuccessCode.POINT_CASH_OUT_SUCCESS, pointCashOutResponseDto);
+        return ResponseEntity.status(SuccessCode.POINT_CASH_OUT_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     // 포인트 잔액 조회
@@ -96,13 +84,10 @@ public class PointController {
     public ResponseEntity<ResponseMessage<Integer>> getPointBalance (
         @PathVariable Long userId) {
         int balance = pointService.getPointBalance(userId);
-        ResponseMessage<Integer> responseMessage = ResponseMessage.<Integer>builder()
-            .statusCode(HttpStatus.OK.value())
-            .message("포인트 잔액이 조회되었습니다.")
-            .data(balance)
-            .build();
+        ResponseMessage<Integer> responseMessage =
+            ResponseMessage.success(SuccessCode.POINT_BALANCE_GET_SUCCESS,balance);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POINT_BALANCE_GET_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     // 포인트 이력 조회
@@ -113,13 +98,10 @@ public class PointController {
             .map(PointResponseDto::from)
             .collect(Collectors.toList());
 
-        ResponseMessage<List<PointResponseDto>> responseMessage = ResponseMessage.<List<PointResponseDto>>builder()
-            .statusCode(HttpStatus.OK.value())
-            .message("포인트 이력이 조회되었습니다.")
-            .data(pointResponseDtos)
-            .build();
+        ResponseMessage<List<PointResponseDto>> responseMessage =
+            ResponseMessage.success(SuccessCode.POINT_HISTORY_GET_SUCCESS, pointResponseDtos);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POINT_HISTORY_GET_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
 

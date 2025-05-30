@@ -4,6 +4,8 @@ import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.Image;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.gym.entity.Gym;
@@ -43,7 +45,7 @@ public class GymService {
     @Transactional(readOnly = true)
     public GymDetailResponDto getGym(Long gymId) {
         Gym gym = gymRepository.findByIdAndIsDeletedFalse(gymId)
-            .orElseThrow(() -> new RuntimeException("존재하지 않는 가게입니다."));
+            .orElseThrow(() -> new BaseException(ExceptionCode.GYM_NOT_FOUND));
         return GymDetailResponDto.from(
             gym.getName(),
             gym.getNumber(),

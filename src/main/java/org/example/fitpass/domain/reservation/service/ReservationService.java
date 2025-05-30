@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
@@ -26,6 +28,7 @@ import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.trainer.repository.TrainerRepository;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,8 +49,8 @@ public class ReservationService {
 
         // 체육관 운영 시간 (체육관 엔티티에서 가져오기)
         List<LocalTime> possibleTimes = generateTimeSlots(
-            gym.getOpenTime().toLocalTime(),
-            gym.getCloseTime().toLocalTime(),
+            gym.getOpenTime(),
+            gym.getCloseTime(),
             60
         );
         // 해당 날짜에 이미 예약된 시간들 제외
@@ -77,7 +80,7 @@ public class ReservationService {
             reservationRequestDto.getReservationTime()
         );
         if (isDuplicate) {
-            throw new IllegalStateException("해당 시간에 이미 예약이 있습니다.");
+            throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
         }
 
         // 포인트 사용
@@ -87,11 +90,7 @@ public class ReservationService {
 
         int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto);
 
-        Reservation reservation = new Reservation(
-            reservationRequestDto.getReservationDate(),
-            reservationRequestDto.getReservationTime(),
-            reservationRequestDto.getReservationStatus(),
-            user, gym, trainer);
+        Reservation reservation = ReservationRequestDto.from(reservationRequestDto, user, gym, trainer);
 
         Reservation createReservation = reservationRepository.save(reservation);
 
@@ -110,20 +109,20 @@ public class ReservationService {
 
         // PENDING 상태만 수정 가능
         if(!reservation.getReservationStatus().equals(ReservationStatus.PENDING)){
-            throw new IllegalStateException("대기 상태의 예약만 변경이 가능합니다.");
+            throw new BaseException(ExceptionCode.RESERVATION_STATUS_NOT_CHANGEABLE);
         }
 
         // 2일 전까지만 변경 가능
         LocalDate today = LocalDate.now();
         LocalDate reservationDate = reservation.getReservationDate();
         if (ChronoUnit.DAYS.between(today, reservationDate) < 2) {
-            throw new IllegalStateException("예약 2일 전까지만 변경이 가능합니다.");
+            throw new BaseException(ExceptionCode.RESERVATION_CHANGE_DEADLINE_PASSED);
         }
 
         // 새로운 예약 날짜도 2일 후부터 가능한지 검증
         LocalDate newReservationDate = updateReservationRequestDto.getReservationDate();
         if (ChronoUnit.DAYS.between(today, newReservationDate) < 2) {
-            throw new IllegalStateException("예약은 2일 후부터 가능합니다.");
+            throw new BaseException(ExceptionCode.RESERVATION_TOO_EARLY);
         }
 
         // 새로운 예약이 이미 예약이 있는지 확인 (중복 예약 방지)
@@ -134,7 +133,7 @@ public class ReservationService {
             reservationId  // 현재 예약은 제외
         );
         if (isDuplicate) {
-            throw new IllegalStateException("해당 시간에 이미 다른 예약이 있습니다.");
+            throw new BaseException(ExceptionCode.RESERVATION_TIME_CONFLICT);
         }
         // 예약 정보 업데이트
         reservation.updateReservation(
@@ -161,13 +160,13 @@ public class ReservationService {
 
         // 본인의 예약인지 확인
         if (!Objects.equals(reservation.getUser().getId(), userId)) {
-            throw new IllegalStateException("본인의 예약만 취소할 수 있습니다.");
+            throw new BaseException(ExceptionCode.NOT_RESERVATION_OWNER);
         }
 
         // PENDING 또는 CONFIRMED 상태만 취소 가능
         if (!reservation.getReservationStatus().equals(ReservationStatus.PENDING) &&
             !reservation.getReservationStatus().equals(ReservationStatus.CONFIRMED)) {
-            throw new IllegalStateException("대기 중이거나 확정된 예약만 취소할 수 있습니다.");
+            throw new BaseException(ExceptionCode.RESERVATION_STATUS_NOT_CANCELLABLE);
         }
 
         // 취소 기한 확인 (예: 2일 전까지만 취소 가능)
@@ -175,7 +174,7 @@ public class ReservationService {
         LocalDate reservationDate = reservation.getReservationDate();
 
         if (ChronoUnit.DAYS.between(today, reservationDate) < 2) {
-            throw new IllegalStateException("예약 2일 전까지만 취소가 가능합니다.");
+            throw new BaseException(ExceptionCode.RESERVATION_CANCEL_DEADLINE_PASSED);
         }
 
         // 포인트 환불
