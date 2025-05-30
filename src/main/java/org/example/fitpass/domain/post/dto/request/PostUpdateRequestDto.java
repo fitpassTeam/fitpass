@@ -3,7 +3,6 @@ package org.example.fitpass.domain.post.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.domain.post.enums.PostStatus;
@@ -12,7 +11,7 @@ import org.example.fitpass.domain.post.enums.PostType;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+
 public class PostUpdateRequestDto {
 
     @NotBlank(message = "게시물의 status가 없습니다.")

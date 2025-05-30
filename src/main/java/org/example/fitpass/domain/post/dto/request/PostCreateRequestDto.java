@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
 
@@ -12,7 +13,8 @@ import org.example.fitpass.domain.post.enums.PostType;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class PostCreateRequestDto {
+public class PostCreateRequestDto extends BaseEntity {
+
     @NotBlank(message = "게시물의 status가 없습니다.")
     private PostStatus status;
 
