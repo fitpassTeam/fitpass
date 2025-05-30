@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.example.fitpass.domain.post.entity.Post;
 import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
+
 import java.time.LocalDateTime;
 
 @Getter

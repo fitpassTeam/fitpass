@@ -2,94 +2,66 @@ package org.example.fitpass.domain.post.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
 import org.example.fitpass.domain.post.dto.request.PostUpdateRequestDto;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.post.service.PostService;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/gyms/{gymsId}")
+@RequestMapping("/gyms/{gymId}")
 public class PostController {
 
     private final PostService postService;
 
     //게시물 생성
     @PostMapping("/posts")
-    public ResponseEntity<ResponseMessage<PostResponseDto>> creatPost(
-            @RequestBody PostCreateRequestDto requestDto,
-            @AuthenticationPrincipal CustomUserPrincipal user,
-            @PathVariable Long gymId
+    public ResponseEntity<ResponseMessage<PostResponseDto>> creatPost(@RequestBody PostCreateRequestDto requestDto, @AuthenticationPrincipal CustomUserPrincipal user, @PathVariable Long gymId
 
-    ){
+    ) {
         PostResponseDto postResponseDto = postService.createPost(requestDto, user, gymId);
 
-        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.<PostResponseDto>builder()
-                .statusCode(HttpStatus.CREATED.value())
-                .message("게시물이 생성 되었습니다.")
-                .data(postResponseDto)
-                .build();
+        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(SuccessCode.POST_CREATE_SUCCESS, postResponseDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POST_CREATE_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     //게시물 전체조회
     @GetMapping("/posts")
-    public ResponseEntity<ResponseMessage<List<PostResponseDto>>> findAllPost(
-            @AuthenticationPrincipal CustomUserPrincipal user,
-            @PathVariable Long gymsId
-    ){
-        List<PostResponseDto> findAllPost = postService.findAllPost(user.getId(), gymsId);
+    public ResponseEntity<ResponseMessage<Page<PostResponseDto>>> findAllPost(@PageableDefault(page = 0, size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, @AuthenticationPrincipal CustomUserPrincipal user, @PathVariable Long gymId) {
+        Page<PostResponseDto> findAllPost = postService.findAllPost(pageable, user.getId(), gymId);
 
-        ResponseMessage<List<PostResponseDto>> responseMessage = ResponseMessage.<List<PostResponseDto>>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("전체 조회에 성공 하였습니다.")
-                .data(findAllPost)
-                .build();
+        ResponseMessage<Page<PostResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.GET_ALL_POST_SUCCESS, findAllPost);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.GET_ALL_POST_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     //게시물 단건 조회
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<ResponseMessage<PostResponseDto>> findPostById(
-            @AuthenticationPrincipal CustomUserPrincipal user,
-            @PathVariable Long gymsId,
-            @PathVariable Long postId
-    ){
-        PostResponseDto findPostById = postService.findPostById(user.getId(), gymsId, postId);
+    public ResponseEntity<ResponseMessage<PostResponseDto>> findPostById(@AuthenticationPrincipal CustomUserPrincipal user, @PathVariable Long gymId, @PathVariable Long postId) {
+        PostResponseDto findPostById = postService.findPostById(user.getId(), gymId, postId);
 
-        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.<PostResponseDto>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("단건 조회에 성공 하였습니다.")
-                .data(findPostById)
-                .build();
+        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(SuccessCode.GET_ONLY_POST_SUCCESS, findPostById);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.GET_ONLY_POST_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     @PatchMapping("posts/{postId}")
-    public ResponseEntity<ResponseMessage<PostResponseDto>> updatePost(
-            @RequestBody PostUpdateRequestDto reqeustDto,
-            @AuthenticationPrincipal CustomUserPrincipal user,
-            @PathVariable Long gymsId,
-            @PathVariable Long postId
-    ){
-        PostResponseDto updateDto = postService.updatePost(reqeustDto, user.getId(), gymsId, postId);
+    public ResponseEntity<ResponseMessage<PostResponseDto>> updatePost(@RequestBody PostUpdateRequestDto requestDto, @AuthenticationPrincipal CustomUserPrincipal user, @PathVariable Long gymId, @PathVariable Long postId) {
+        PostResponseDto updateDto = postService.updatePost(requestDto, user.getId(), gymId, postId);
 
-        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.<PostResponseDto>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("게시물 수정에 성공 하였습니다.")
-                .data(updateDto)
-                .build();
+        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(SuccessCode.POST_UPDATE_SUCCESS, updateDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POST_UPDATE_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
 }
