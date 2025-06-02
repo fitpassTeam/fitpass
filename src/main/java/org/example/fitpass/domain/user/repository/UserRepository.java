@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findById(Long userId);
+    Optional<User> findByEmail(String email);
 
     default User findByIdOrElseThrow(Long userId) {
         User user = findById(userId).orElseThrow(
