@@ -28,7 +28,7 @@ import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.trainer.repository.TrainerRepository;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
-import org.springframework.http.HttpStatus;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +43,8 @@ public class ReservationService {
     private final PointService pointService;
 
     // 예약 가능 시간 조회
-    public List<LocalTime> getAvailableTimes(Long gymId, Long trainerId, LocalDate date) {
+    public List<LocalTime> getAvailableTimes(Long userId, Long gymId, Long trainerId, LocalDate date) {
+        User user = userRepository.findByIdOrElseThrow(userId);
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
 
@@ -73,33 +74,31 @@ public class ReservationService {
         // 트레이너 조회
         Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
 
-        // 중복 예약 검증
-        boolean isDuplicate = reservationRepository.existsByTrainerAndReservationDateAndReservationTime(
-            trainer,
-            reservationRequestDto.getReservationDate(),
-            reservationRequestDto.getReservationTime()
-        );
-        if (isDuplicate) {
+        try {
+            // 포인트 사용
+            PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto();
+            pointUseRefundRequestDto.setAmount(trainer.getPrice()); // 트레이너 이용료
+            pointUseRefundRequestDto.setDescription("PT 예약 - " + trainer.getName());
+
+            int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto);
+
+            // 예약 생성 및 저장 (DB 유니크 제약조건으로 중복 방지)
+            Reservation reservation = ReservationRequestDto.from(reservationRequestDto, user, gym, trainer);
+            Reservation createReservation = reservationRepository.save(reservation);
+
+            return ReservationResponseDto.from(createReservation);
+            
+        } catch (DataIntegrityViolationException e) {
+            // DB 유니크 제약조건 위반 시 (중복 예약 시도)
             throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
         }
-
-        // 포인트 사용
-        PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto();
-        pointUseRefundRequestDto.setAmount(trainer.getPrice()); // 트레이너 이용료
-        pointUseRefundRequestDto.setDescription("PT 예약 - " + trainer.getName());
-
-        int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto);
-
-        Reservation reservation = ReservationRequestDto.from(reservationRequestDto, user, gym, trainer);
-
-        Reservation createReservation = reservationRepository.save(reservation);
-
-        return ReservationResponseDto.from(createReservation);
     }
 
     // 예약 수정
     @Transactional
-    public UpdateReservationResponseDto updateReservation (UpdateReservationRequestDto updateReservationRequestDto, Long gymId, Long trainerId, Long reservationId){
+    public UpdateReservationResponseDto updateReservation (UpdateReservationRequestDto updateReservationRequestDto,Long userId, Long gymId, Long trainerId, Long reservationId){
+        // 사용자 조회
+        User user = userRepository.findByIdOrElseThrow(userId);
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
@@ -190,7 +189,9 @@ public class ReservationService {
 
     // 트레이너별 예약 목록 조회
     @Transactional(readOnly = true)
-    public List<TrainerReservationResponseDto> getTrainerReservation(Long gymId, Long trainerId) {
+    public List<TrainerReservationResponseDto> getTrainerReservation(Long userId, Long gymId, Long trainerId) {
+        // 사용자 조회
+        User user = userRepository.findByIdOrElseThrow(userId);
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
@@ -217,7 +218,9 @@ public class ReservationService {
 
     // 예약 단건 조회
     @Transactional(readOnly = true)
-    public GetReservationResponseDto getReservation(Long reservationId) {
+    public GetReservationResponseDto getReservation(Long userId, Long reservationId) {
+        // 유저 조회
+        User user = userRepository.findByIdOrElseThrow(userId);
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
         return GetReservationResponseDto.from(reservation);
     }
