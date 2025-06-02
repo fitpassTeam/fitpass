@@ -14,19 +14,18 @@ public class ResponseMessage<T> {
 
 	public static <T> ResponseMessage<T> success(SuccessCode successCode, T data) {
 		return new ResponseMessage<>(
-			successCode.getHttpStatus().value(),
-			successCode.getMessage(),
-			data
+				successCode.getHttpStatus().value(),
+				successCode.getMessage(),
+				data
 		);
 	}
 
 	public static <T> ResponseMessage<T> success(SuccessCode successCode) {
 		return new ResponseMessage<>(
-			successCode.getHttpStatus().value(),
-			successCode.getMessage(),
-			null
+				successCode.getHttpStatus().value(),
+				successCode.getMessage(),
+				null
 		);
 	}
-
-
 }
+

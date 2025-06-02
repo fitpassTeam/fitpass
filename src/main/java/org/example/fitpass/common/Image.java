@@ -9,11 +9,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import org.example.fitpass.domain.gym.entity.Gym;
+import org.example.fitpass.domain.trainer.entity.Trainer;
 
 @Entity
 @Getter
 @Table(name = "images")
 public class Image {
+
     @Id
     @GeneratedValue
     private Long id;
@@ -24,7 +26,24 @@ public class Image {
     @JoinColumn(name = "gym_id")
     private Gym gym;
 
-    public void assignToGym(Gym gym){
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainer_id")
+    private Trainer trainer;
+
+    public void assignToTrainer(Trainer trainer) {
+        this.trainer = trainer;
+    }
+
+    private Image(String url, Trainer trainer) {
+        this.url = url;
+        this.trainer = trainer;
+    }
+
+    public static Image from(String url, Trainer trainer) {
+        return new Image(url, trainer);
+    }
+
+    public void assignToGym(Gym gym) {
         this.gym = gym;
     }
 

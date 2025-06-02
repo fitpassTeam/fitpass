@@ -6,15 +6,16 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
+
 public enum SuccessCode implements BaseCode {
 
-    // 1000: Auth 성공 코드
+    // 1000: auth 성공 코드
     SIGNUP_SUCCESS(HttpStatus.CREATED, "1001", "회원가입이 완료되었습니다."),
     LOGIN_SUCCESS(HttpStatus.OK, "1002", "로그인에 성공하였습니다."),
     REISSUE_SUCCESS(HttpStatus.OK, "1003", "토큰이 재발급되었습니다."),
     LOGOUT_SUCCESS(HttpStatus.OK, "1004", "로그아웃이 완료되었습니다."),
 
-    // 2000: User 성공 코드
+    //2000: User 성공 코드
     USER_GET_SUCCESS(HttpStatus.OK, "2001", "유저 조회 성공"),
     USER_DELETE_SUCCESS(HttpStatus.OK, "2002", "유저 삭제 성공"),
     USER_BOOK_LIST_SUCCESS(HttpStatus.OK, "2003", "대여한 도서 목록 조회 성공"),
@@ -28,6 +29,15 @@ public enum SuccessCode implements BaseCode {
     POINT_CASH_OUT_SUCCESS(HttpStatus.OK, "3004", "포인트 현금화가 완료되었습니다."),
     POINT_BALANCE_GET_SUCCESS(HttpStatus.OK, "3005", "포인트 잔액 조회가 완료되었습니다."),
     POINT_HISTORY_GET_SUCCESS(HttpStatus.OK, "3006", "포인트 이력 조회가 완료되었습니다."),
+
+    // 6000 keyword
+    GET_FAVORITE_KEYWORD_SUCCESS(HttpStatus.OK, "5001", "키워드 조회가 왼료되었습니다."),
+
+    // 7000: 게시물 성공 코드
+    POST_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "게시물 등록이 완료되었습니다."),
+    POST_UPDATE_SUCCESS(HttpStatus.OK, "7002", "게시물 정보 수정이 완료되었습니다."),
+    GET_ALL_POST_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 게시물이 조회되었습니다."),
+    GET_ONLY_POST_SUCCESS(HttpStatus.OK, "7004", "등록된 게시물 조회가 되었습니다."),
 
     // 4000: Reservation 성공 코드
     RESERVATION_CREATE_SUCCESS(HttpStatus.CREATED, "4001", "예약이 완료되었습니다."),
@@ -46,8 +56,12 @@ public enum SuccessCode implements BaseCode {
     GYM_EDIT_INFO_SUCCESS(HttpStatus.OK, "5005", "체육관 정보 수정 완료되었습니다."),
     GYM_DELETE_SUCCESS(HttpStatus.OK, "5006", "체육관 등록 삭제 처리되었습니다."),
 
-    // 6000 keyword
-    GET_FAVORITE_KEYWORD_SUCCESS(HttpStatus.OK, "5001", "키워드 조회가 왼료되었습니다."),
+    // 6000 trainer 성공 코드
+    POST_TRAINER_SUCCESS(HttpStatus.CREATED, "6001", "트레이너 생성이 완료되었습니다."),
+    GET_TRAINER_SUCCESS(HttpStatus.OK, "6002", "트레이너 조회"),
+    PATCH_TRAINER_SUCCESS(HttpStatus.OK, "6003", "트레이너 정보 수정이 완료되었습니다."),
+    DELETE_TRAINER_SUCCESS(HttpStatus.OK, "6004", "트레이너가 삭제되었습니다"),
+    PATCH_TRAINER_IMAGE_SUCCESS(HttpStatus.OK, "6005", "트레이너 정보 수정이 완료되었습니다."),
 
     // 7000: ADMIN 성공 코드
     BOOK_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "책 등록이 완료되었습니다."),
