@@ -1,5 +1,22 @@
 package org.example.fitpass.domain.user.dto;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.example.fitpass.domain.user.Gender;
+import org.example.fitpass.domain.user.UserRole;
+
+@Getter
+@NoArgsConstructor
 public class UserRequestDto {
+
+    private String email;
+    private String password;
+    private String name;
+    private String phone;
+    private int age;
+    private String address;
+    private Gender gender;
+    private UserRole userRole;
+
 
 }

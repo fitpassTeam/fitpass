@@ -8,11 +8,13 @@ import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
 import org.example.fitpass.domain.post.dto.request.PostUpdateRequestDto;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.post.service.PostService;
+import org.example.fitpass.common.security.CustomUserDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -25,10 +27,13 @@ public class PostController {
 
     //게시물 생성
     @PostMapping("/posts")
-    public ResponseEntity<ResponseMessage<PostResponseDto>> creatPost(@RequestBody PostCreateRequestDto requestDto, @AuthenticationPrincipal CustomUserPrincipal user, @PathVariable Long gymId
+    public ResponseEntity<ResponseMessage<PostResponseDto>> creatPost(
+        @RequestBody PostCreateRequestDto requestDto,
+        @AuthenticationPrincipal CustomUserDetails user,
+        @PathVariable Long gymId
 
     ) {
-        PostResponseDto postResponseDto = postService.createPost(requestDto, user, gymId);
+        PostResponseDto postResponseDto = postService.createPost(requestDto, user.getUser(), gymId);
 
         ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(SuccessCode.POST_CREATE_SUCCESS, postResponseDto);
 
@@ -37,8 +42,12 @@ public class PostController {
 
     //게시물 전체조회
     @GetMapping("/posts")
-    public ResponseEntity<ResponseMessage<Page<PostResponseDto>>> findAllPost(@PageableDefault(page = 0, size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, @AuthenticationPrincipal CustomUserPrincipal user, @PathVariable Long gymId) {
-        Page<PostResponseDto> findAllPost = postService.findAllPost(pageable, user.getId(), gymId);
+    public ResponseEntity<ResponseMessage<Page<PostResponseDto>>> findAllPost(
+        @PageableDefault(page = 0, size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+        @AuthenticationPrincipal CustomUserDetails user,
+        @PathVariable Long gymId
+    ) {
+        Page<PostResponseDto> findAllPost = postService.findAllPost(pageable, user.getUser(), gymId);
 
         ResponseMessage<Page<PostResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.GET_ALL_POST_SUCCESS, findAllPost);
 
@@ -47,8 +56,12 @@ public class PostController {
 
     //게시물 단건 조회
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<ResponseMessage<PostResponseDto>> findPostById(@AuthenticationPrincipal CustomUserPrincipal user, @PathVariable Long gymId, @PathVariable Long postId) {
-        PostResponseDto findPostById = postService.findPostById(user.getId(), gymId, postId);
+    public ResponseEntity<ResponseMessage<PostResponseDto>> findPostById(
+        @AuthenticationPrincipal CustomUserDetails user,
+        @PathVariable Long gymId,
+        @PathVariable Long postId
+    ) {
+        PostResponseDto findPostById = postService.findPostById(user.getUser(), gymId, postId);
 
         ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(SuccessCode.GET_ONLY_POST_SUCCESS, findPostById);
 
@@ -56,8 +69,13 @@ public class PostController {
     }
 
     @PatchMapping("posts/{postId}")
-    public ResponseEntity<ResponseMessage<PostResponseDto>> updatePost(@RequestBody PostUpdateRequestDto requestDto, @AuthenticationPrincipal CustomUserPrincipal user, @PathVariable Long gymId, @PathVariable Long postId) {
-        PostResponseDto updateDto = postService.updatePost(requestDto, user.getId(), gymId, postId);
+    public ResponseEntity<ResponseMessage<PostResponseDto>> updatePost(
+        @RequestBody PostUpdateRequestDto requestDto,
+        @AuthenticationPrincipal CustomUserDetails user,
+        @PathVariable Long gymId,
+        @PathVariable Long postId
+    ) {
+        PostResponseDto updateDto = postService.updatePost(requestDto, user.getUser(), gymId, postId);
 
         ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(SuccessCode.POST_UPDATE_SUCCESS, updateDto);
 
