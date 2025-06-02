@@ -15,9 +15,10 @@ import org.example.fitpass.domain.reservation.dto.request.UpdateReservationReque
 import org.example.fitpass.domain.reservation.dto.response.UpdateReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.response.UserReservationResponseDto;
 import org.example.fitpass.domain.reservation.service.ReservationService;
+import org.example.fitpass.common.security.CustomUserDetails;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,11 +37,12 @@ public class ReservationController {
     // 예약 가능 시간 조회
     @GetMapping("/gyms/{gymId}/trainers/{trainerId}/available-times")
     public ResponseEntity<ResponseMessage<List<LocalTime>>> getAvailableTimes(
+        @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable Long gymId,
         @PathVariable Long trainerId,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate date) {
 
-        List<LocalTime> availableTimes = reservationService.getAvailableTimes(gymId, trainerId, date);
+        List<LocalTime> availableTimes = reservationService.getAvailableTimes(user.getId(), gymId, trainerId, date);
 
         ResponseMessage<List<LocalTime>> responseMessage =
             ResponseMessage.success(SuccessCode.AVAILABLE_TIMES_GET_SUCCESS, availableTimes);
@@ -50,14 +52,14 @@ public class ReservationController {
 
 
     // 예약 생성
-    @PostMapping("/users/{userId}/gyms/{gymId}/trainers/{trainerId}/reservations")
+    @PostMapping("/gyms/{gymId}/trainers/{trainerId}/reservations")
     public ResponseEntity<ResponseMessage<ReservationResponseDto>> createReservation (
         @Valid @RequestBody ReservationRequestDto reservationRequestDto,
-        @PathVariable Long userId,
+        @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable Long gymId,
         @PathVariable Long trainerId) {
         ReservationResponseDto reservationResponseDto =
-            reservationService.createReservation(reservationRequestDto, userId, gymId, trainerId);
+            reservationService.createReservation(reservationRequestDto, user.getId(), gymId, trainerId);
 
         ResponseMessage<ReservationResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.RESERVATION_CREATE_SUCCESS, reservationResponseDto);
@@ -69,12 +71,13 @@ public class ReservationController {
     @PatchMapping("/gyms/{gymId}/trainers/{trainerId}/reservations/{reservationId}")
     public ResponseEntity<ResponseMessage<UpdateReservationResponseDto>> updateReservation (
         @Valid @RequestBody UpdateReservationRequestDto updateReservationRequestDto,
+        @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable Long gymId,
         @PathVariable Long trainerId,
         @PathVariable Long reservationId
     ){
         UpdateReservationResponseDto updateReservationResponseDto =
-            reservationService.updateReservation(updateReservationRequestDto, gymId, trainerId, reservationId);
+            reservationService.updateReservation(updateReservationRequestDto, user.getId(), gymId, trainerId, reservationId);
 
         ResponseMessage<UpdateReservationResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.RESERVATION_UPDATE_SUCCESS, updateReservationResponseDto);
@@ -83,14 +86,14 @@ public class ReservationController {
     }
 
     // 예약 취소
-    @DeleteMapping("/users/{userId}/gyms/{gymId}/trainers/{trainerId}/reservations/{reservationId}")
+    @DeleteMapping("/gyms/{gymId}/trainers/{trainerId}/reservations/{reservationId}")
     public ResponseEntity<ResponseMessage<Void>> cancelReservation (
-        @PathVariable Long userId,
+        @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable Long gymId,
         @PathVariable Long trainerId,
         @PathVariable Long reservationId
     ) {
-        reservationService.cancelReservation(userId, gymId, trainerId, reservationId);
+        reservationService.cancelReservation(user.getId(), gymId, trainerId, reservationId);
 
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.RESERVATION_CANCEL_WITH_REFUND_SUCCESS);
@@ -101,11 +104,12 @@ public class ReservationController {
     // 트레이너별 예약 목록 조회
     @GetMapping("/gyms/{gymId}/trainers/{trainerId}/reservations")
     public ResponseEntity<ResponseMessage<List<TrainerReservationResponseDto>>> getTrainerReservation (
+        @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable Long gymId,
         @PathVariable Long trainerId
     ) {
         List<TrainerReservationResponseDto> trainerReservationResponseDto =
-            reservationService.getTrainerReservation(gymId, trainerId);
+            reservationService.getTrainerReservation(user.getId(), gymId, trainerId);
 
         ResponseMessage<List<TrainerReservationResponseDto>> responseMessage =
             ResponseMessage.success(SuccessCode.TRAINER_RESERVATION_LIST_SUCCESS, trainerReservationResponseDto);
@@ -113,12 +117,12 @@ public class ReservationController {
     }
 
     // 유저별 예약 목록
-    @GetMapping("/users/{userId}/reservations")
+    @GetMapping("/users/reservations")
     public ResponseEntity<ResponseMessage<List<UserReservationResponseDto>>> getUserReservations(
-        @PathVariable Long userId) {
+        @AuthenticationPrincipal CustomUserDetails user) {
         
         List<UserReservationResponseDto> userReservations =
-            reservationService.getUserReservations(userId);
+            reservationService.getUserReservations(user.getId());
         
         ResponseMessage<List<UserReservationResponseDto>> responseMessage =
             ResponseMessage.success(SuccessCode.USER_RESERVATION_LIST_SUCCESS, userReservations);
@@ -129,10 +133,10 @@ public class ReservationController {
     // 예약 단건 조회
     @GetMapping("/reservations/{reservationId}")
     public ResponseEntity<ResponseMessage<GetReservationResponseDto>> getReservation(
-        @PathVariable Long reservationId) {
+        @AuthenticationPrincipal CustomUserDetails user, @PathVariable Long reservationId) {
 
         GetReservationResponseDto reservation =
-            reservationService.getReservation(reservationId);
+            reservationService.getReservation(user.getId(), reservationId);
         
         ResponseMessage<GetReservationResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.RESERVATION_GET_SUCCESS, reservation);
