@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.user.Gender;
 import org.example.fitpass.domain.user.UserRole;
+import org.example.fitpass.domain.user.dto.UserRequestDto;
 
 @Getter
 @Entity
@@ -52,6 +53,27 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    public User(String email, String password, String name, String phone, int age, String address, Gender gender, UserRole userRole) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.age = age;
+        this.address = address;
+        this.gender = gender;
+        this.userRole = userRole;
+        this.pointBalance = 0;
+    }
+
+    public void updateInfo(UserRequestDto dto) {
+        this.name = dto.getName();
+        this.phone = dto.getPhone();
+        this.age = dto.getAge();
+        this.address = dto.getAddress();
+        this.gender = dto.getGender();
+        this.userRole = dto.getUserRole();
+    }
 
 
     // 포인트 잔액 업데이트

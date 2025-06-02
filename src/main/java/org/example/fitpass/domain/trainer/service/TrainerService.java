@@ -1,7 +1,6 @@
 package org.example.fitpass.domain.trainer.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.trainer.dto.TrainerReqeustDto;
 import org.example.fitpass.domain.trainer.dto.TrainerResponseDto;
