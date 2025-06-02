@@ -1,11 +1,11 @@
-package org.example.fitpass.jwt;
+package org.example.fitpass.common.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.security.CustomUserDetailsService;
+import org.example.fitpass.common.security.CustomUserDetailsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,10 +24,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        String url = request.getRequestURI();
+
+        if (url.startsWith("/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String token = jwtTokenProvider.resolveToken(request);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            Long userId = jwtTokenProvider.getUserIdFromToken(token);
+        if (token == null || !token.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String jwt = jwtTokenProvider.substringToken(token);
+
+        if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
+            Long userId = jwtTokenProvider.getUserIdFromToken(jwt);
             UserDetails userDetails = customUserDetailsService.loadUserById(userId);
 
             UsernamePasswordAuthenticationToken authentication =

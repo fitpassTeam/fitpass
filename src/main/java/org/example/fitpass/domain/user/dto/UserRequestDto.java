@@ -18,13 +18,5 @@ public class UserRequestDto {
     private Gender gender;
     private UserRole userRole;
 
-    public void updateInfo(UserRequestDto dto) {
-        this.name = dto.getName();
-        this.phone = dto.getPhone();
-        this.age = dto.getAge();
-        this.address = dto.getAddress();
-        this.gender = dto.getGender();
-        this.userRole = dto.getUserRole();
-    }
 
 }

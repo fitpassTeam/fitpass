@@ -1,4 +1,4 @@
-package org.example.fitpass.jwt;
+package org.example.fitpass.common.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -6,7 +6,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.user.entity.User;
-import org.example.fitpass.security.CustomUserDetailsService;
+import org.example.fitpass.common.security.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
@@ -27,7 +28,9 @@ public class JwtTokenProvider {
 
     private Key key;
 
-    private final long tokenValidityInMilliseconds = 1000 * 60 * 60; // 1시간
+    private final long tokenValidityInMilliseconds = 1000 * 60 * 60;
+
+    private static final String BEARER_PREFIX = "Bearer ";// 1시간
 
     private final CustomUserDetailsService userDetailsService;
 
@@ -45,12 +48,19 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date validity = new Date(now.getTime() + tokenValidityInMilliseconds);
 
-        return Jwts.builder()
+        return BEARER_PREFIX + Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String substringToken(String tokenValue) {
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+            return tokenValue.substring(7);
+        }
+        throw new RuntimeException("토큰을 찾지 못했습니다.");
     }
 
     public Long getUserIdFromToken(String token) {

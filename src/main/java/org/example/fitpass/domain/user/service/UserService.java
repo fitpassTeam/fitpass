@@ -1,10 +1,12 @@
 package org.example.fitpass.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
 import org.example.fitpass.domain.user.dto.UserResponseDto;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public UserResponseDto signup(UserRequestDto dto) {
         User user = new User(
@@ -30,7 +33,7 @@ public class UserService {
         return UserResponseDto.from(user);
     }
 
-    public User login(UserRequestDto dto) {
+    public SigninResponseDto login(UserRequestDto dto) {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
 
@@ -38,7 +41,9 @@ public class UserService {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
-        return user;
+        String bearerToken = jwtTokenProvider.createToken(user.getEmail(), user.getUserRole().name());
+
+        return new SigninResponseDto(user.getId(), bearerToken, user.getEmail());
     }
 
     public UserResponseDto getUserInfo(String email) {
