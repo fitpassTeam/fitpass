@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
+import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.gym.dto.request.GymPhotoUpdateRequestDto;
 import org.example.fitpass.domain.gym.dto.request.GymRequestDto;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,7 +34,8 @@ public class GymController {
 
     @PostMapping
     public ResponseEntity<ResponseMessage<GymResponseDto>> postGym(
-        @Valid @RequestBody GymRequestDto request){
+        @Valid @RequestBody GymRequestDto request,
+        @AuthenticationPrincipal CustomUserDetails user){
         GymResponseDto response = gymService.post(
             request.getAddress(),
             request.getName(),
@@ -40,7 +43,8 @@ public class GymController {
             request.getNumber(),
             request.getGymImage(),
             request.getOpenTime(),
-            request.getCloseTime()
+            request.getCloseTime(),
+            user.getId()
         );
         ResponseMessage<GymResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.GYM_POST_SUCCESS,response);
@@ -68,8 +72,9 @@ public class GymController {
     @PutMapping("/{gymId}/photo")
     public ResponseEntity<ResponseMessage<Void>> updatePhoto(
         @Valid @RequestBody GymPhotoUpdateRequestDto request,
-        @PathVariable Long gymId){
-        gymService.updatePhoto(request.getPhotoUrls(), gymId);
+        @PathVariable Long gymId,
+        @AuthenticationPrincipal CustomUserDetails user){
+        gymService.updatePhoto(request.getPhotoUrls(), gymId, user.getId());
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.GYM_EDIT_PHOTO_SUCCESS);
         return ResponseEntity.status(SuccessCode.GYM_EDIT_PHOTO_SUCCESS.getHttpStatus()).body(responseMessage);
@@ -78,7 +83,8 @@ public class GymController {
     @PatchMapping("/{gymId}")
     public ResponseEntity<ResponseMessage<GymResponseDto>> updateGym(
         @RequestBody GymRequestDto request,
-        @PathVariable Long gymId){
+        @PathVariable Long gymId,
+        @AuthenticationPrincipal CustomUserDetails user){
         GymResponseDto response = gymService.updateGym(
             request.getName(),
             request.getNumber(),
@@ -86,7 +92,8 @@ public class GymController {
             request.getAddress(),
             request.getOpenTime(),
             request.getCloseTime(),
-            gymId
+            gymId,
+            user.getId()
         );
         ResponseMessage<GymResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.GYM_EDIT_INFO_SUCCESS, response);
@@ -94,8 +101,10 @@ public class GymController {
     }
 
     @DeleteMapping("/{gymId}")
-    public ResponseEntity<ResponseMessage<Void>> deleteGym(@PathVariable Long gymId){
-        gymService.delete(gymId);
+    public ResponseEntity<ResponseMessage<Void>> deleteGym(
+        @PathVariable Long gymId,
+        @AuthenticationPrincipal CustomUserDetails user){
+        gymService.delete(gymId, user.getId());
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.GYM_DELETE_SUCCESS);
         return ResponseEntity.status(SuccessCode.GYM_DELETE_SUCCESS.getHttpStatus()).body(responseMessage);

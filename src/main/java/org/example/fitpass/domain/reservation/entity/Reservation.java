@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,11 @@ import org.example.fitpass.domain.user.entity.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "reservations")
+@Table(name = "reservations", 
+       uniqueConstraints = @UniqueConstraint(
+           name = "uk_trainer_date_time",
+           columnNames = {"trainer_id", "reservation_date", "reservation_time"}
+       ))
 public class Reservation extends BaseEntity {
 
     @Id

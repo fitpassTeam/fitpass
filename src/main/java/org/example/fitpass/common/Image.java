@@ -8,12 +8,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 
 @Entity
 @Getter
 @Table(name = "images")
+@NoArgsConstructor
 public class Image {
 
     @Id
@@ -49,7 +51,7 @@ public class Image {
 
     private Image(String url, Gym gym) {
         this.url = url;
-        this.gym = null;
+        this.gym = gym;
     }
 
     public static Image from(String url, Gym gym) {

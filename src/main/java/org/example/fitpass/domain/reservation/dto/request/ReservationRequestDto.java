@@ -7,16 +7,16 @@ import java.time.LocalTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.entity.Reservation;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.entity.User;
 
-@Getter
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class ReservationRequestDto {
 
     @NotBlank(message = "날짜를 입력해주세요.")
