@@ -10,8 +10,6 @@ import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
-import org.example.fitpass.domain.user.Gender;
-import org.example.fitpass.domain.user.UserRole;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -27,9 +25,8 @@ public class GymService {
     private final UserRepository userRepository;
 
     @Transactional
-    public GymResponseDto post(String address, String name, String content, String number, List<Image> gymImage, LocalTime openTime, LocalTime closeTime) {
-        Long userId = 1L;
-        User user = User.of(userId,"image.js", Gender.MAN, UserRole.USER);
+    public GymResponseDto post(String address, String name, String content, String number, List<Image> gymImage, LocalTime openTime, LocalTime closeTime, Long userId) {
+        User user = userRepository.findByIdOrElseThrow(userId);
         Gym gym = Gym.of(gymImage,name,number,content,address,openTime,closeTime,user);
         gymRepository.save(gym);
         return GymResponseDto.of(
@@ -53,7 +50,7 @@ public class GymService {
             gym.getAddress(),
             gym.getOpenTime(),
             gym.getCloseTime(),
-            gym.getImages(),
+            gym.getImages().stream().map(Image::getUrl).toList(),
             gym.getTrainers().stream().map(trainer -> trainer.getName()).toList(),
             gym.getGymStatus()
         );
@@ -61,25 +58,22 @@ public class GymService {
 
     @Transactional(readOnly = true)
     public Page<GymResponseDto> getAllGyms(Pageable pageable) {
-        Page<Gym> gyms = gymRepository.findAllAndIsDeletedFalse(pageable);
+        Page<Gym> gyms = gymRepository.findAllByIsDeletedFalse(pageable);
         return gyms.map(GymResponseDto::from);
     }
 
     @Transactional
-    public void updatePhoto(List<String> imageUrls, Long gymId) {
-        Long userId = 1L; // 임시로 사용, 나중에 인증객체 받아와서 사용할 예정
-        User user = userRepository.findByIdOrElseThrow(userId); // 임시로 사용, 나중에 인증객체 받아와서 사용할 예정
+    public void updatePhoto(List<String> imageUrls, Long gymId, Long userId) {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        gym.isOwner(user.getId());
+        gym.isOwner(userId);
         gym.updatePhoto(imageUrls, gym);
         gymRepository.save(gym);
     }
 
-    public GymResponseDto updateGym(String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, Long gymId){
-        Long userId = 1L; // 임시로 사용, 나중에 인증객체 받아와서 사용할 예정
-        User user = userRepository.findByIdOrElseThrow(userId); // 임시로 사용, 나중에 인증객체 받아와서 사용할 예정
+    @Transactional
+    public GymResponseDto updateGym(String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, Long gymId, Long userId){
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        gym.isOwner(user.getId());
+        gym.isOwner(userId);
         gym.update(name,number,content,address,openTime,closeTime);
         gymRepository.save(gym);
         return GymResponseDto.of(
@@ -93,11 +87,9 @@ public class GymService {
     }
 
     @Transactional
-    public void delete(Long gymId) {
-        Long userId = 1L; // 임시로 사용, 나중에 인증객체 받아와서 사용할 예정
-        User user = userRepository.findByIdOrElseThrow(userId); // 임시로 사용, 나중에 인증객체 받아와서 사용할 예정
+    public void delete(Long gymId, Long userId) {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        gym.isOwner(user.getId());
+        gym.isOwner(userId);
         gym.delete();
         gymRepository.save(gym);
     }

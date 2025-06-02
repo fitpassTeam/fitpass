@@ -65,13 +65,12 @@ public class Gym extends BaseEntity {
     @JoinColumn(name = "trainer_id")
     private List <Trainer> trainers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
     private Boolean isDeleted = false;
 
     public Gym(List<Image> gymImage, String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, User user) {
-        Gym gym = new Gym();
         this.name = name;
         this.number = number;
         this.content = content;
@@ -81,8 +80,8 @@ public class Gym extends BaseEntity {
         this.user = user;
 
         for (Image image : gymImage) {
-            image.assignToGym(gym);
-            gym.getImages().add(image);
+            image.assignToGym(this);
+            this.images.add(image);
         }
     }
 
