@@ -1,8 +1,8 @@
-package org.example.fitpass.security;
+package org.example.fitpass.common.security;
 
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.jwt.JwtAuthenticationFilter;
-import org.example.fitpass.jwt.JwtTokenProvider;
+import org.example.fitpass.common.jwt.JwtAuthenticationFilter;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

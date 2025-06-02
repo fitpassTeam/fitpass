@@ -1,4 +1,4 @@
-package org.example.fitpass.security;
+package org.example.fitpass.common.security;
 
 import lombok.Getter;
 import org.example.fitpass.domain.user.entity.User;
