@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.Image;
 import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.domain.trainer.dto.reqeust.TrainerUpdateRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerDetailResponseDto;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerResponseDto;
@@ -23,9 +24,8 @@ public class TrainerService {
 
     private final TrainerRepository trainerRepository;
 
-    public TrainerResponseDto createTrainer(String name, int price, String content,
-        TrainerStatus trainerStatus, List<Image> trainerImage) {
-        Trainer trainer = Trainer.of(trainerImage, name, price, content, trainerStatus);
+    public TrainerResponseDto createTrainer(String name, int price, String content, List<Image> trainerImage) {
+        Trainer trainer = Trainer.of(trainerImage, name, price, content);
         trainerRepository.save(trainer);
         return TrainerResponseDto.of(
             trainer.getName(),
@@ -63,12 +63,17 @@ public class TrainerService {
     }
 
     @Transactional
-    public TrainerResponseDto updateTrainer(Long id, TrainerRequestDto dto) {
+    public TrainerResponseDto updateTrainer(Long id, TrainerUpdateRequestDto dto) {
         Trainer trainer = trainerRepository.findById(id)
             .orElseThrow(() -> new BaseException(CANT_FIND_DATA));
         trainer.update(dto.getTrainerImage(), dto.getName(), dto.getPrice(), dto.getContent(),
             dto.getTrainerStatus());
-        return TrainerResponseDto.fromEntity(trainer);
+        return TrainerResponseDto.of(
+            trainer.getName(),
+            trainer.getPrice(),
+            trainer.getContent(),
+            trainer.getTrainerStatus()
+        );
     }
 
     @Transactional

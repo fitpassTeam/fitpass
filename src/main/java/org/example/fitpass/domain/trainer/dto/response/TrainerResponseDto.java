@@ -1,7 +1,9 @@
 package org.example.fitpass.domain.trainer.dto.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.example.fitpass.common.Image;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.trainer.enums.TrainerStatus;
 
@@ -29,4 +31,5 @@ public class TrainerResponseDto {
         TrainerStatus trainerStatus) {
         return new TrainerResponseDto(name, price, content, trainerStatus);
     }
+
 }
