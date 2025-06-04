@@ -18,6 +18,8 @@ public enum ExceptionCode implements BaseCode {
     RESERVATION_STATUS_NOT_CANCELLABLE(HttpStatus.BAD_REQUEST, "400", "대기 중이거나 확정된 예약만 취소할 수 있습니다."),
     RESERVATION_CANCEL_DEADLINE_PASSED(HttpStatus.BAD_REQUEST, "400", "예약 2일 전까지만 취소가 가능합니다."),
     INSUFFICIENT_POINT_BALANCE(HttpStatus.BAD_REQUEST, "400", "포인트 잔액이 부족합니다."),
+    POST_STATUS_NOT_ACCEPT(HttpStatus.BAD_REQUEST, "400", "정확한 상태를 입력해주세요."),
+    POST_TYPE_NOT_ACCEPT(HttpStatus.BAD_REQUEST, "400", "정확한 종류를 입력해주세요."),
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED,"401", "유효하지 않는 JWT 서명입니다."),
@@ -25,12 +27,15 @@ public enum ExceptionCode implements BaseCode {
     // 403 Forbidden = 권한이 없을 때
     NO_OWNER_AUTHORITY(HttpStatus.FORBIDDEN,"403", "사장의 권한이 없습니다."),
     NOT_GYM_OWNER(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
+    POST_NOT_AUTHOR(HttpStatus.FORBIDDEN,"403","게시물 작성자만 수정이 가능합니다."),
+    NOTICE_ONLY_OWNER(HttpStatus.FORBIDDEN, "403", "공지사항은 관리자만 작성할 수 있습니다."),
 
     NOT_RESERVATION_OWNER(HttpStatus.FORBIDDEN, "403", "본인의 예약만 취소할 수 있습니다."),
 
     // 404 Not Found
     CANT_FIND_DATA(HttpStatus.NOT_FOUND,"404", "해당 데이터를 찾을 수 없습니다."),
     GYM_NOT_FOUND(HttpStatus.NOT_FOUND,"404","찾으시는 체육관이 존재하지 않습니다."),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND,"404","게시물이 존재하지 않습니다."),
 
     // 409 Conflict = 서버와 충돌, 데이터가 이미 존재할때(400 보다 명확함)
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"409", "이미 등록된 회원입니다."),
