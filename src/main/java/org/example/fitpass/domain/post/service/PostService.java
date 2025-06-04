@@ -85,11 +85,11 @@ public class PostService {
 
         Post post = postRepository.findByIdOrElseThrow(postId);
 
-        User finduser = userRepository.findByIdOrElseThrow(user.getId());
+        User findUser = userRepository.findByIdOrElseThrow(user.getId());
 
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
 
-        if (!finduser.equals(post.getUser().getId())) {
+        if (!findUser.getId().equals(post.getUser().getId())) {
             throw new IllegalArgumentException("게시물 작성자만 수정이 가능 합니다");
         }
 
@@ -101,7 +101,7 @@ public class PostService {
                 requestDto.getPostImage()
         );
 
-        if (requestDto.getPostType() == PostType.NOTICE && finduser.getUserRole() != UserRole.OWNER) {
+        if (requestDto.getPostType() == PostType.NOTICE && findUser.getUserRole() != UserRole.OWNER) {
             throw new IllegalArgumentException("공지사항은 관리자만 작성할 수 있습니다.");
         }
 

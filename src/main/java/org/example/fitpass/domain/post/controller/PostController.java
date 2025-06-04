@@ -30,7 +30,7 @@ public class PostController {
     public ResponseEntity<ResponseMessage<PostResponseDto>> creatPost(
         @RequestBody PostCreateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails user,
-        @PathVariable Long gymId
+        @PathVariable("gymId") Long gymId
 
     ) {
         PostResponseDto postResponseDto = postService.createPost(requestDto, user.getUser(), gymId);
@@ -45,7 +45,7 @@ public class PostController {
     public ResponseEntity<ResponseMessage<Page<PostResponseDto>>> findAllPost(
         @PageableDefault(page = 0, size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
         @AuthenticationPrincipal CustomUserDetails user,
-        @PathVariable Long gymId
+        @PathVariable("gymId") Long gymId
     ) {
         Page<PostResponseDto> findAllPost = postService.findAllPost(pageable, user.getUser(), gymId);
 
@@ -58,8 +58,8 @@ public class PostController {
     @GetMapping("/posts/{postId}")
     public ResponseEntity<ResponseMessage<PostResponseDto>> findPostById(
         @AuthenticationPrincipal CustomUserDetails user,
-        @PathVariable Long gymId,
-        @PathVariable Long postId
+        @PathVariable("gymId")  Long gymId,
+        @PathVariable("postId")  Long postId
     ) {
         PostResponseDto findPostById = postService.findPostById(user.getUser(), gymId, postId);
 
@@ -72,8 +72,8 @@ public class PostController {
     public ResponseEntity<ResponseMessage<PostResponseDto>> updatePost(
         @RequestBody PostUpdateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails user,
-        @PathVariable Long gymId,
-        @PathVariable Long postId
+        @PathVariable("gymId")  Long gymId,
+        @PathVariable("postId")  Long postId
     ) {
         PostResponseDto updateDto = postService.updatePost(requestDto, user.getUser(), gymId, postId);
 
