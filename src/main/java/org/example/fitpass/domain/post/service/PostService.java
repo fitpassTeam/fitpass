@@ -1,6 +1,8 @@
 package org.example.fitpass.domain.post.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
@@ -35,7 +37,7 @@ public class PostService {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
 
         if (postRequestDto.getPostType() == PostType.NOTICE && finduser.getUserRole() != UserRole.OWNER) {
-            throw new IllegalArgumentException("공지사항은 관리자만 작성할 수 있습니다.");
+            throw new BaseException(ExceptionCode.NOTICE_ONLY_OWNER);
         }
 
         Post post = new Post(
@@ -90,7 +92,7 @@ public class PostService {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
 
         if (!findUser.getId().equals(post.getUser().getId())) {
-            throw new IllegalArgumentException("게시물 작성자만 수정이 가능 합니다");
+            throw new BaseException(ExceptionCode.POST_NOT_AUTHOR);
         }
 
         post.update(
@@ -102,7 +104,7 @@ public class PostService {
         );
 
         if (requestDto.getPostType() == PostType.NOTICE && findUser.getUserRole() != UserRole.OWNER) {
-            throw new IllegalArgumentException("공지사항은 관리자만 작성할 수 있습니다.");
+            throw new BaseException(ExceptionCode.NOTICE_ONLY_OWNER);
         }
 
         Post updatePost = postRepository.save(post);

@@ -1,5 +1,7 @@
 package org.example.fitpass.domain.post.repository;
 
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.post.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +15,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     default Post findByIdOrElseThrow(Long postId) {
         Post post = findById(postId).orElseThrow(
-                () -> new RuntimeException("존재하지 않은 게시물 id입니다."));
+                () -> new BaseException(ExceptionCode.POST_NOT_FOUND));
         return post;
     }
 

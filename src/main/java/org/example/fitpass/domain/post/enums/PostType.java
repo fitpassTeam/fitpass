@@ -1,5 +1,8 @@
 package org.example.fitpass.domain.post.enums;
 
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
+
 import java.util.Arrays;
 
 public enum PostType {
@@ -10,6 +13,6 @@ public enum PostType {
         return Arrays.stream(PostType.values())
                 .filter(r -> r.name().equalsIgnoreCase(type))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("정확한 종류를 선택해주세요."));
+                .orElseThrow(() -> new BaseException(ExceptionCode.POST_TYPE_NOT_ACCEPT));
     }
 }
