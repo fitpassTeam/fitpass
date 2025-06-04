@@ -45,7 +45,7 @@ public class Trainer extends BaseEntity {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    private TrainerStatus trainerStatus;
+    private TrainerStatus trainerStatus = TrainerStatus.ACTIVE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gym_id")
@@ -54,23 +54,19 @@ public class Trainer extends BaseEntity {
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL)
     private List<Image> images = new ArrayList<>();
 
-    public Trainer(List<Image> trainerImage, String name, int price, String content,
-        TrainerStatus trainerStatus) {
-        Trainer trainer = new Trainer();
+    public Trainer(List<Image> trainerImage, String name, int price, String content) {
         this.name = name;
         this.price = price;
         this.content = content;
-        this.trainerStatus = trainerStatus;
 
         for (Image image : trainerImage) {
-            image.assignToTrainer(trainer);
-            trainer.getImages().add(image);
+            image.assignToTrainer(this);
+            this.images.add(image);
         }
     }
 
-    public static Trainer of(List<Image> trainerImage, String name, int price, String content,
-        TrainerStatus trainerStatus) {
-        return new Trainer(trainerImage, name, price, content, trainerStatus);
+    public static Trainer of(List<Image> trainerImage, String name, int price, String content) {
+        return new Trainer(trainerImage, name, price, content);
     }
 
     public void updatePhoto(List<String> imageUrls, Trainer trainer) {
@@ -81,8 +77,7 @@ public class Trainer extends BaseEntity {
         this.images.addAll(convertedImages);
     }
 
-    public void update(List<Image> images, String name, int price, String content,
-        TrainerStatus trainerStatus) {
+    public void update(List<Image> images, String name, int price, String content, TrainerStatus trainerStatus) {
         this.images = images;
         this.name = name;
         this.price = price;
