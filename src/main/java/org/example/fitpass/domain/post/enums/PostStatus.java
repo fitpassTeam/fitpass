@@ -1,5 +1,9 @@
 package org.example.fitpass.domain.post.enums;
 
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
+import org.springframework.http.HttpStatus;
+
 import java.util.Arrays;
 
 public enum PostStatus {
@@ -10,6 +14,6 @@ public enum PostStatus {
         return Arrays.stream(PostStatus.values())
                 .filter(r -> r.name().equalsIgnoreCase(type))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("정확한 상태를 기입해주세요."));
+                .orElseThrow(() -> new BaseException(ExceptionCode.POST_STATUS_NOT_ACCEPT));
     }
 }
