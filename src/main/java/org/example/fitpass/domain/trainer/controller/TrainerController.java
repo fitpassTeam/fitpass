@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.gym.dto.request.GymPhotoUpdateRequestDto;
+import org.example.fitpass.domain.trainer.dto.reqeust.TrainerUpdateRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerDetailResponseDto;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerResponseDto;
@@ -39,7 +40,6 @@ public class TrainerController {
             request.getName(),
             request.getPrice(),
             request.getContent(),
-            request.getTrainerStatus(),
             request.getTrainerImage()
         );
         ResponseMessage<TrainerResponseDto> responseMessage =
@@ -74,7 +74,7 @@ public class TrainerController {
     @PatchMapping("/{id}")
     public ResponseEntity<ResponseMessage<TrainerResponseDto>> updateTrainer(
         @PathVariable("id") Long id,
-        @Valid @RequestBody TrainerRequestDto dto) {
+        @Valid @RequestBody TrainerUpdateRequestDto dto) {
         TrainerResponseDto response = trainerService.updateTrainer(id, dto);
         ResponseMessage<TrainerResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response);
