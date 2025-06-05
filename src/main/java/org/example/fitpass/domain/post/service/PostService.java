@@ -19,6 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -55,17 +58,31 @@ public class PostService {
         return PostResponseDto.from(createPost);
     }
 
-    //게시물 전체 조회
+    //General 게시물 전체 조회
     @Transactional(readOnly = true)
-    public Page<PostResponseDto> findAllPost(Pageable pageable, User user, Long gymId) {
+    public Page<PostResponseDto> findAllPostByGeneral(Pageable pageable, User user, Long gymId, PostType postType) {
 
         User finduser = userRepository.findByIdOrElseThrow(user.getId());
 
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
 
-        Page<Post> posts = postRepository.findAll(pageable);
+        Page<Post> posts = postRepository.findByGymIdAndPostType(gymId, postType, pageable);
 
         return posts.map(PostResponseDto::from);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findAllPostByNotice(User user, Long gymId, PostType postType) {
+
+        User finduser = userRepository.findByIdOrElseThrow(user.getId());
+
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+
+        List<Post> posts = postRepository.findByGymIdAndPostType(gymId, postType);
+
+        return posts.stream()
+                .map(PostResponseDto::from)
+                .collect(Collectors.toList());
     }
 
     //게시물 단건 조회
