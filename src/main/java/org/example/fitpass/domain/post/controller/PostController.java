@@ -35,9 +35,11 @@ public class PostController {
     ) {
         PostResponseDto postResponseDto = postService.createPost(requestDto, user.getUser(), gymId);
 
-        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(SuccessCode.POST_CREATE_SUCCESS, postResponseDto);
+        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(
+            SuccessCode.POST_CREATE_SUCCESS, postResponseDto);
 
-        return ResponseEntity.status(SuccessCode.POST_CREATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POST_CREATE_SUCCESS.getHttpStatus())
+            .body(responseMessage);
     }
 
     //게시물 전체조회
@@ -47,39 +49,47 @@ public class PostController {
         @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable("gymId") Long gymId
     ) {
-        Page<PostResponseDto> findAllPost = postService.findAllPost(pageable, user.getUser(), gymId);
+        Page<PostResponseDto> findAllPost = postService.findAllPost(pageable, user.getUser(),
+            gymId);
 
-        ResponseMessage<Page<PostResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.GET_ALL_POST_SUCCESS, findAllPost);
+        ResponseMessage<Page<PostResponseDto>> responseMessage = ResponseMessage.success(
+            SuccessCode.GET_ALL_POST_SUCCESS, findAllPost);
 
-        return ResponseEntity.status(SuccessCode.GET_ALL_POST_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.GET_ALL_POST_SUCCESS.getHttpStatus())
+            .body(responseMessage);
     }
 
     //게시물 단건 조회
     @GetMapping("/posts/{postId}")
     public ResponseEntity<ResponseMessage<PostResponseDto>> findPostById(
         @AuthenticationPrincipal CustomUserDetails user,
-        @PathVariable("gymId")  Long gymId,
-        @PathVariable("postId")  Long postId
+        @PathVariable("gymId") Long gymId,
+        @PathVariable("postId") Long postId
     ) {
         PostResponseDto findPostById = postService.findPostById(user.getUser(), gymId, postId);
 
-        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(SuccessCode.GET_ONLY_POST_SUCCESS, findPostById);
+        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(
+            SuccessCode.GET_ONLY_POST_SUCCESS, findPostById);
 
-        return ResponseEntity.status(SuccessCode.GET_ONLY_POST_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.GET_ONLY_POST_SUCCESS.getHttpStatus())
+            .body(responseMessage);
     }
 
     @PatchMapping("posts/{postId}")
     public ResponseEntity<ResponseMessage<PostResponseDto>> updatePost(
         @RequestBody PostUpdateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails user,
-        @PathVariable("gymId")  Long gymId,
-        @PathVariable("postId")  Long postId
+        @PathVariable("gymId") Long gymId,
+        @PathVariable("postId") Long postId
     ) {
-        PostResponseDto updateDto = postService.updatePost(requestDto, user.getUser(), gymId, postId);
+        PostResponseDto updateDto = postService.updatePost(requestDto, user.getUser(), gymId,
+            postId);
 
-        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(SuccessCode.POST_UPDATE_SUCCESS, updateDto);
+        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(
+            SuccessCode.POST_UPDATE_SUCCESS, updateDto);
 
-        return ResponseEntity.status(SuccessCode.POST_UPDATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POST_UPDATE_SUCCESS.getHttpStatus())
+            .body(responseMessage);
     }
 
 }
