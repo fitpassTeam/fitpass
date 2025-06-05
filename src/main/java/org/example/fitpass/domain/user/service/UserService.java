@@ -2,6 +2,7 @@ package org.example.fitpass.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
+import org.example.fitpass.domain.user.dto.LoginRequestDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
 import org.example.fitpass.domain.user.dto.UserResponseDto;
 import org.example.fitpass.domain.user.entity.User;
@@ -33,7 +34,7 @@ public class UserService {
         return UserResponseDto.from(user);
     }
 
-    public SigninResponseDto login(UserRequestDto dto) {
+    public SigninResponseDto login(LoginRequestDto dto) {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
 
