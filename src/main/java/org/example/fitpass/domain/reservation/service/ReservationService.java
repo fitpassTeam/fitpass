@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.domain.user.UserRole;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.example.fitpass.common.error.BaseException;
@@ -136,12 +137,18 @@ public class ReservationService {
         Long trainerId, Long reservationId) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
+
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
         Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         // 예약 조회
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
+
+        // 본인의 예약인지 확인
+        if (!Objects.equals(reservation.getUser().getId(), userId)) {
+            throw new BaseException(ExceptionCode.NOT_RESERVATION_OWNER);
+        }
 
         // PENDING 상태만 수정 가능
         if (!reservation.getReservationStatus().equals(ReservationStatus.PENDING)) {
@@ -230,10 +237,22 @@ public class ReservationService {
         Long trainerId) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
+
+        // OWNER 권한 확인
+        if (!user.getUserRole().equals(UserRole.OWNER)) {
+            throw new BaseException(ExceptionCode.NO_OWNER_AUTHORITY);
+        }
+
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        gym.isOwner(userId);
         // 트레이너 조회
         Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
+        // 트레이너가 해당 체육관 소속인지 확인
+        if (!trainer.getGym().getId().equals(gymId)) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
+
         // 트레이너의 모든 예약 조회
         List<Reservation> reservations = reservationRepository.findByTrainerOrderByReservationDateDescReservationTimeDesc(
             trainer);
@@ -262,6 +281,12 @@ public class ReservationService {
         // 유저 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
+
+        // 본인의 예약인지 확인
+        if (!Objects.equals(reservation.getUser().getId(), userId)) {
+            throw new BaseException(ExceptionCode.NOT_RESERVATION_OWNER);
+        }
+
         return GetReservationResponseDto.from(reservation);
     }
 

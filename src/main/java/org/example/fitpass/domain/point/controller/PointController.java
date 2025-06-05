@@ -3,6 +3,8 @@ package org.example.fitpass.domain.point.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.common.security.CustomUserDetails;
@@ -13,6 +15,7 @@ import org.example.fitpass.domain.point.dto.response.PointCashOutResponseDto;
 import org.example.fitpass.domain.point.dto.response.PointResponseDto;
 import org.example.fitpass.domain.point.entity.Point;
 import org.example.fitpass.domain.point.service.PointService;
+import org.example.fitpass.domain.user.UserRole;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,19 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class PointController {
 
     private final PointService pointService;
-
-    // 포인트 충전 - 관리자만 충전할 수 있게
-    @PostMapping("/charge")
-    public ResponseEntity<ResponseMessage<Integer>> chargePoint(
-        @RequestBody PointChargeRequestDto pointChargeRequestDto,
-        @AuthenticationPrincipal CustomUserDetails user
-    ) {
-        int newBalance = pointService.chargePoint(user.getId(), pointChargeRequestDto, "포인트 충전");
-
-        ResponseMessage<Integer> responseMessage =
-            ResponseMessage.success(SuccessCode.POINT_CHARGE_SUCCESS, newBalance);
-        return ResponseEntity.status(SuccessCode.POINT_CHARGE_SUCCESS.getHttpStatus()).body(responseMessage);
-    }
 
     // 포인트 사용
     @PostMapping("/use")

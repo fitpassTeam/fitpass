@@ -29,8 +29,8 @@ public enum ExceptionCode implements BaseCode {
     NOT_GYM_OWNER(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
     POST_NOT_AUTHOR(HttpStatus.FORBIDDEN,"403","게시물 작성자만 수정이 가능합니다."),
     NOTICE_ONLY_OWNER(HttpStatus.FORBIDDEN, "403", "공지사항은 관리자만 작성할 수 있습니다."),
-
-    NOT_RESERVATION_OWNER(HttpStatus.FORBIDDEN, "403", "본인의 예약만 취소할 수 있습니다."),
+    NO_ADMIN_AUTHORITY(HttpStatus.FORBIDDEN, "403", "관리자 권한이 필요합니다."),
+    NOT_RESERVATION_OWNER(HttpStatus.FORBIDDEN, "403", "본인의 예약만 취소/수정/조회 할 수 있습니다."),
 
     // 404 Not Found
     CANT_FIND_DATA(HttpStatus.NOT_FOUND,"404", "해당 데이터를 찾을 수 없습니다."),
