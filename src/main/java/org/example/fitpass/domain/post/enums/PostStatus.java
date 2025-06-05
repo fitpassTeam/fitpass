@@ -1,14 +1,15 @@
 package org.example.fitpass.domain.post.enums;
 
+import lombok.Getter;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 
+@Getter
 public enum PostStatus {
 
-    ACTIVE, HOLIDAY, DELETED;
+    ACTIVE, DELETED;
 
     public static PostStatus of(String type) {
         return Arrays.stream(PostStatus.values())

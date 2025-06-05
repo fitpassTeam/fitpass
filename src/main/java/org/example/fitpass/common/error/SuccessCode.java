@@ -21,6 +21,8 @@ public enum SuccessCode implements BaseCode {
     USER_BOOK_LIST_SUCCESS(HttpStatus.OK, "2003", "대여한 도서 목록 조회 성공"),
     USER_UPDATE_SUCCESS(HttpStatus.OK, "2004", "유저 수정 성공"),
     USER_LIKED_LIST_SUCCESS(HttpStatus.OK, "2005", "좋아요한 도서 목록 조회 성공"),
+    USER_PHONE_EDIT_SUCCESS(HttpStatus.OK, "U202", "전화번호 수정 성공"),
+    USER_PASSWORD_EDIT_SUCCESS(HttpStatus.OK, "U203", "비밀번호 수정 성공"),
 
     // 3000: Point 성공 코드
     POINT_CHARGE_SUCCESS(HttpStatus.OK, "3001", "포인트 충전이 완료되었습니다."),
@@ -36,8 +38,9 @@ public enum SuccessCode implements BaseCode {
     // 7000: 게시물 성공 코드
     POST_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "게시물 등록이 완료되었습니다."),
     POST_UPDATE_SUCCESS(HttpStatus.OK, "7002", "게시물 정보 수정이 완료되었습니다."),
-    GET_ALL_POST_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 게시물이 조회되었습니다."),
-    GET_ONLY_POST_SUCCESS(HttpStatus.OK, "7004", "등록된 게시물 조회가 되었습니다."),
+    GET_ALL_GENERAL_POST_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 일반 게시물이 조회되었습니다."),
+    GET_ALL_NOTICE_POST_SUCCESS(HttpStatus.OK, "7004", "등록된 모든 공지사항 게시물이 조회되었습니다."),
+    GET_ONLY_POST_SUCCESS(HttpStatus.OK, "7005", "등록된 게시물 조회가 되었습니다."),
 
     // 4000: Reservation 성공 코드
     RESERVATION_CREATE_SUCCESS(HttpStatus.CREATED, "4001", "예약이 완료되었습니다."),

@@ -2,6 +2,7 @@ package org.example.fitpass.domain.auth.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
+import org.example.fitpass.domain.user.dto.LoginRequestDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
 import org.example.fitpass.domain.user.dto.UserResponseDto;
 import org.example.fitpass.domain.user.service.UserService;
@@ -28,7 +29,7 @@ public class AuthController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<SigninResponseDto> login(@RequestBody UserRequestDto request) {
+    public ResponseEntity<SigninResponseDto> login(@RequestBody LoginRequestDto request) {
         SigninResponseDto responseDto = userService.login(request);
         return ResponseEntity.ok(responseDto);
     }
