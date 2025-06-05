@@ -23,6 +23,8 @@ public enum ExceptionCode implements BaseCode {
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED,"401", "유효하지 않는 JWT 서명입니다."),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "401", "비밀번호가 일치하지 않습니다."),
+    INVALID_OLD_PASSWORD(HttpStatus.UNAUTHORIZED, "401", "기존 비밀번호가 일치하지 않습니다."),
 
     // 403 Forbidden = 권한이 없을 때
     NO_OWNER_AUTHORITY(HttpStatus.FORBIDDEN,"403", "사장의 권한이 없습니다."),
@@ -36,10 +38,12 @@ public enum ExceptionCode implements BaseCode {
     CANT_FIND_DATA(HttpStatus.NOT_FOUND,"404", "해당 데이터를 찾을 수 없습니다."),
     GYM_NOT_FOUND(HttpStatus.NOT_FOUND,"404","찾으시는 체육관이 존재하지 않습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND,"404","게시물이 존재하지 않습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "사용자를 찾을 수 없습니다."),
 
     // 409 Conflict = 서버와 충돌, 데이터가 이미 존재할때(400 보다 명확함)
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"409", "이미 등록된 회원입니다."),
     RESERVATION_TIME_CONFLICT(HttpStatus.CONFLICT, "409", "해당 시간에 이미 다른 예약이 있습니다."),
+    USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "이미 존재하는 이메일입니다."),
 
     // 500 Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"500", "서버 내부 오류 혹은 예기치 못한 예외가 발생했습니다."),
