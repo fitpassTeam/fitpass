@@ -60,4 +60,25 @@ public class UserService {
         user.updateInfo(dto); // 엔티티에 해당 로직 필요
         return UserResponseDto.from(user);
     }
+
+    // 전화번호 수정
+    public UserResponseDto updatePhone(String email, String newPhone) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        user.updatePhone(newPhone);
+        return UserResponseDto.from(user);
+    }
+
+    // 비밀번호 수정
+    public void updatePassword(String email, String oldPassword, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new RuntimeException("기존 비밀번호가 일치하지 않습니다.");
+        }
+
+        user.updatePassword(passwordEncoder.encode(newPassword));
+    }
+
 }

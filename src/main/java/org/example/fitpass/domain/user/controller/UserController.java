@@ -1,6 +1,8 @@
 package org.example.fitpass.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.domain.user.dto.UpdatePasswordRequestDto;
+import org.example.fitpass.domain.user.dto.UpdatePhoneRequestDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
 import org.example.fitpass.domain.user.dto.UserResponseDto;
 import org.example.fitpass.domain.user.service.UserService;
@@ -29,6 +31,22 @@ public class UserController {
         @RequestBody UserRequestDto request) {
         UserResponseDto response = userService.updateUserInfo(userDetails.getUsername(), request);
         return ResponseEntity.ok(response);
+    }
+
+    // 전화번호 수정
+    @PatchMapping("/me/phone")
+    public ResponseEntity<UserResponseDto> updatePhone(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                       @RequestBody UpdatePhoneRequestDto request) {
+        UserResponseDto response = userService.updatePhone(userDetails.getUsername(), request.getPhone());
+        return ResponseEntity.ok(response);
+    }
+
+    // 비밀번호 수정
+    @PatchMapping("/me/password")
+    public ResponseEntity<Void> updatePassword(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                               @RequestBody UpdatePasswordRequestDto request) {
+        userService.updatePassword(userDetails.getUsername(), request.getOldPassword(), request.getNewPassword());
+        return ResponseEntity.ok().build();
     }
 
 }
