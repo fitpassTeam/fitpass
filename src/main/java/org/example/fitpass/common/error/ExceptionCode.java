@@ -43,7 +43,8 @@ public enum ExceptionCode implements BaseCode {
 
     // 500 Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"500", "서버 내부 오류 혹은 예기치 못한 예외가 발생했습니다."),
-    RESERVATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "해당 시간에 이미 예약이 존재합니다.");
+    RESERVATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "해당 시간에 이미 예약이 존재합니다."),
+    RESERVATION_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "예약 처리 중 인터럽트가 발생했습니다.");;
 
     private final HttpStatus httpStatus;
     private final String code;

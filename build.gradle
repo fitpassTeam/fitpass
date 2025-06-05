@@ -36,6 +36,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     runtimeOnly 'com.mysql:mysql-connector-j'
+    testRuntimeOnly 'com.h2database:h2'  // 테스트용 H2 DB
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
@@ -45,6 +46,8 @@ dependencies {
 
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.27.0'
 
     // jwt
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
