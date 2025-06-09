@@ -17,12 +17,9 @@ public enum SuccessCode implements BaseCode {
 
     //2000: User 성공 코드
     USER_GET_SUCCESS(HttpStatus.OK, "2001", "유저 조회 성공"),
-    USER_DELETE_SUCCESS(HttpStatus.OK, "2002", "유저 삭제 성공"),
-    USER_BOOK_LIST_SUCCESS(HttpStatus.OK, "2003", "대여한 도서 목록 조회 성공"),
-    USER_UPDATE_SUCCESS(HttpStatus.OK, "2004", "유저 수정 성공"),
-    USER_LIKED_LIST_SUCCESS(HttpStatus.OK, "2005", "좋아요한 도서 목록 조회 성공"),
-    USER_PHONE_EDIT_SUCCESS(HttpStatus.OK, "U202", "전화번호 수정 성공"),
-    USER_PASSWORD_EDIT_SUCCESS(HttpStatus.OK, "U203", "비밀번호 수정 성공"),
+    USER_UPDATE_SUCCESS(HttpStatus.OK, "2002", "유저 수정 성공"),
+    USER_PHONE_EDIT_SUCCESS(HttpStatus.OK, "2003", "전화번호 수정 성공"),
+    USER_PASSWORD_EDIT_SUCCESS(HttpStatus.OK, "2004", "비밀번호 수정 성공"),
 
     // 3000: Point 성공 코드
     POINT_CHARGE_SUCCESS(HttpStatus.OK, "3001", "포인트 충전이 완료되었습니다."),
@@ -31,17 +28,6 @@ public enum SuccessCode implements BaseCode {
     POINT_CASH_OUT_SUCCESS(HttpStatus.OK, "3004", "포인트 현금화가 완료되었습니다."),
     POINT_BALANCE_GET_SUCCESS(HttpStatus.OK, "3005", "포인트 잔액 조회가 완료되었습니다."),
     POINT_HISTORY_GET_SUCCESS(HttpStatus.OK, "3006", "포인트 이력 조회가 완료되었습니다."),
-    POST_SEARCH_SUCCESS(HttpStatus.OK, "5007", "게시물 검색이 완료되었습니다."),
-
-    // 6000 keyword
-    GET_FAVORITE_KEYWORD_SUCCESS(HttpStatus.OK, "5001", "키워드 조회가 왼료되었습니다."),
-
-    // 7000: 게시물 성공 코드
-    POST_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "게시물 등록이 완료되었습니다."),
-    POST_UPDATE_SUCCESS(HttpStatus.OK, "7002", "게시물 정보 수정이 완료되었습니다."),
-    GET_ALL_GENERAL_POST_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 일반 게시물이 조회되었습니다."),
-    GET_ALL_NOTICE_POST_SUCCESS(HttpStatus.OK, "7004", "등록된 모든 공지사항 게시물이 조회되었습니다."),
-    GET_ONLY_POST_SUCCESS(HttpStatus.OK, "7005", "등록된 게시물 조회가 되었습니다."),
 
     // 4000: Reservation 성공 코드
     RESERVATION_CREATE_SUCCESS(HttpStatus.CREATED, "4001", "예약이 완료되었습니다."),
@@ -68,11 +54,13 @@ public enum SuccessCode implements BaseCode {
     DELETE_TRAINER_SUCCESS(HttpStatus.OK, "6004", "트레이너가 삭제되었습니다"),
     PATCH_TRAINER_IMAGE_SUCCESS(HttpStatus.OK, "6005", "트레이너 정보 수정이 완료되었습니다."),
 
-    // 7000: ADMIN 성공 코드
-    BOOK_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "책 등록이 완료되었습니다."),
-    BOOK_UPDATE_SUCCESS(HttpStatus.OK, "7002", "책 정보 수정이 완료되었습니다."),
-    GET_ALL_BOOKS_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 책이 조회되었습니다."),
-    BOOK_DELETE_SUCCESS(HttpStatus.OK, "7004", "등록된 책이 삭제되었습니다."),
+    // 7000: 게시물 성공 코드
+    POST_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "게시물 등록이 완료되었습니다."),
+    POST_UPDATE_SUCCESS(HttpStatus.OK, "7002", "게시물 정보 수정이 완료되었습니다."),
+    GET_ALL_GENERAL_POST_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 일반 게시물이 조회되었습니다."),
+    GET_ALL_NOTICE_POST_SUCCESS(HttpStatus.OK, "7004", "등록된 모든 공지사항 게시물이 조회되었습니다."),
+    GET_ONLY_POST_SUCCESS(HttpStatus.OK, "7005", "등록된 게시물 조회가 되었습니다."),
+    POST_SEARCH_SUCCESS(HttpStatus.OK, "7006", "게시물 검색이 완료되었습니다."),
 
     // 8000 FitnessGoal 성공코드
     FITNESSGOAL_CREATE_SUCCESS(HttpStatus.CREATED, "8001", "운동 목표 생성이 완료되었습니다."),
