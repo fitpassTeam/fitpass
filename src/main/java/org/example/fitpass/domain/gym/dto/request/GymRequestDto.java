@@ -8,7 +8,7 @@ import java.time.LocalTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.common.Image;
+import org.example.fitpass.common.entity.Image;
 
 @Getter
 @NoArgsConstructor
@@ -31,5 +31,5 @@ public class GymRequestDto {
     private LocalTime openTime;
     @NotNull(message = "영업종료시간을 입력해주세요")
     private LocalTime closeTime;
-    private List<Image> gymImage; // s3 적용시 변경예정
+    private List<String> gymImage;
 }

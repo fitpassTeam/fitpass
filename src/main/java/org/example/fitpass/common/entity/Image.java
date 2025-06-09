@@ -1,4 +1,4 @@
-package org.example.fitpass.common;
+package org.example.fitpass.common.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -41,15 +41,15 @@ public class Image {
         this.trainer = trainer;
     }
 
+
     public void assignToDailyRecord(DailyRecord dailyRecord) {
         this.dailyRecord = dailyRecord;
     }
 
-    private Image(String url, Trainer trainer) {
+    public Image(String url, Trainer trainer) {
         this.url = url;
         this.trainer = trainer;
     }
-
 
     public static Image from(String url, Trainer trainer) {
         return new Image(url, trainer);
@@ -59,7 +59,11 @@ public class Image {
         this.gym = gym;
     }
 
-    private Image(String url, Gym gym) {
+    public Image(String url) {
+        this.url = url;
+    }
+
+    public Image(String url, Gym gym) {
         this.url = url;
         this.gym = gym;
     }
@@ -69,3 +73,5 @@ public class Image {
     }
 
 }
+
+

@@ -56,3 +56,9 @@ out/
 .idea/
 
 .env
+
+# AWS credentials (properties)
+src/main/resources/application-*.properties
+src/test/resources/application-*.properties
+
+

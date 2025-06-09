@@ -4,14 +4,12 @@ import static org.example.fitpass.common.error.ExceptionCode.CANT_FIND_DATA;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.Image;
+import org.example.fitpass.common.entity.Image;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerUpdateRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerDetailResponseDto;
-import org.example.fitpass.domain.trainer.dto.reqeust.TrainerRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerResponseDto;
 import org.example.fitpass.domain.trainer.entity.Trainer;
-import org.example.fitpass.domain.trainer.enums.TrainerStatus;
 import org.example.fitpass.domain.trainer.repository.TrainerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
