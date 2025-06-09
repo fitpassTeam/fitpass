@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.common.Image;
+import org.example.fitpass.common.entity.Image;
 import org.example.fitpass.domain.fitnessGoal.entity.DailyRecord;
 import org.example.fitpass.domain.fitnessGoal.enums.RecordType;
 

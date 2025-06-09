@@ -41,16 +41,15 @@ public class Image {
         this.trainer = trainer;
     }
 
-    public Image(String url, Trainer trainer) {
+
     public void assignToDailyRecord(DailyRecord dailyRecord) {
         this.dailyRecord = dailyRecord;
     }
 
-    private Image(String url, Trainer trainer) {
+    public Image(String url, Trainer trainer) {
         this.url = url;
         this.trainer = trainer;
     }
-
 
     public static Image from(String url, Trainer trainer) {
         return new Image(url, trainer);
@@ -60,7 +59,7 @@ public class Image {
         this.gym = gym;
     }
 
-    public Image(String url){
+    public Image(String url) {
         this.url = url;
     }
 
@@ -74,4 +73,5 @@ public class Image {
     }
 
 }
+
 

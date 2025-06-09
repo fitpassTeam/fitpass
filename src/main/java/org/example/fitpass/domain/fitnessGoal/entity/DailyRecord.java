@@ -19,7 +19,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
-import org.example.fitpass.common.Image;
+import org.example.fitpass.common.entity.Image;
 import org.example.fitpass.domain.fitnessGoal.enums.RecordType;
 
 @Getter
