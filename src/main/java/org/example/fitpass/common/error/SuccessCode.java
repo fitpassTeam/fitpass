@@ -70,7 +70,11 @@ public enum SuccessCode implements BaseCode {
     BOOK_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "책 등록이 완료되었습니다."),
     BOOK_UPDATE_SUCCESS(HttpStatus.OK, "7002", "책 정보 수정이 완료되었습니다."),
     GET_ALL_BOOKS_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 책이 조회되었습니다."),
-    BOOK_DELETE_SUCCESS(HttpStatus.OK, "7004", "등록된 책이 삭제되었습니다.");
+    BOOK_DELETE_SUCCESS(HttpStatus.OK, "7004", "등록된 책이 삭제되었습니다."),
+
+    // 8000 s3 성공 코드
+    S3_UPLOAD_SUCCESS(HttpStatus.CREATED,"9001", "이미지 업로드가 완료되었습니다"),
+    S3_DELETE_SUCCESS(HttpStatus.OK,"9002","이미지 삭제가 완료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

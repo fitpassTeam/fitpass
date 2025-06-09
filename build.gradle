@@ -68,6 +68,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
 
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+
+    // s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 // Querydsl 빌드 옵션 설정

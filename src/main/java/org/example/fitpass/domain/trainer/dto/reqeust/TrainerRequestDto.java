@@ -7,9 +7,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.common.Image;
-import org.example.fitpass.domain.trainer.entity.Trainer;
-import org.example.fitpass.domain.trainer.enums.TrainerStatus;
+import org.example.fitpass.common.entity.Image;
 
 @Getter
 @NoArgsConstructor
