@@ -29,4 +29,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // NOTICE 게시물 리스트 조회 생성시간 내림차순
     @Query("SELECT p FROM Post p WHERE p.gym.id = :gymId AND p.postType = :postType ORDER BY p.createdAt DESC")
     List<Post> findByGymIdAndPostType(@Param("gymId")Long gymId, @Param("postType") PostType postType);
+
+    @Query("SELECT p FROM Post p WHERE p.content LIKE %:keyword% AND p.postStatus <> 'Deleted'")
+    Page<Post> findByPostNameContaining(@Param("keyword") String keyword, Pageable pageable);
 }
