@@ -7,6 +7,8 @@ import org.example.fitpass.domain.gym.entity.Gym;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -24,4 +26,6 @@ public interface GymRepository extends JpaRepository<Gym, Long> {
 
     Page<Gym> findAllByIsDeletedFalse(Pageable pageable);
 
+    @Query("SELECT g FROM Gym g WHERE g.name LIKE %:keyword% AND g.isDeleted = false")
+    Page<Gym> findByGymNameContaining(@Param("keyword") String keyword, Pageable pageable);
 }

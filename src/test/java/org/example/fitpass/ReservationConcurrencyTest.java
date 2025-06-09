@@ -87,8 +87,7 @@ class ReservationConcurrencyTest {
             new ArrayList<>(), // 이미지 리스트
             "테스트트레이너",
             50000,
-            "동시성 테스트용 트레이너",
-            TrainerStatus.ACTIVE
+            "동시성 테스트용 트레이너"
         );
 
         // gym 연관관계 설정 (리플렉션 사용)

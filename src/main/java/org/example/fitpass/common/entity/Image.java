@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.fitpass.domain.fitnessGoal.entity.DailyRecord;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 
@@ -32,14 +33,24 @@ public class Image {
     @JoinColumn(name = "trainer_id")
     private Trainer trainer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "daily_record_id")
+    private DailyRecord dailyRecord;
+
     public void assignToTrainer(Trainer trainer) {
         this.trainer = trainer;
     }
 
     public Image(String url, Trainer trainer) {
+    public void assignToDailyRecord(DailyRecord dailyRecord) {
+        this.dailyRecord = dailyRecord;
+    }
+
+    private Image(String url, Trainer trainer) {
         this.url = url;
         this.trainer = trainer;
     }
+
 
     public static Image from(String url, Trainer trainer) {
         return new Image(url, trainer);
@@ -63,3 +74,4 @@ public class Image {
     }
 
 }
+
