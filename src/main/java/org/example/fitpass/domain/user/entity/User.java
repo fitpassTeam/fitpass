@@ -68,13 +68,19 @@ public class User extends BaseEntity {
 
     public void updateInfo(UserRequestDto dto) {
         this.name = dto.getName();
-        this.phone = dto.getPhone();
         this.age = dto.getAge();
         this.address = dto.getAddress();
         this.gender = dto.getGender();
         this.userRole = dto.getUserRole();
     }
 
+    public void updatePhone(String newPhone) {
+        this.phone = newPhone;
+    }
+
+    public void updatePassword(String encodedNewPassword) {
+        this.password = encodedNewPassword;
+    }
 
     // 포인트 잔액 업데이트
     public void updatePointBalance(int newBalance) {

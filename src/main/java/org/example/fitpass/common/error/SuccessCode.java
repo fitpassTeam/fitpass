@@ -21,6 +21,8 @@ public enum SuccessCode implements BaseCode {
     USER_BOOK_LIST_SUCCESS(HttpStatus.OK, "2003", "대여한 도서 목록 조회 성공"),
     USER_UPDATE_SUCCESS(HttpStatus.OK, "2004", "유저 수정 성공"),
     USER_LIKED_LIST_SUCCESS(HttpStatus.OK, "2005", "좋아요한 도서 목록 조회 성공"),
+    USER_PHONE_EDIT_SUCCESS(HttpStatus.OK, "U202", "전화번호 수정 성공"),
+    USER_PASSWORD_EDIT_SUCCESS(HttpStatus.OK, "U203", "비밀번호 수정 성공"),
 
     // 3000: Point 성공 코드
     POINT_CHARGE_SUCCESS(HttpStatus.OK, "3001", "포인트 충전이 완료되었습니다."),
