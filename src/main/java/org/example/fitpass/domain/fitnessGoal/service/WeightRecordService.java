@@ -9,6 +9,7 @@ import org.example.fitpass.domain.fitnessGoal.dto.request.WeightRecordCreateRequ
 import org.example.fitpass.domain.fitnessGoal.dto.response.WeightRecordResponseDto;
 import org.example.fitpass.domain.fitnessGoal.entity.FitnessGoal;
 import org.example.fitpass.domain.fitnessGoal.entity.WeightRecord;
+import org.example.fitpass.domain.fitnessGoal.enums.GoalStatus;
 import org.example.fitpass.domain.fitnessGoal.repository.FitnessGoalRepository;
 import org.example.fitpass.domain.fitnessGoal.repository.WeightRecordRepository;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,12 @@ public class WeightRecordService {
         // 목표 존재 여부 및 권한 확인
         FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(requestDto.getFitnessGoalId(), userId);
 
+        // 만료되거나 취소된 목표에는 체중 기록 생성 불가
+        if (fitnessGoal.getGoalStatus() == GoalStatus.EXPIRED || 
+            fitnessGoal.getGoalStatus() == GoalStatus.CANCELLED) {
+            throw new BaseException(ExceptionCode.FITNESS_GOAL_WEIGHT_UPDATE_NOT_ALLOWED);
+        }
+
         if(weightRecordRepository.existsByFitnessGoalIdAndRecordDate(
             requestDto.getFitnessGoalId(), requestDto.getRecordDate())) {
             throw new BaseException(ExceptionCode.WEIGHT_RECORD_ALREADY_EXISTS);
@@ -41,7 +48,9 @@ public class WeightRecordService {
 
         WeightRecord savedRecord = weightRecordRepository.save(weightRecord);
 
+        // 현재 체중 업데이트 (목표 달성 체크 포함)
         fitnessGoal.updateCurrentWeight(requestDto.getWeight());
+        
         return WeightRecordResponseDto.from(savedRecord);
     }
 

@@ -11,11 +11,11 @@ import org.example.fitpass.domain.fitnessGoal.dto.request.FitnessGoalUpdateReque
 import org.example.fitpass.domain.fitnessGoal.dto.response.FitnessGoalListResponseDto;
 import org.example.fitpass.domain.fitnessGoal.dto.response.FitnessGoalResponseDto;
 import org.example.fitpass.domain.fitnessGoal.service.FitnessGoalService;
-import org.example.fitpass.domain.reservation.dto.response.ReservationResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -78,6 +78,19 @@ public class FitnessGoalController {
             ResponseMessage.success(SuccessCode.FITNESSGOAL_UPDATE_SUCCESS, responseDto);
 
         return ResponseEntity.status(SuccessCode.FITNESSGOAL_UPDATE_SUCCESS.getHttpStatus()).body(responseMessage);
+    }
+
+    // 목표 취소
+    @PatchMapping("/{goalId}/cancel")
+    public ResponseEntity<ResponseMessage<FitnessGoalResponseDto>> cancelGoal (
+        @PathVariable Long goalId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        FitnessGoalResponseDto responseDto = fitnessGoalService.cancelGoal(goalId, userDetails.getId());
+        ResponseMessage<FitnessGoalResponseDto> responseMessage =
+            ResponseMessage.success(SuccessCode.FITNESSGOAL_CANCEL_SUCCESS, responseDto);
+
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_CANCEL_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     // 목표 삭제

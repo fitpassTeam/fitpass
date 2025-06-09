@@ -6,6 +6,7 @@ import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.fitnessGoal.entity.FitnessGoal;
+import org.example.fitpass.domain.fitnessGoal.enums.GoalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +15,9 @@ public interface FitnessGoalRepository extends JpaRepository<FitnessGoal, Long> 
 
     // 특정 사용자의 목표들 조회
     List<FitnessGoal> findByUserIdOrderByCreatedAtDesc (Long userId);
+
+    // 특정 상태의 목표들 조회
+    List<FitnessGoal> findByGoalStatus(GoalStatus goalStatus);
 
     Optional<FitnessGoal> findByIdAndUserId(Long goalId, Long userId);
 

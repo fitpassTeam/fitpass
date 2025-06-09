@@ -23,6 +23,12 @@ public enum ExceptionCode implements BaseCode {
     DAILY_RECORD_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "400", "해당 날짜에 이미 일일 기록이 존재합니다."),
     WEIGHT_RECORD_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "400", "해당 날짜에 이미 체중 기록이 존재합니다."),
     WEIGHT_RECORD_NOT_FOUND(HttpStatus.BAD_REQUEST, "400", "체중 기록을 찾을 수 없습니다."),
+    FITNESS_GOAL_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "400", "이미 완료된 목표는 수정할 수 없습니다."),
+    FITNESS_GOAL_ALREADY_CANCELLED(HttpStatus.BAD_REQUEST, "400", "이미 취소된 목표입니다."),
+    FITNESS_GOAL_ALREADY_EXPIRED(HttpStatus.BAD_REQUEST, "400", "만료된 목표는 수정할 수 없습니다."),
+    FITNESS_GOAL_WEIGHT_UPDATE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "만료되었거나 완료된 목표의 체중은 업데이트할 수 없습니다."),
+    FITNESS_GOAL_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "완료된 목표는 취소할 수 없습니다."),
+    FITNESS_GOAL_DELETE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "완료된 목표는 삭제할 수 없습니다."),
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED,"401", "유효하지 않는 JWT 서명입니다."),
@@ -38,6 +44,7 @@ public enum ExceptionCode implements BaseCode {
     NOT_RESERVATION_OWNER(HttpStatus.FORBIDDEN, "403", "본인의 예약만 취소/수정/조회 할 수 있습니다."),
     NOT_WEIGHT_RECORD_OWNER(HttpStatus.FORBIDDEN, "403", "체중 기록에 접근 권한이 없습니다."),
     NOT_DAILY_RECORD_OWNER(HttpStatus.FORBIDDEN, "403", "일일 기록에 접근 권한이 없습니다."),
+    NOT_FITNESS_GOAL_OWNER(HttpStatus.FORBIDDEN, "403", "해당 목표에 접근 권한이 없습니다."),
 
     // 404 Not Found
     CANT_FIND_DATA(HttpStatus.NOT_FOUND,"404", "해당 데이터를 찾을 수 없습니다."),

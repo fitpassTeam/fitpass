@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.fitnessGoal.enums.GoalStatus;
 import org.example.fitpass.domain.fitnessGoal.enums.GoalType;
 import org.example.fitpass.domain.user.entity.User;
@@ -80,6 +82,7 @@ public class FitnessGoal extends BaseEntity {
         this.targetWeight = targetWeight;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.initializeStatus(); // 상태 초기화
     }
 
     public static FitnessGoal of(User user, String title, String description, GoalType goalType,
@@ -109,8 +112,38 @@ public class FitnessGoal extends BaseEntity {
             return currentWeight <= targetWeight;
         } else if (goalType == GoalType.WEIGHT_GAIN) {
             return currentWeight >= targetWeight;
+        } else if (goalType == GoalType.WEIGHT_MAINTAIN) {
+            // 목표 체중 ±1kg 범위 내면 달성
+            return Math.abs(currentWeight - targetWeight) <= 1.0;
         }
         return false;
+    }
+
+    // 목표 만료 체크
+    public void checkAndUpdateExpiredStatus() {
+        if (goalStatus == GoalStatus.ACTIVE && LocalDate.now().isAfter(endDate)) {
+            this.goalStatus = GoalStatus.EXPIRED;
+        }
+    }
+
+    // 목표 상태 초기화 (생성 시)
+    public void initializeStatus() {
+        if (LocalDate.now().isAfter(endDate)) {
+            this.goalStatus = GoalStatus.EXPIRED;
+        } else {
+            this.goalStatus = GoalStatus.ACTIVE;
+        }
+    }
+
+    // 목표 취소 (상태를 CANCELLED로 변경)
+    public void cancelGoal() {
+        if (goalStatus == GoalStatus.COMPLETED) {
+            throw new BaseException(ExceptionCode.FITNESS_GOAL_CANCEL_NOT_ALLOWED);
+        }
+        if (goalStatus == GoalStatus.CANCELLED) {
+            throw new BaseException(ExceptionCode.FITNESS_GOAL_ALREADY_CANCELLED);
+        }
+        this.goalStatus = GoalStatus.CANCELLED;
     }
 
     // 목표 달성률 계산

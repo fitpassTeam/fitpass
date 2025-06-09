@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +41,7 @@ public class WeightRecordController {
     }
 
     // 특정 목표의 체중 기록 목록 조회
-    @GetMapping("/{goalId}/weight-records")
+    @GetMapping("/goals/{goalId}")
     public ResponseEntity<ResponseMessage<List<WeightRecordResponseDto>>> getWeightRecords (
         @PathVariable Long goalId,
         @AuthenticationPrincipal CustomUserDetails userDetails
@@ -57,10 +58,23 @@ public class WeightRecordController {
         @PathVariable Long recordId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        WeightRecordResponseDto responseDto = weightRecordService.getWeightRecord(recordId, userDetails.getId());
+        WeightRecordResponseDto responseDto = weightRecordService.getWeightRecord(userDetails.getId(), recordId);
         ResponseMessage<WeightRecordResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_GET_SUCCESS, responseDto);
         return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+    }
+
+    // 체중 기록 수정
+    @PutMapping("/{recordId}")
+    public ResponseEntity<ResponseMessage<WeightRecordResponseDto>> updateWeightRecord (
+        @PathVariable Long recordId,
+        @Valid @RequestBody WeightRecordCreateRequestDto requestDto,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        WeightRecordResponseDto responseDto = weightRecordService.updateWeightRecord(userDetails.getId(), recordId, requestDto);
+        ResponseMessage<WeightRecordResponseDto> responseMessage =
+            ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_UPDATE_SUCCESS, responseDto);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_UPDATE_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     // 체중 기록 삭제
@@ -69,7 +83,7 @@ public class WeightRecordController {
         @PathVariable Long recordId,
         @AuthenticationPrincipal CustomUserDetails userDetails
         ) {
-        weightRecordService.deleteWeightRecord(recordId, userDetails.getId());
+        weightRecordService.deleteWeightRecord(userDetails.getId(), recordId);
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_DELETE_SUCCESS);
         return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_DELETE_SUCCESS.getHttpStatus()).body(responseMessage);
