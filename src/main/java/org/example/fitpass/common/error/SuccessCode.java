@@ -58,6 +58,7 @@ public enum SuccessCode implements BaseCode {
     GYM_EDIT_PHOTO_SUCCESS(HttpStatus.OK, "5004", "체육관 사진 수정 완료되었습니다."),
     GYM_EDIT_INFO_SUCCESS(HttpStatus.OK, "5005", "체육관 정보 수정 완료되었습니다."),
     GYM_DELETE_SUCCESS(HttpStatus.OK, "5006", "체육관 등록 삭제 처리되었습니다."),
+    GYM_SEARCH_SUCCESS(HttpStatus.OK, "5007", "체육관 검색이 완료되었습니다."),
 
     // 6000 trainer 성공 코드
     POST_TRAINER_SUCCESS(HttpStatus.CREATED, "6001", "트레이너 생성이 완료되었습니다."),
@@ -70,7 +71,23 @@ public enum SuccessCode implements BaseCode {
     BOOK_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "책 등록이 완료되었습니다."),
     BOOK_UPDATE_SUCCESS(HttpStatus.OK, "7002", "책 정보 수정이 완료되었습니다."),
     GET_ALL_BOOKS_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 책이 조회되었습니다."),
-    BOOK_DELETE_SUCCESS(HttpStatus.OK, "7004", "등록된 책이 삭제되었습니다.");
+    BOOK_DELETE_SUCCESS(HttpStatus.OK, "7004", "등록된 책이 삭제되었습니다."),
+
+    // 8000 FitnessGoal 성공코드
+    FITNESSGOAL_CREATE_SUCCESS(HttpStatus.CREATED, "8001", "운동 목표 생성이 완료되었습니다."),
+    FITNESSGOAL_LIST_SUCCESS(HttpStatus.OK, "8002", "운동 목표 목록 조회가 완료되었습니다."),
+    FITNESSGOAL_GET_SUCCESS(HttpStatus.OK,"8003", "운동 목표 조회가 완료되었습니다."),
+    FITNESSGOAL_UPDATE_SUCCESS(HttpStatus.OK, "8004", "운동 목표 수정이 완료되었습니다."),
+    FITNESSGOAL_DELETE_SUCCESS(HttpStatus.OK, "8005", "운동 목표 삭제가 완료되었습니다."),
+    FITNESSGOAL_WEIGHTRECORD_CREATE_SUCCESS(HttpStatus.CREATED, "8006", "체중 기록 생성이 완료되었습니다."),
+    FITNESSGOAL_WEIGHTRECORD_LIST_SUCCESS(HttpStatus.OK,"8007", "체중 기록 목록 조회가 완료되었습니다."),
+    FITNESSGOAL_WEIGHTRECORD_GET_SUCCESS(HttpStatus.OK, "8008", "체중 기록 상세 조회가 완료되었습니다."),
+    FITNESSGOAL_WEIGHTRECORD_DELETE_SUCCESS(HttpStatus.OK, "8009", "체중 기록 삭제가 완료되었습니다."),
+    FITNESSGOAL_DAILYRECORD_CREATE_SUCCESS(HttpStatus.CREATED, "8010", "일일 기록 생성 완료되었습니다."),
+    FITNESSGOAL_DAILYRECORD_LIST_SUCCESS(HttpStatus.OK, "8011", "특정 목표의 일일 기록 목록 조회가 완료되었습니다."),
+    FITNESSGOAL_DAILYRECORD_GET_SUCCESS(HttpStatus.OK, "8012", "일일 기록 상세 조회가 완료되었습니다."),
+    FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS(HttpStatus.OK, "8013", "일일 기록 삭제가 완료되었습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;
