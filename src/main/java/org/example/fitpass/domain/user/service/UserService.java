@@ -3,6 +3,7 @@ package org.example.fitpass.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.common.redis.RedisService;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
 import org.example.fitpass.domain.user.dto.LoginRequestDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
@@ -21,6 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisService redisService;
 
     @Transactional
     public UserResponseDto signup(UserRequestDto dto) {
@@ -51,9 +53,10 @@ public class UserService {
             throw new BaseException(ExceptionCode.INVALID_PASSWORD);
         }
 
-        String token = jwtTokenProvider.createToken(user.getEmail(), user.getUserRole().name());
+        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getUserRole().name());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail(), user.getUserRole().name());
 
-        return new SigninResponseDto(user.getId(), token, user.getEmail());
+        return new SigninResponseDto(user.getId(), accessToken, refreshToken, user.getEmail());
     }
 
     @Transactional(readOnly = true)
@@ -93,5 +96,32 @@ public class UserService {
         }
 
         user.updatePassword(passwordEncoder.encode(newPassword));
+    }
+
+    @Transactional
+    public SigninResponseDto reissueToken(String refreshToken) {
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new BaseException(ExceptionCode.INVALID_TOKEN);
+        }
+
+        String email = jwtTokenProvider.getUserEmail(jwtTokenProvider.substringToken(refreshToken));
+
+        // Redis에서 refreshToken이 유효한지 확인
+        String storedToken = redisService.getRefreshToken(email);
+        if (!refreshToken.equals(storedToken)) {
+            throw new BaseException(ExceptionCode.INVALID_REFRESH_TOKEN);
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(ExceptionCode.USER_NOT_FOUND));
+
+        String newAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getUserRole().name());
+
+        return new SigninResponseDto(user.getId(), newAccessToken, refreshToken, email);
+    }
+
+    @Transactional
+    public void logout(String email) {
+        redisService.deleteRefreshToken(email);
     }
 }
