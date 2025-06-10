@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     Optional<ChatRoom> findByUserIdAndTrainerId(Long userId, Long trainerId);
+
 }

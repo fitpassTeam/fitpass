@@ -19,7 +19,7 @@ public class ChatRoom extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chatroomId;
+    private Long chatRoomId;
 
     @Column(nullable = false)
     private Long userId;

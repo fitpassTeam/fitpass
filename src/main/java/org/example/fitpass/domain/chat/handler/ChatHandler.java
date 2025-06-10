@@ -1,6 +1,5 @@
 package org.example.fitpass.domain.chat.handler;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,25 +39,39 @@ public class ChatHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message)
         throws Exception {
-        JSONObject json = new JSONObject(message.getPayload());
+        String payload = message.getPayload();
 
-        Long senderId = json.getLong("senderId");
-        Long receiverId = json.getLong("receiverId");
-        String content = json.getString("message");
+        try{
+            //Json 여부 검사
+            JSONObject json = new JSONObject(message.getPayload());
 
-        //채팅방 조회 또는 생성
-        ChatRoom room = chatRoomRepository.findByUserIdAndTrainerId(senderId, receiverId).orElseGet(
-            () -> chatRoomRepository.save(ChatRoom.of(senderId, receiverId)));
+            Long senderId = json.getLong("senderId");
+            Long receiverId = json.getLong("receiverId");
+            String content = json.getString("message");
 
-        //메세지 저장
-        ChatMessage chatMessage = ChatMessage.of(room, senderId, content);
-        chatMessageRepository.save(chatMessage);
+            //채팅방 조회 또는 생성
+            ChatRoom room = chatRoomRepository.findByUserIdAndTrainerId(senderId, receiverId).orElseGet(
+                () -> chatRoomRepository.save(ChatRoom.of(senderId, receiverId)));
 
-        //메세지 전송
-        WebSocketSession receiverSession = sessionMap.get(receiverId);
-        if (receiverSession != null && receiverSession.isOpen()) {
-            receiverSession.sendMessage(new TextMessage(content));
+            //메세지 저장
+            ChatMessage chatMessage = ChatMessage.of(room, senderId, content);
+            chatMessageRepository.save(chatMessage);
+
+            //메세지 전송
+            WebSocketSession receiverSession = sessionMap.get(receiverId);
+            if (receiverSession != null && receiverSession.isOpen()) {
+                receiverSession.sendMessage(new TextMessage(content));
+            }
+        } catch (Exception e) {
+            //JSON이 아닌 일반 메세지인 경우 전체 브로드캐스트
+            log.warn("일반 메세지 수진 : {}", payload);
+            for(WebSocketSession s : sessionMap.values()){
+                if(s.isOpen()){
+                    s.sendMessage(new TextMessage("[Broadcast] " + payload));
+                }
+            }
         }
+
     }
 
     // Client 접속 해제 시 호출되는 메서드
