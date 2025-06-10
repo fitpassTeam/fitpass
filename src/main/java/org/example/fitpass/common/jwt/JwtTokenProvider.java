@@ -5,7 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.domain.user.entity.User;
+import org.example.fitpass.common.redis.RedisService;
 import org.example.fitpass.common.security.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,11 +28,13 @@ public class JwtTokenProvider {
 
     private Key key;
 
-    private final long tokenValidityInMilliseconds = 1000 * 60 * 60;
+    private final long accessTokenValidityInMs = 1000 * 60 * 60; // 1시간
+    private final long refreshTokenValidityInMs = 1000 * 60 * 60 * 24 * 7; // 7일
 
     private static final String BEARER_PREFIX = "Bearer ";// 1시간
 
     private final CustomUserDetailsService userDetailsService;
+    private final RedisService redisService;
 
     @PostConstruct
     protected void init() {
@@ -40,18 +42,27 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // JWT 토큰 생성
-    public String createToken(String email, String role) {
+    public String createAccessToken(String email, String role) {
+        return generateToken(email, role, accessTokenValidityInMs);
+    }
+
+    public String createRefreshToken(String email, String role) {
+        String refreshToken = generateToken(email, role, refreshTokenValidityInMs);
+        redisService.setRefreshToken(email, refreshToken, refreshTokenValidityInMs);
+        return refreshToken;
+    }
+
+    private String generateToken(String email, String role, long validityInMs) {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + tokenValidityInMilliseconds);
+        Date expiry = new Date(now.getTime() + validityInMs);
 
         return BEARER_PREFIX + Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(validity)
+                .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -63,31 +74,16 @@ public class JwtTokenProvider {
         throw new RuntimeException("토큰을 찾지 못했습니다.");
     }
 
-    public Long getUserIdFromToken(String token) {
-        String email = getUserEmail(token); // 이미 있는 메서드 사용
-        User user = userDetailsService.loadUserEntityByEmail(email);
-        return user.getId();
-    }
-
-
-    // 인증 정보 조회
-    public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserEmail(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
-    // 토큰에서 이메일 추출
     public String getUserEmail(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
-    // Request Header에서 토큰 추출
-    public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("Authorization");
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserEmail(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    // 토큰 유효성 검증
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -95,5 +91,9 @@ public class JwtTokenProvider {
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        return request.getHeader("Authorization");
     }
 }

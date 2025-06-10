@@ -9,7 +9,9 @@ public class SigninResponseDto {
 
     private final Long userId;
 
-    private final String bearerToken;
+    private String accessToken;
+
+    private String refreshToken;
 
     private final String email;
 
