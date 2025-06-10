@@ -1,6 +1,7 @@
 package org.example.fitpass.domain.chat.handler;
 
 import java.net.URI;
+import java.net.http.WebSocket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class ChatHandler extends TextWebSocketHandler {
 
     // Client 접속 시 호출되는 메서드
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         Long userId = extractUserId(session);
         if (userId != null) {
             sessionMap.put(userId, session);
@@ -85,16 +86,17 @@ public class ChatHandler extends TextWebSocketHandler {
         }
     }
 
+
+     //WebSocket 세션에서 URI 쿼리 파라미터로 userId 추출
+     //ex) ws://localhost:8080/chat?userId=1
+
     private Long extractUserId(WebSocketSession session) {
         URI uri = session.getUri();
-        if (uri == null) {
-            return null;
-        }
+        if (uri == null) return null;
 
         String query = uri.getQuery();
-        if (query == null) {
-            return null;
-        }
+        if (query == null) return null;
+
 
         for (String param : query.split("&")) {
             String[] pair = param.split("=");
