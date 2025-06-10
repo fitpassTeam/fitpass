@@ -87,7 +87,10 @@ public enum SuccessCode implements BaseCode {
 
     // 8000 s3 성공 코드
     S3_UPLOAD_SUCCESS(HttpStatus.CREATED,"9001", "이미지 업로드가 완료되었습니다"),
-    S3_DELETE_SUCCESS(HttpStatus.OK,"9002","이미지 삭제가 완료되었습니다.");
+    S3_DELETE_SUCCESS(HttpStatus.OK,"9002","이미지 삭제가 완료되었습니다."),
+
+    //10000 : 채팅 성공 코드
+    GET_ALL_CHATTING(HttpStatus.OK,"10000", "채팅 내역이 조회되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

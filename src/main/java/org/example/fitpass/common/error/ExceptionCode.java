@@ -31,6 +31,8 @@ public enum ExceptionCode implements BaseCode {
     FITNESS_GOAL_DELETE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "완료된 목표는 삭제할 수 없습니다."),
 
     // 401 Unauthorized = 인증이 안될 때
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰입니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED,"401","리프레시 토큰이 유효하지 않습니다."),
     INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED,"401", "유효하지 않는 JWT 서명입니다."),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "401", "비밀번호가 일치하지 않습니다."),
     INVALID_OLD_PASSWORD(HttpStatus.UNAUTHORIZED, "401", "기존 비밀번호가 일치하지 않습니다."),
@@ -51,6 +53,7 @@ public enum ExceptionCode implements BaseCode {
     GYM_NOT_FOUND(HttpStatus.NOT_FOUND,"404","찾으시는 체육관이 존재하지 않습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND,"404","게시물이 존재하지 않습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "사용자를 찾을 수 없습니다."),
+    CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "채팅방이 존재하지 않습니다."),
     FITNESS_GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "목표를 찾을 수 없습니다."),
     DAILY_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "일일 기록을 찾을 수 없습니다."),
 
