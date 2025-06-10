@@ -87,10 +87,9 @@ class ReservationConcurrencyTest {
             new ArrayList<>(), // 이미지 리스트
             "테스트트레이너",
             50000,
-            "동시성 테스트용 트레이너",
-            TrainerStatus.ACTIVE
+            "동시성 테스트용 트레이너"
         );
-        
+
         // gym 연관관계 설정 (리플렉션 사용)
         try {
             java.lang.reflect.Field gymField = Trainer.class.getDeclaredField("gym");
@@ -99,7 +98,7 @@ class ReservationConcurrencyTest {
         } catch (Exception e) {
             throw new RuntimeException("Trainer gym 설정 실패", e);
         }
-        
+
         testTrainer = trainerRepository.save(testTrainer);
     }
 
@@ -187,7 +186,7 @@ class ReservationConcurrencyTest {
 
         latch.await(10, TimeUnit.SECONDS);
         executor.shutdown();
-        
+
         // 종료 시간 측정
         long endTime = System.currentTimeMillis();
 
@@ -200,7 +199,7 @@ class ReservationConcurrencyTest {
 
         // 정상적이라면 성공 1개, 실패 1개여야 함
         assertThat(successCount.get() + failCount.get()).isEqualTo(2);
-        
+
         // 동시성 제어가 제대로 되었다면 1명만 성공해야 함
         if (successCount.get() == 1) {
             System.out.println("동시성 제어 성공!");
@@ -255,7 +254,7 @@ class ReservationConcurrencyTest {
         // 모든 스레드가 완료될 때까지 대기
         latch.await(30, TimeUnit.SECONDS);
         executor.shutdown();
-        
+
         // 종료 시간 측정
         long endTime = System.currentTimeMillis();
 
@@ -270,7 +269,7 @@ class ReservationConcurrencyTest {
 
         // 검증: 정상적이라면 1명만 성공해야 함
         assertThat(successCount.get() + failCount.get()).isEqualTo(threadCount);
-        
+
         if (successCount.get() == 1) {
             System.out.println("\n동시성 제어 완벽!");
         } else {
@@ -303,7 +302,7 @@ class ReservationConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             final int userIndex = i;
             final User user = users.get(i);
-            
+
             executor.submit(() -> {
                 try {
                     // 모든 스레드가 동시에 시작하도록 대기
@@ -323,14 +322,14 @@ class ReservationConcurrencyTest {
 
         // 시작 시간 측정
         long startTime = System.currentTimeMillis();
-        
+
         // 모든 스레드 동시 시작!
         startLatch.countDown();
 
         // 모든 스레드 완료 대기
         endLatch.await(60, TimeUnit.SECONDS);
         executor.shutdown();
-        
+
         // 종료 시간 측정
         long endTime = System.currentTimeMillis();
 
@@ -343,7 +342,7 @@ class ReservationConcurrencyTest {
 
         // 검증
         assertThat(successCount.get() + failCount.get()).isEqualTo(threadCount);
-        
+
         if (successCount.get() == 1) {
             System.out.println("극한 동시성 테스트 통과!");
         } else {
@@ -407,7 +406,7 @@ class ReservationConcurrencyTest {
 
         latch.await(15, TimeUnit.SECONDS); // Redis 락 대기시간 고려해서 조금 더 길게
         executor.shutdown();
-        
+
         // 종료 시간 측정
         long endTime = System.currentTimeMillis();
 
@@ -420,7 +419,7 @@ class ReservationConcurrencyTest {
 
         // 검증: Redis 분산 락으로도 1명만 성공해야 함
         assertThat(successCount.get() + failCount.get()).isEqualTo(2);
-        
+
         if (successCount.get() == 1) {
             System.out.println("Redis 분산락 동시성 제어 성공!");
         } else {
@@ -472,7 +471,7 @@ class ReservationConcurrencyTest {
         // 모든 스레드가 완료될 때까지 대기 (Redis 락 타임아웃 고려)
         latch.await(60, TimeUnit.SECONDS);
         executor.shutdown();
-        
+
         // 종료 시간 측정
         long endTime = System.currentTimeMillis();
 
@@ -487,7 +486,7 @@ class ReservationConcurrencyTest {
 
         // 검증: Redis 분산 락으로도 1명만 성공해야 함
         assertThat(successCount.get() + failCount.get()).isEqualTo(threadCount);
-        
+
         if (successCount.get() == 1) {
             System.out.println("\nRedis 분산락 다중 사용자 동시성 제어 완벽!");
         } else {
@@ -520,19 +519,19 @@ class ReservationConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             final int userIndex = i;
             final User user = users.get(i);
-            
+
             executor.submit(() -> {
                 try {
                     // 모든 스레드가 동시에 시작하도록 대기
                     startLatch.await();
 
                     ReservationRequestDto request = createReservationRequest(reservationDate, reservationTime);
-                    
+
                     // 하이브리드 방식(Redis + DB) 사용
                     ReservationResponseDto result = reservationService.createReservation(
                         request, user.getId(), testGym.getId(), testTrainer.getId()
                     );
-                    
+
                     successCount.incrementAndGet();
                     results.add("하이브리드 사용자" + userIndex + " 예약 성공! 예약ID: " + result.getReservationId());
 
@@ -547,14 +546,14 @@ class ReservationConcurrencyTest {
 
         // 시작 시간 측정
         long startTime = System.currentTimeMillis();
-        
+
         // 모든 스레드 동시 시작!
         startLatch.countDown();
 
         // 모든 스레드 완료 대기
         endLatch.await(120, TimeUnit.SECONDS); // 하이브리드 방식은 시간이 더 걸릴 수 있음
         executor.shutdown();
-        
+
         // 종료 시간 측정
         long endTime = System.currentTimeMillis();
 
@@ -572,7 +571,7 @@ class ReservationConcurrencyTest {
 
         // 검증: 하이브리드 방식으로도 1명만 성공해야 함
         assertThat(successCount.get() + failCount.get()).isEqualTo(threadCount);
-        
+
         if (successCount.get() == 1) {
             System.out.println("\n하이브리드 방식 최종 테스트 완벽 성공!");
             System.out.println("Redis 분산락 1차 방어 + DB 유니크 제약조건 2차 방어 = 완벽한 동시성 제어!");

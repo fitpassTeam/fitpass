@@ -19,7 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
-import org.example.fitpass.common.Image;
+import org.example.fitpass.common.entity.Image;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.trainer.enums.TrainerStatus;
 

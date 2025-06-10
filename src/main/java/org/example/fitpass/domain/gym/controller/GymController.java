@@ -1,6 +1,7 @@
 package org.example.fitpass.domain.gym.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
@@ -23,7 +24,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/gym")
@@ -73,13 +76,13 @@ public class GymController {
     }
 
     @PutMapping("/{gymId}/photo")
-    public ResponseEntity<ResponseMessage<Void>> updatePhoto(
-        @Valid @RequestBody GymPhotoUpdateRequestDto request,
+    public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
+        @RequestParam("images")List<MultipartFile> files,
         @PathVariable Long gymId,
         @AuthenticationPrincipal CustomUserDetails user) {
-        gymService.updatePhoto(request.getPhotoUrls(), gymId, user.getId());
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.GYM_EDIT_PHOTO_SUCCESS);
+        List<String> updatedImageUrls = gymService.updatePhoto(files, gymId, user.getId());
+        ResponseMessage<List<String>> responseMessage =
+            ResponseMessage.success(SuccessCode.GYM_EDIT_PHOTO_SUCCESS, updatedImageUrls);
         return ResponseEntity.status(SuccessCode.GYM_EDIT_PHOTO_SUCCESS.getHttpStatus())
             .body(responseMessage);
     }

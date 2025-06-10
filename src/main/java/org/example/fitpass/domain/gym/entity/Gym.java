@@ -22,7 +22,7 @@ import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.enums.GymStatus;
-import org.example.fitpass.common.Image;
+import org.example.fitpass.common.entity.Image;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.entity.User;
 
@@ -85,8 +85,11 @@ public class Gym extends BaseEntity {
         }
     }
 
-    public static Gym of(List<Image> gymImage, String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, User user) {
-        return new Gym(gymImage, name, number, content, address, openTime, closeTime, user);
+    public static Gym of(List<String> gymImage, String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, User user) {
+        List<Image> images = gymImage.stream()
+            .map(Image::new)
+            .toList();
+        return new Gym(images, name, number, content, address, openTime, closeTime, user);
     }
 
     public void isOwner(Long userId) {

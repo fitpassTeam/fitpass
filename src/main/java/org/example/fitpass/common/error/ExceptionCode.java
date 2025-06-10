@@ -20,6 +20,15 @@ public enum ExceptionCode implements BaseCode {
     INSUFFICIENT_POINT_BALANCE(HttpStatus.BAD_REQUEST, "400", "포인트 잔액이 부족합니다."),
     POST_STATUS_NOT_ACCEPT(HttpStatus.BAD_REQUEST, "400", "정확한 상태를 입력해주세요."),
     POST_TYPE_NOT_ACCEPT(HttpStatus.BAD_REQUEST, "400", "정확한 종류를 입력해주세요."),
+    DAILY_RECORD_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "400", "해당 날짜에 이미 일일 기록이 존재합니다."),
+    WEIGHT_RECORD_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "400", "해당 날짜에 이미 체중 기록이 존재합니다."),
+    WEIGHT_RECORD_NOT_FOUND(HttpStatus.BAD_REQUEST, "400", "체중 기록을 찾을 수 없습니다."),
+    FITNESS_GOAL_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "400", "이미 완료된 목표는 수정할 수 없습니다."),
+    FITNESS_GOAL_ALREADY_CANCELLED(HttpStatus.BAD_REQUEST, "400", "이미 취소된 목표입니다."),
+    FITNESS_GOAL_ALREADY_EXPIRED(HttpStatus.BAD_REQUEST, "400", "만료된 목표는 수정할 수 없습니다."),
+    FITNESS_GOAL_WEIGHT_UPDATE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "만료되었거나 완료된 목표의 체중은 업데이트할 수 없습니다."),
+    FITNESS_GOAL_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "완료된 목표는 취소할 수 없습니다."),
+    FITNESS_GOAL_DELETE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "완료된 목표는 삭제할 수 없습니다."),
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED,"401", "유효하지 않는 JWT 서명입니다."),
@@ -33,6 +42,9 @@ public enum ExceptionCode implements BaseCode {
     NOTICE_ONLY_OWNER(HttpStatus.FORBIDDEN, "403", "공지사항은 관리자만 작성할 수 있습니다."),
     NO_ADMIN_AUTHORITY(HttpStatus.FORBIDDEN, "403", "관리자 권한이 필요합니다."),
     NOT_RESERVATION_OWNER(HttpStatus.FORBIDDEN, "403", "본인의 예약만 취소/수정/조회 할 수 있습니다."),
+    NOT_WEIGHT_RECORD_OWNER(HttpStatus.FORBIDDEN, "403", "체중 기록에 접근 권한이 없습니다."),
+    NOT_DAILY_RECORD_OWNER(HttpStatus.FORBIDDEN, "403", "일일 기록에 접근 권한이 없습니다."),
+    NOT_FITNESS_GOAL_OWNER(HttpStatus.FORBIDDEN, "403", "해당 목표에 접근 권한이 없습니다."),
 
     // 404 Not Found
     CANT_FIND_DATA(HttpStatus.NOT_FOUND,"404", "해당 데이터를 찾을 수 없습니다."),
@@ -40,6 +52,8 @@ public enum ExceptionCode implements BaseCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND,"404","게시물이 존재하지 않습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "사용자를 찾을 수 없습니다."),
     CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "채팅방이 존재하지 않습니다."),
+    FITNESS_GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "목표를 찾을 수 없습니다."),
+    DAILY_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "일일 기록을 찾을 수 없습니다."),
 
     // 409 Conflict = 서버와 충돌, 데이터가 이미 존재할때(400 보다 명확함)
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"409", "이미 등록된 회원입니다."),
@@ -48,6 +62,8 @@ public enum ExceptionCode implements BaseCode {
 
     // 500 Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"500", "서버 내부 오류 혹은 예기치 못한 예외가 발생했습니다."),
+    S3_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"500", "S3 업로드를 실패하였습니다."),
+    S3_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"500", "S3 삭제를 실패하였습니다."),
     RESERVATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "해당 시간에 이미 예약이 존재합니다."),
     RESERVATION_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "예약 처리 중 인터럽트가 발생했습니다.");;
 
