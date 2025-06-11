@@ -2,6 +2,7 @@ package org.example.fitpass.domain.auth.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
+import org.example.fitpass.common.jwt.RefreshTokenRequestDto;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
 import org.example.fitpass.domain.user.dto.LoginRequestDto;

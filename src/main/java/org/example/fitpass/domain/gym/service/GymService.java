@@ -4,8 +4,6 @@ import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.entity.Image;
-import org.example.fitpass.common.error.BaseException;
-import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.service.S3Service;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
@@ -44,8 +42,7 @@ public class GymService {
 
     @Transactional(readOnly = true)
     public GymDetailResponDto getGym(Long gymId) {
-        Gym gym = gymRepository.findByIdAndIsDeletedFalse(gymId)
-            .orElseThrow(() -> new BaseException(ExceptionCode.GYM_NOT_FOUND));
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         return GymDetailResponDto.from(
             gym.getName(),
             gym.getNumber(),
@@ -61,7 +58,7 @@ public class GymService {
 
     @Transactional(readOnly = true)
     public Page<GymResponseDto> getAllGyms(Pageable pageable) {
-        Page<Gym> gyms = gymRepository.findAllByIsDeletedFalse(pageable);
+        Page<Gym> gyms = gymRepository.findAll(pageable);
         return gyms.map(GymResponseDto::from);
     }
 
@@ -98,7 +95,6 @@ public class GymService {
     public void delete(Long gymId, Long userId) {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         gym.isOwner(userId);
-        gym.delete();
-        gymRepository.save(gym);
+        gymRepository.delete(gym);
     }
 }

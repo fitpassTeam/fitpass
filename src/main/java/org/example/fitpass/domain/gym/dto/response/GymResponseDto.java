@@ -6,14 +6,13 @@ import lombok.NoArgsConstructor;
 import org.example.fitpass.domain.gym.entity.Gym;
 
 @Getter
-@NoArgsConstructor
 public class GymResponseDto {
-    private String name;
-    private String number;
-    private String content;
-    private String address;
-    private LocalTime openTime;
-    private LocalTime closeTime;
+    private final String name;
+    private final String number;
+    private final String content;
+    private final String address;
+    private final LocalTime openTime;
+    private final LocalTime closeTime;
 
     public GymResponseDto(String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime) {
         this.name = name;
