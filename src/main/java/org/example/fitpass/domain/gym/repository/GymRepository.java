@@ -22,10 +22,15 @@ public interface GymRepository extends JpaRepository<Gym, Long> {
         return gym;
     }
 
-    Optional<Gym> findByIdAndIsDeletedFalse(Long gymId);
+//    Optional<Gym> findByIdAndIsDeletedFalse(Long gymId);
+//
+//    default Gym findByIdAndIsDeletedFalseOrElseThrow(Long gymId){
+//        return findByIdAndIsDeletedFalse(gymId)
+//            .orElseThrow(() -> new BaseException(ExceptionCode.GYM_NOT_FOUND));
+//    }
 
-    Page<Gym> findAllByIsDeletedFalse(Pageable pageable);
+    Page<Gym> findAll(Pageable pageable);
 
-    @Query("SELECT g FROM Gym g WHERE g.name LIKE %:keyword% AND g.isDeleted = false")
+    @Query("SELECT g FROM Gym g WHERE g.name LIKE %:keyword% AND g.deletedAt IS NULL")
     Page<Gym> findByGymNameContaining(@Param("keyword") String keyword, Pageable pageable);
 }

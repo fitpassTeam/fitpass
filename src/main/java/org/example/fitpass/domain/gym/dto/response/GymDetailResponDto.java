@@ -3,21 +3,19 @@ package org.example.fitpass.domain.gym.dto.response;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.example.fitpass.domain.gym.enums.GymStatus;
 
 @Getter
-@NoArgsConstructor
 public class GymDetailResponDto {
-    private String name;
-    private String number;
-    private String content;
-    private String address;
-    private LocalTime openTime;
-    private LocalTime closeTime;
-    private List<String> gymImage;
-    private List<String> trainerNames;
-    private GymStatus gymStatus;
+    private final String name;
+    private final String number;
+    private final String content;
+    private final String address;
+    private final LocalTime openTime;
+    private final LocalTime closeTime;
+    private final List<String> gymImage;
+    private final List<String> trainerNames;
+    private final GymStatus gymStatus;
 
     public GymDetailResponDto(String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, List<String> gymImage, List<String> trainerNames, GymStatus gymStatus) {
         this.name = name;

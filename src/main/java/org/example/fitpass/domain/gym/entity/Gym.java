@@ -25,10 +25,14 @@ import org.example.fitpass.domain.gym.enums.GymStatus;
 import org.example.fitpass.common.entity.Image;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.entity.User;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@SQLRestriction("deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE gyms SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Table(name = "gyms")
 public class Gym extends BaseEntity {
 
@@ -67,8 +71,6 @@ public class Gym extends BaseEntity {
 
     @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
-
-    private Boolean isDeleted = false;
 
     public Gym(List<Image> gymImage, String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, User user) {
         this.name = name;
@@ -127,7 +129,4 @@ public class Gym extends BaseEntity {
         }
     }
 
-    public void delete() {
-        this.isDeleted = true;
-    }
 }

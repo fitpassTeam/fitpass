@@ -29,6 +29,7 @@ public enum ExceptionCode implements BaseCode {
     FITNESS_GOAL_WEIGHT_UPDATE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "만료되었거나 완료된 목표의 체중은 업데이트할 수 없습니다."),
     FITNESS_GOAL_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "완료된 목표는 취소할 수 없습니다."),
     FITNESS_GOAL_DELETE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "완료된 목표는 삭제할 수 없습니다."),
+    VALID_STATUS(HttpStatus.BAD_REQUEST,"400","잘못된 상태 입니다."),
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰입니다."),
