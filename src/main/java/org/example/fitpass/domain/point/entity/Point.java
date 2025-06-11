@@ -23,8 +23,6 @@ import org.example.fitpass.domain.user.entity.User;
 @Getter
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Table(name = "points")
 public class Point extends BaseEntity {
 

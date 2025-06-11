@@ -56,6 +56,7 @@ public enum ExceptionCode implements BaseCode {
     CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "채팅방이 존재하지 않습니다."),
     FITNESS_GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "목표를 찾을 수 없습니다."),
     DAILY_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "일일 기록을 찾을 수 없습니다."),
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "예약을 찾을 수 없습니다."),
 
     // 409 Conflict = 서버와 충돌, 데이터가 이미 존재할때(400 보다 명확함)
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"409", "이미 등록된 회원입니다."),

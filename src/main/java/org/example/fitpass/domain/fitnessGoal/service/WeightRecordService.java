@@ -55,6 +55,7 @@ public class WeightRecordService {
     }
 
     // 체중 기록 목록 조회
+    @Transactional
     public List<WeightRecordResponseDto> getWeightRecords (Long goalId, Long userId) {
         fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId, userId);
 
@@ -63,6 +64,7 @@ public class WeightRecordService {
     }
 
     // 체중 기록 상세 조회
+    @Transactional
     public WeightRecordResponseDto getWeightRecord(Long userId, Long recordId) {
         WeightRecord weightRecord = weightRecordRepository.findByIdOrElseThrow(recordId);
 

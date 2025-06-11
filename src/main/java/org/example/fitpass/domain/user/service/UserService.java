@@ -46,8 +46,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public SigninResponseDto login(LoginRequestDto dto) {
-        User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new BaseException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmailOrElseThrow(dto.getEmail());
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new BaseException(ExceptionCode.INVALID_PASSWORD);
@@ -61,17 +60,14 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserInfo(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BaseException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         return UserResponseDto.from(user);
     }
 
-
     @Transactional
     public UserResponseDto updateUserInfo(String email, UserRequestDto dto) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BaseException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         user.updateInfo(dto);
         return UserResponseDto.from(user);
@@ -79,8 +75,7 @@ public class UserService {
 
     @Transactional
     public UserResponseDto updatePhone(String email, String newPhone) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BaseException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         user.updatePhone(newPhone);
         return UserResponseDto.from(user);
@@ -88,8 +83,7 @@ public class UserService {
 
     @Transactional
     public void updatePassword(String email, String oldPassword, String newPassword) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BaseException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new BaseException(ExceptionCode.INVALID_OLD_PASSWORD);
@@ -112,8 +106,7 @@ public class UserService {
             throw new BaseException(ExceptionCode.INVALID_REFRESH_TOKEN);
         }
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BaseException(ExceptionCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         String newAccessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getUserRole().name());
 

@@ -12,26 +12,36 @@ import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.entity.Reservation;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class UpdateReservationResponseDto {
 
-    private Long reservationId;
-    private Long userId;
-    private Long gymId;
-    private Long trainerId;
+    private final Long reservationId;
+    private final Long userId;
+    private final Long gymId;
+    private final Long trainerId;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate reservationDate;
+    private final LocalDate reservationDate;
 
     @JsonFormat(pattern = "HH:mm")
-    private LocalTime reservationTime;
+    private final LocalTime reservationTime;
 
-    private ReservationStatus reservationStatus;
+    private final ReservationStatus reservationStatus;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updatedAt;
+    private final LocalDateTime updatedAt;
+
+    public UpdateReservationResponseDto(Long reservationId, Long userId, Long gymId, Long trainerId,
+        LocalDate reservationDate, LocalTime reservationTime, ReservationStatus reservationStatus,
+        LocalDateTime updatedAt) {
+        this.reservationId = reservationId;
+        this.userId = userId;
+        this.gymId = gymId;
+        this.trainerId = trainerId;
+        this.reservationDate = reservationDate;
+        this.reservationTime = reservationTime;
+        this.reservationStatus = reservationStatus;
+        this.updatedAt = updatedAt;
+    }
 
     public static UpdateReservationResponseDto from(Reservation reservation) {
         return new UpdateReservationResponseDto(

@@ -45,6 +45,7 @@ public class FitnessGoalService {
     }
 
     // 내 목표 목록 조회 (만료 상태 체크 포함)
+    @Transactional
     public List<FitnessGoalListResponseDto> getMyGoals(Long userId) {
         List<FitnessGoal> goals = fitnessGoalRepository.findByUserIdOrderByCreatedAtDesc(userId);
         
@@ -55,6 +56,7 @@ public class FitnessGoalService {
     }
 
     // 목표 상세 조회 (만료 상태 체크 포함)
+    @Transactional
     public FitnessGoalResponseDto getGoal(Long userId, Long goalId) {
         FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId, userId);
         

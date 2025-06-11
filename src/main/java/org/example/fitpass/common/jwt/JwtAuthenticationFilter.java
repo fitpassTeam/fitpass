@@ -32,18 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String bearerToken = jwtTokenProvider.resolveToken(request);
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            try {
                 String token = jwtTokenProvider.substringToken(bearerToken);
 
                 if (jwtTokenProvider.validateToken(token)) {
                     Authentication authentication = jwtTokenProvider.getAuthentication(token);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
-            } catch (Exception e) {
-                logger.warn("JWT 인증 실패: {}");
-            }
         }
-
         filterChain.doFilter(request, response);
     }
 }

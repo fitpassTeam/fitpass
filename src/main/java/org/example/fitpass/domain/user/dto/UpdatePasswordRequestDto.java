@@ -4,8 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class UpdatePasswordRequestDto {
-    private String oldPassword;
-    private String newPassword;
+    private final String oldPassword;
+    private final String newPassword;
+
+    public UpdatePasswordRequestDto(String oldPassword, String newPassword) {
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
+    }
 }

@@ -1,10 +1,18 @@
 package org.example.fitpass.common.jwt;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.redis.RedisService;
 import org.example.fitpass.common.security.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,11 +20,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-
-import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
 import org.springframework.util.StringUtils;
 
 @Component
@@ -31,7 +34,7 @@ public class JwtTokenProvider {
     private final long accessTokenValidityInMs = 1000 * 60 * 60; // 1시간
     private final long refreshTokenValidityInMs = 1000 * 60 * 60 * 24 * 7; // 7일
 
-    private static final String BEARER_PREFIX = "Bearer ";// 1시간
+    private static final String BEARER_PREFIX = "Bearer ";
 
     private final CustomUserDetailsService userDetailsService;
     private final RedisService redisService;
@@ -71,7 +74,7 @@ public class JwtTokenProvider {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
-        throw new RuntimeException("토큰을 찾지 못했습니다.");
+        throw new BaseException(ExceptionCode.JWT_TOKEN_REQUIRED);
     }
 
     public String getUserEmail(String token) {

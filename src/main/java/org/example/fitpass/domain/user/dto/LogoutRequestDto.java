@@ -1,13 +1,17 @@
 package org.example.fitpass.domain.user.dto;
 
-public class LogoutRequestDto {
-    private String email;
+import lombok.Getter;
 
-    public String getEmail() {
+@Getter
+public class LogoutRequestDto {
+    private final String email;
+
+    public LogoutRequestDto(String email) {
+        this.email = email;
+    }
+
+    public  String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }

@@ -12,28 +12,39 @@ import org.example.fitpass.domain.reservation.entity.Reservation;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class GetReservationResponseDto {
-    private Long reservationId;
-    private Long userId;
-    private Long gymId;
-    private Long trainerId;
+    private final Long reservationId;
+    private final Long userId;
+    private final Long gymId;
+    private final Long trainerId;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate reservationDate;
+    private final LocalDate reservationDate;
 
     @JsonFormat(pattern = "HH:mm")
-    private LocalTime reservationTime;
+    private final LocalTime reservationTime;
 
-    private ReservationStatus reservationStatus;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
+    private final ReservationStatus reservationStatus;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updatedAt;
+    private final LocalDateTime createdAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private final LocalDateTime updatedAt;
+
+    public GetReservationResponseDto(Long reservationId, Long userId, Long gymId, Long trainerId,
+        LocalDate reservationDate, LocalTime reservationTime, ReservationStatus reservationStatus,
+        LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.reservationId = reservationId;
+        this.userId = userId;
+        this.gymId = gymId;
+        this.trainerId = trainerId;
+        this.reservationDate = reservationDate;
+        this.reservationTime = reservationTime;
+        this.reservationStatus = reservationStatus;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     public static GetReservationResponseDto from(Reservation reservation) {
         return new GetReservationResponseDto(

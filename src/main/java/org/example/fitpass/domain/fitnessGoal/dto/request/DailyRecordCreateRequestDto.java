@@ -4,25 +4,31 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.example.fitpass.domain.fitnessGoal.enums.RecordType;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-@NoArgsConstructor
 public class DailyRecordCreateRequestDto {
 
     @NotNull(message = "목표 ID는 필수입니다")
-    private Long fitnessGoalId;
+    private final Long fitnessGoalId;
 
     @NotNull(message = "기록 타입은 필수입니다")
-    private RecordType recordType;
+    private final RecordType recordType;
 
-    private List<MultipartFile> imageUrls;
+    private final List<MultipartFile> imageUrls;
 
-    private String memo;
+    private final String memo;
 
     @NotNull(message = "기록일은 필수입니다")
-    private LocalDate recordDate;
+    private final LocalDate recordDate;
 
+    public DailyRecordCreateRequestDto(Long fitnessGoalId, RecordType recordType,
+        List<MultipartFile> imageUrls, String memo, LocalDate recordDate) {
+        this.fitnessGoalId = fitnessGoalId;
+        this.recordType = recordType;
+        this.imageUrls = imageUrls;
+        this.memo = memo;
+        this.recordDate = recordDate;
+    }
 }
