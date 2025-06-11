@@ -30,24 +30,26 @@ public class PostDummyInitializer implements CommandLineRunner {
     private static final Random random = new Random();
 
     private static final String[] TITLES = {
-            "운동 루틴", "식단 공개", "공지사항", "운동 꿀팁", "후기", "질문 있어요", "정보 공유", "챌린지 모집"
+        "운동 루틴", "식단 공개", "공지사항", "운동 꿀팁", "후기", "질문 있어요", "정보 공유", "챌린지 모집"
     };
 
     private static final String[] CONTENTS = {
-            "오늘은 하체 루틴을 소화했습니다.", "단백질 보충에 대해 알려드릴게요.", "이번 주는 휴무입니다.",
-            "질문 있습니다! 데드리프트 자세 점검 부탁드려요.", "헬스장 분위기 최고예요!", "3개월 후기 공유합니다.",
-            "새로운 챌린지 참가자 모집 중입니다!", "다이어트는 역시 식단이 중요하네요."
+        "오늘은 하체 루틴을 소화했습니다.", "단백질 보충에 대해 알려드릴게요.", "이번 주는 휴무입니다.",
+        "질문 있습니다! 데드리프트 자세 점검 부탁드려요.", "헬스장 분위기 최고예요!", "3개월 후기 공유합니다.",
+        "새로운 챌린지 참가자 모집 중입니다!", "다이어트는 역시 식단이 중요하네요."
     };
 
     @Override
 
     public void run(String... args) throws Exception {
-        if (postRepository.count() > 0) return;
+        if (postRepository.count() > 0) {
+            return;
+        }
 
         User user = userRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("User not found"));
         Gym gym = gymRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("Gym not found"));
+            .orElseThrow(() -> new RuntimeException("Gym not found"));
 
         List<Post> posts = new ArrayList<>();
 
@@ -55,13 +57,13 @@ public class PostDummyInitializer implements CommandLineRunner {
             PostCreateRequestDto dto = createRandomPostDto(i);
 
             Post post = new Post(
-                    dto.getStatus(),
-                    dto.getPostType(),
-                    dto.getPostImage(),
-                    dto.getTitle(),
-                    dto.getContent(),
-                    user,
-                    gym
+                dto.getStatus(),
+                dto.getPostType(),
+                dto.getPostImage(),
+                dto.getTitle(),
+                dto.getContent(),
+                user,
+                gym
             );
 
             posts.add(post);
@@ -92,11 +94,11 @@ public class PostDummyInitializer implements CommandLineRunner {
         PostType type = (index % 20 == 0) ? PostType.NOTICE : PostType.GENERAL;
 
         return new PostCreateRequestDto(
-                status,
-                type,
-                title,
-                content,
-                image
+            status,
+            type,
+            title,
+            content,
+            image
         );
     }
 

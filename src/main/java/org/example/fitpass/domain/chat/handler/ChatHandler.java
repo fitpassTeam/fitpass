@@ -10,6 +10,7 @@ import org.example.fitpass.domain.chat.entity.ChatMessage;
 import org.example.fitpass.domain.chat.entity.ChatRoom;
 import org.example.fitpass.domain.chat.repository.ChatMessageRepository;
 import org.example.fitpass.domain.chat.repository.ChatRoomRepository;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -42,7 +43,7 @@ public class ChatHandler extends TextWebSocketHandler {
         throws Exception {
         String payload = message.getPayload();
 
-        try{
+        try {
             //Json 여부 검사
             JSONObject json = new JSONObject(message.getPayload());
 
@@ -51,8 +52,9 @@ public class ChatHandler extends TextWebSocketHandler {
             String content = json.getString("message");
 
             //채팅방 조회 또는 생성
-            ChatRoom room = chatRoomRepository.findByUserIdAndTrainerId(senderId, receiverId).orElseGet(
-                () -> chatRoomRepository.save(ChatRoom.of(senderId, receiverId)));
+            ChatRoom room = chatRoomRepository.findByUserIdAndTrainerId(senderId, receiverId)
+                .orElseGet(
+                    () -> chatRoomRepository.save(ChatRoom.of(senderId, receiverId)));
 
             //메세지 저장
             ChatMessage chatMessage = ChatMessage.of(room, senderId, content);
@@ -63,11 +65,11 @@ public class ChatHandler extends TextWebSocketHandler {
             if (receiverSession != null && receiverSession.isOpen()) {
                 receiverSession.sendMessage(new TextMessage(content));
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) { //JSON 내부에서 예상한 필드가 없거나 타입이 잘못됐을 때 발생 가능
             //JSON이 아닌 일반 메세지인 경우 전체 브로드캐스트
             log.warn("일반 메세지 수진 : {}", payload);
-            for(WebSocketSession s : sessionMap.values()){
-                if(s.isOpen()){
+            for (WebSocketSession s : sessionMap.values()) {
+                if (s.isOpen()) {
                     s.sendMessage(new TextMessage("[Broadcast] " + payload));
                 }
             }
@@ -77,8 +79,7 @@ public class ChatHandler extends TextWebSocketHandler {
 
     // Client 접속 해제 시 호출되는 메서드
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status)
-        throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         Long userId = extractUserId(session);
         if (userId != null) {
             sessionMap.put(userId, session);
@@ -86,17 +87,19 @@ public class ChatHandler extends TextWebSocketHandler {
         }
     }
 
-
-     //WebSocket 세션에서 URI 쿼리 파라미터로 userId 추출
-     //ex) ws://localhost:8080/chat?userId=1
+    //WebSocket 세션에서 URI 쿼리 파라미터로 userId 추출
+    //ex) ws://localhost:8080/chat?userId=1
 
     private Long extractUserId(WebSocketSession session) {
         URI uri = session.getUri();
-        if (uri == null) return null;
+        if (uri == null) {
+            return null;
+        }
 
         String query = uri.getQuery();
-        if (query == null) return null;
-
+        if (query == null) {
+            return null;
+        }
 
         for (String param : query.split("&")) {
             String[] pair = param.split("=");

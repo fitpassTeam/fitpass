@@ -21,10 +21,12 @@ public class DummyDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (gymRepository.count() > 0) return; // 이미 데이터가 있다면 중단
+        if (gymRepository.count() > 0) {
+            return; // 이미 데이터가 있다면 중단
+        }
 
         User defaultUser = userRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("기본 유저가 없습니다."));
+            .orElseThrow(() -> new RuntimeException("기본 유저가 없습니다."));
 
         List<Gym> gyms = new ArrayList<>();
         for (int i = 1; i <= 100000; i++) {
@@ -36,14 +38,14 @@ public class DummyDataInitializer implements CommandLineRunner {
             LocalTime close = LocalTime.of(23, 0);
 
             Gym gym = Gym.of(
-                    new ArrayList<>(),
-                    name,
-                    number,
-                    content,
-                    address,
-                    open,
-                    close,
-                    defaultUser
+                new ArrayList<>(),
+                name,
+                number,
+                content,
+                address,
+                open,
+                close,
+                defaultUser
             );
 
             gyms.add(gym);
