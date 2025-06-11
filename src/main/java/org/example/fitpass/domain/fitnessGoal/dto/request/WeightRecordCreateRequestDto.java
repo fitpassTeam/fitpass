@@ -7,19 +7,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class WeightRecordCreateRequestDto {
 
     @NotNull(message = "목표 ID는 필수입니다")
-    private Long fitnessGoalId;
+    private final Long fitnessGoalId;
 
     @NotNull(message = "체중은 필수입니다")
     @Positive(message = "체중은 양수여야 합니다")
-    private Double weight;
+    private final Double weight;
 
     @NotNull(message = "기록일은 필수입니다")
-    private LocalDate recordDate;
+    private final LocalDate recordDate;
 
-    private String memo;
+    private final String memo;
 
+    public WeightRecordCreateRequestDto(Long fitnessGoalId, Double weight, LocalDate recordDate,
+        String memo) {
+        this.fitnessGoalId = fitnessGoalId;
+        this.weight = weight;
+        this.recordDate = recordDate;
+        this.memo = memo;
+    }
 }

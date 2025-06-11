@@ -2,25 +2,23 @@ package org.example.fitpass.domain.fitnessGoal.dto.response;
 
 import java.time.LocalDate;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.example.fitpass.domain.fitnessGoal.entity.FitnessGoal;
 import org.example.fitpass.domain.fitnessGoal.enums.GoalStatus;
 import org.example.fitpass.domain.fitnessGoal.enums.GoalType;
 
 @Getter
-@NoArgsConstructor
 public class FitnessGoalListResponseDto {
-    private Long id;
-    private String title;
-    private GoalType goalType;
-    private GoalStatus goalStatus;
+    private final Long id;
+    private final String title;
+    private final GoalType goalType;
+    private final GoalStatus goalStatus;
 
-    private Double startWeight;
-    private Double targetWeight;
-    private Double currentWeight;
+    private final Double startWeight;
+    private final Double targetWeight;
+    private final Double currentWeight;
 
-    private LocalDate endDate;
-    private double progressRate;
+    private final LocalDate endDate;
+    private final double progressRate;
 
     public FitnessGoalListResponseDto (Long id, String title, GoalType goalType,
         GoalStatus goalStatus, Double startWeight,

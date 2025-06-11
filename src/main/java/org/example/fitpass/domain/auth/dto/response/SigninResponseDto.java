@@ -4,15 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class SigninResponseDto {
 
     private final Long userId;
 
-    private String accessToken;
+    private final String accessToken;
 
-    private String refreshToken;
+    private final String refreshToken;
 
     private final String email;
 
+    public SigninResponseDto(Long userId, String accessToken, String refreshToken, String email) {
+        this.userId = userId;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.email = email;
+    }
 }
