@@ -44,7 +44,7 @@ public class TrainerServiceTest {
 
         //when
         TrainerResponseDto result = trainerService.createTrainer(
-            "이름", 10000, "트레이너 정보", List.of()
+            1L, "이름", 10000, "트레이너 정보", List.of()
         );
         //then
         assertThat(result.getName()).isEqualTo("이름");

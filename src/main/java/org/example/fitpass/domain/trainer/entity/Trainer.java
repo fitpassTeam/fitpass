@@ -77,11 +77,16 @@ public class Trainer extends BaseEntity {
         this.images.addAll(convertedImages);
     }
 
-    public void update(List<Image> images, String name, int price, String content, TrainerStatus trainerStatus) {
+    public void update(List<Image> images, String name, int price, String content,
+        TrainerStatus trainerStatus) {
         this.images = images;
         this.name = name;
         this.price = price;
         this.content = content;
         this.trainerStatus = trainerStatus;
+    }
+
+    public void assignToGym(Gym gym) {
+        this.gym = gym;
     }
 }
