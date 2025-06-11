@@ -11,22 +11,40 @@ import org.example.fitpass.domain.post.enums.PostType;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-
 public class PostResponseDto {
 
-    private Long postId;
-    private PostStatus status;
-    private PostType postType;
-    private String title;
-    private String content;
-    private String postImage;
-    private Long userId;
-    private Long gymId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private final Long postId;
+
+    private final PostStatus status;
+
+    private final PostType postType;
+
+    private final String title;
+
+    private final String content;
+
+    private final String postImage;
+
+    private final Long userId;
+
+    private final Long gymId;
+
+    private final LocalDateTime createdAt;
+
+    private final LocalDateTime updatedAt;
+
+    public PostResponseDto(Long postId, PostStatus status, PostType postType, String title, String content, String postImage, Long userId, Long gymId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.postId = postId;
+        this.status = status;
+        this.postType = postType;
+        this.title = title;
+        this.content = content;
+        this.postImage = postImage;
+        this.userId = userId;
+        this.gymId = gymId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     public static PostResponseDto from(Post post) {
         return new PostResponseDto(
