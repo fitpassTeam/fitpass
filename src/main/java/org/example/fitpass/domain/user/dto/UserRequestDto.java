@@ -6,17 +6,27 @@ import org.example.fitpass.domain.user.Gender;
 import org.example.fitpass.domain.user.UserRole;
 
 @Getter
-@NoArgsConstructor
 public class UserRequestDto {
 
-    private String email;
-    private String password;
-    private String name;
-    private String phone;
-    private int age;
-    private String address;
-    private Gender gender;
-    private UserRole userRole;
+    private final String email;
+    private final String password;
+    private final String name;
+    private final String phone;
+    private final int age;
+    private final String address;
+    private final Gender gender;
+    private final UserRole userRole;
 
 
+    public UserRequestDto(String email, String password, String name, String phone, int age,
+        String address, Gender gender, UserRole userRole) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.age = age;
+        this.address = address;
+        this.gender = gender;
+        this.userRole = userRole;
+    }
 }

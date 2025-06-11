@@ -16,7 +16,7 @@ public interface DailyRecordRepository extends JpaRepository<DailyRecord, Long> 
 
     List<DailyRecord> findByFitnessGoalIdOrderByRecordDateDesc(Long fitnessGoalId);
 
-    Optional<DailyRecord> findById (Long recordId);
+    Optional<DailyRecord> findById(Long recordId);
 
     default DailyRecord findByIdOrElseThrow (Long recordId) {
         DailyRecord dailyRecord = findById(recordId)

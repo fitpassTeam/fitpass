@@ -15,11 +15,18 @@ public class UpdateReservationRequestDto {
     @NotNull(message = "날짜를 입력해주세요.")
     @Future(message = "예약 날짜는 현재 날짜 이후여야 합니다.")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate reservationDate;
+    private final LocalDate reservationDate;
 
     @NotNull(message = "시간을 입력해주세요.")
     @JsonFormat(pattern = "HH:mm")
-    private LocalTime reservationTime;
+    private final LocalTime reservationTime;
 
-    private ReservationStatus reservationStatus;
+    private final ReservationStatus reservationStatus;
+
+    public UpdateReservationRequestDto(LocalDate reservationDate, LocalTime reservationTime,
+        ReservationStatus reservationStatus) {
+        this.reservationDate = reservationDate;
+        this.reservationTime = reservationTime;
+        this.reservationStatus = reservationStatus;
+    }
 }

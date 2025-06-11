@@ -40,7 +40,7 @@ public class DailyRecord extends BaseEntity {
     @Column(nullable = false)
     private RecordType recordType;
 
-    @OneToMany(mappedBy = "dailyRecord", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "dailyRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")

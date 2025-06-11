@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class UpdatePhoneRequestDto {
-    private String phone;
+    private final String phone;
+
+    public UpdatePhoneRequestDto(String phone) {
+        this.phone = phone;
+    }
 }

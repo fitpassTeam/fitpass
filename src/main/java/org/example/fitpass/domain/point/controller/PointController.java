@@ -85,10 +85,7 @@ public class PointController {
     // 포인트 이력 조회
     @GetMapping("/history")
     public ResponseEntity<ResponseMessage<List<PointResponseDto>>> getPointHistory (@AuthenticationPrincipal CustomUserDetails user) {
-        List<Point> history = pointService.getPointHistory(user.getId());
-        List<PointResponseDto> pointResponseDtos = history.stream()
-            .map(PointResponseDto::from)
-            .collect(Collectors.toList());
+        List<PointResponseDto> pointResponseDtos = pointService.getPointHistory(user.getId());
 
         ResponseMessage<List<PointResponseDto>> responseMessage =
             ResponseMessage.success(SuccessCode.POINT_HISTORY_GET_SUCCESS, pointResponseDtos);

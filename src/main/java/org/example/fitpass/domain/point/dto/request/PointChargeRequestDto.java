@@ -4,5 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class PointChargeRequestDto {
-    private int amount;
+    private final int amount;
+
+    public PointChargeRequestDto(int amount) {
+        this.amount = amount;
+    }
 }
