@@ -5,34 +5,45 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.example.fitpass.common.entity.Image;
 import org.example.fitpass.domain.fitnessGoal.entity.DailyRecord;
 import org.example.fitpass.domain.fitnessGoal.enums.RecordType;
 
 @Getter
-@NoArgsConstructor
 public class DailyRecordResponseDto {
 
-    private Long id;
-    private Long fitnessGoalId;
-    private RecordType recordType;
-    private List<String> imageUrls;
-    private String memo;
-    private LocalDate recordDate;
-    private LocalDateTime createdAt;
+    private final Long id;
+    private final Long fitnessGoalId;
+    private final RecordType recordType;
+    private final List<String> imageUrls;
+    private final String memo;
+    private final LocalDate recordDate;
+    private final LocalDateTime createdAt;
+
+    public DailyRecordResponseDto(Long id, Long fitnessGoalId, RecordType recordType,
+        List<String> imageUrls, String memo, LocalDate recordDate, LocalDateTime createdAt) {
+        this.id = id;
+        this.fitnessGoalId = fitnessGoalId;
+        this.recordType = recordType;
+        this.imageUrls = imageUrls;
+        this.memo = memo;
+        this.recordDate = recordDate;
+        this.createdAt = createdAt;
+    }
 
     public static DailyRecordResponseDto from(DailyRecord dailyRecord) {
-        DailyRecordResponseDto dto = new DailyRecordResponseDto();
-        dto.id = dailyRecord.getId();
-        dto.fitnessGoalId = dailyRecord.getFitnessGoal().getId();
-        dto.recordType = dailyRecord.getRecordType();
-        dto.imageUrls = dailyRecord.getImages().stream()
-            .map(Image::getUrl) // Image 엔티티에 getUrl() 메서드 필요
+        List<String> imageUrls = dailyRecord.getImages().stream()
+            .map(Image::getUrl)
             .collect(Collectors.toList());
-        dto.memo = dailyRecord.getMemo();
-        dto.recordDate = dailyRecord.getRecordDate();
-        dto.createdAt = dailyRecord.getCreatedAt();
-        return dto;
+
+        return new DailyRecordResponseDto(
+            dailyRecord.getId(),
+            dailyRecord.getFitnessGoal().getId(),
+            dailyRecord.getRecordType(),
+            imageUrls,
+            dailyRecord.getMemo(),
+            dailyRecord.getRecordDate(),
+            dailyRecord.getCreatedAt()
+        );
     }
 }

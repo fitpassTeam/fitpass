@@ -16,21 +16,26 @@ import org.example.fitpass.domain.reservation.entity.Reservation;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.entity.User;
 
-@Getter @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 public class ReservationRequestDto {
 
     @NotNull(message = "날짜를 입력해주세요.")
     @Future(message = "예약 날짜는 현재 날짜 이후여야 합니다.")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate reservationDate;
+    private final LocalDate reservationDate;
 
     @NotNull(message = "시간을 입력해주세요.")
     @JsonFormat(pattern = "HH:mm")
-    private LocalTime reservationTime;
+    private final LocalTime reservationTime;
 
-    private ReservationStatus reservationStatus;
+    private final ReservationStatus reservationStatus;
+
+    public ReservationRequestDto(LocalDate reservationDate, LocalTime reservationTime,
+        ReservationStatus reservationStatus) {
+        this.reservationDate = reservationDate;
+        this.reservationTime = reservationTime;
+        this.reservationStatus = reservationStatus;
+    }
 
     public static Reservation from(ReservationRequestDto dto, User user, Gym gym, Trainer trainer) {
         return new Reservation(

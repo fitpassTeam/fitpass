@@ -49,6 +49,7 @@ public class ReservationService {
     private final RedissonClient redissonClient; // ⭐ Redis 분산 락용
 
     // 예약 가능 시간 조회
+    @Transactional
     public List<LocalTime> getAvailableTimes(Long userId, Long gymId, Long trainerId,
         LocalDate date) {
         User user = userRepository.findByIdOrElseThrow(userId);
@@ -106,9 +107,8 @@ public class ReservationService {
             }
 
             // 포인트 사용
-            PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto();
-            pointUseRefundRequestDto.setAmount(trainer.getPrice()); // 트레이너 이용료
-            pointUseRefundRequestDto.setDescription("PT 예약 - " + trainer.getName());
+            String description = "PT 예약 - " + trainer.getName();
+            PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);// 트레이너 이용료
 
             int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto);
 
@@ -221,9 +221,8 @@ public class ReservationService {
         }
 
         // 포인트 환불
-        PointUseRefundRequestDto pointRefundRequestDto = new PointUseRefundRequestDto();
-        pointRefundRequestDto.setAmount(trainer.getPrice());
-        pointRefundRequestDto.setDescription("PT 예약 취소 환불 - " + trainer.getName());
+        String description = "PT 예약 취소 환불 - " + trainer.getName();
+        PointUseRefundRequestDto pointRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);
 
         pointService.refundPoint(userId, pointRefundRequestDto);
 

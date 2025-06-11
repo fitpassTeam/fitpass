@@ -21,7 +21,7 @@ public class ChatMessage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ChatMessageId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatRoomId")
@@ -33,13 +33,13 @@ public class ChatMessage extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    public ChatMessage(ChatRoom chatRoom, Long senderId, String content){
+    public ChatMessage(ChatRoom chatRoom, Long senderId, String content) {
         this.chatRoom = chatRoom;
         this.senderId = senderId;
         this.content = content;
     }
 
-    public static ChatMessage of(ChatRoom chatRoom, Long senderId, String content){
+    public static ChatMessage of(ChatRoom chatRoom, Long senderId, String content) {
         return new ChatMessage(chatRoom, senderId, content);
     }
 }

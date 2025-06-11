@@ -1,6 +1,7 @@
 package org.example.fitpass.domain.point.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
@@ -8,6 +9,7 @@ import org.example.fitpass.domain.point.dto.request.PointCashOutRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
 import org.example.fitpass.domain.point.dto.response.PointCashOutResponseDto;
+import org.example.fitpass.domain.point.dto.response.PointResponseDto;
 import org.example.fitpass.domain.point.entity.Point;
 import org.example.fitpass.domain.point.enums.PointType;
 import org.example.fitpass.domain.point.repository.PointRepository;
@@ -95,11 +97,11 @@ public class PointService {
 
         user.updatePointBalance(newBalance);
 
-        return PointCashOutResponseDto.builder()
-            .requestedAmount(requestedAmount)
-            .cashAmount(cashAmount)
-            .newBalance(newBalance)
-            .build();
+        return new PointCashOutResponseDto(
+            requestedAmount,
+            cashAmount,
+            newBalance
+        );
     }
 
     // 포인트 잔액 조회
@@ -110,8 +112,12 @@ public class PointService {
     }
 
     // 포인트 이력 조회
-    @Transactional
-    public List<Point> getPointHistory(Long userId) {
-        return pointRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    @Transactional(readOnly = true)
+    public List<PointResponseDto> getPointHistory(Long userId) {
+        List<Point> points = pointRepository.findByUserIdOrderByCreatedAtDesc(userId);
+
+        return points.stream()
+            .map(PointResponseDto::from)
+            .collect(Collectors.toList());
     }
 }

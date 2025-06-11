@@ -7,7 +7,6 @@ import org.example.fitpass.domain.trainer.enums.TrainerStatus;
 
 @Getter
 @AllArgsConstructor
-
 public class TrainerResponseDto {
 
     private String name;

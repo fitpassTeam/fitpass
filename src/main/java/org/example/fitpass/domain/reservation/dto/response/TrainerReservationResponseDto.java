@@ -11,39 +11,44 @@ import org.example.fitpass.domain.reservation.entity.Reservation;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class TrainerReservationResponseDto {
-    private Long reservationId;
-    private LocalDate reservationDate;
-    private LocalTime reservationTime;
-    private ReservationStatus status;
-    private LocalDateTime createdAt;
+    private final Long reservationId;
+    private final LocalDate reservationDate;
+    private final LocalTime reservationTime;
+    private final ReservationStatus status;
+    private final LocalDateTime createdAt;
 
-    private GymInfo gym;
-    private UserInfo user;
+    private final GymInfo gym;
+    private final UserInfo user;
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class GymInfo {
-        private Long gymId;
-        private String name;
-        private String address;
-        private String number;
+    public TrainerReservationResponseDto(Long reservationId, LocalDate reservationDate,
+        LocalTime reservationTime, ReservationStatus status, LocalDateTime createdAt, GymInfo gym,
+        UserInfo user) {
+        this.reservationId = reservationId;
+        this.reservationDate = reservationDate;
+        this.reservationTime = reservationTime;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.gym = gym;
+        this.user = user;
     }
 
     @Getter
-    @Builder
-    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GymInfo {
+        private final Long gymId;
+        private final String name;
+        private final String address;
+        private final String number;
+    }
+
+    @Getter
     @AllArgsConstructor
     public static class UserInfo {
-        private Long userId;
-        private String name;
-        private String email;
-        private String phone;
+        private final Long userId;
+        private final String name;
+        private final String email;
+        private final String phone;
     }
 
     // Entity -> Dto 변환 메서드

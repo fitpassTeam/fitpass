@@ -7,19 +7,18 @@ import org.example.fitpass.domain.user.UserRole;
 import org.example.fitpass.domain.user.entity.User;
 
 @Getter
-@AllArgsConstructor
 public class UserResponseDto {
 
-    private Long id;
-    private String email;
-    private String name;
-    private String phone;
-    private int age;
-    private String address;
-    private int pointBalance;
-    private String userImage;
-    private Gender gender;
-    private UserRole userRole;
+    private final Long id;
+    private final String email;
+    private final String name;
+    private final String phone;
+    private final int age;
+    private final String address;
+    private final int pointBalance;
+    private final String userImage;
+    private final Gender gender;
+    private final UserRole userRole;
 
     public UserResponseDto(User user) {
         this.id = user.getId();

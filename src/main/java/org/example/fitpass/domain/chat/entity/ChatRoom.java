@@ -19,7 +19,7 @@ public class ChatRoom extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chatRoomId;
+    private Long id;
 
     @Column(nullable = false)
     private Long userId;
@@ -27,12 +27,12 @@ public class ChatRoom extends BaseEntity {
     @Column(nullable = false)
     private Long trainerId;
 
-    public ChatRoom(Long userId, Long trainerId){
+    public ChatRoom(Long userId, Long trainerId) {
         this.userId = userId;
         this.trainerId = trainerId;
     }
 
-    public static ChatRoom of(Long userId, Long trainerId){
-       return new ChatRoom(userId, trainerId);
+    public static ChatRoom of(Long userId, Long trainerId) {
+        return new ChatRoom(userId, trainerId);
     }
 }

@@ -27,8 +27,6 @@ import org.example.fitpass.domain.user.entity.User;
 @Getter
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Table(name = "reservations", 
        uniqueConstraints = @UniqueConstraint(
            name = "uk_trainer_date_time",

@@ -1,7 +1,6 @@
 package org.example.fitpass.domain.trainer.controller;
 
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
@@ -35,8 +34,10 @@ public class TrainerController {
     //생성
     @PostMapping
     public ResponseEntity<ResponseMessage<TrainerResponseDto>> createTrainer(
+        @PathVariable("gymId") Long gymId,
         @Valid @RequestBody TrainerRequestDto request) {
         TrainerResponseDto response = trainerService.createTrainer(
+            gymId,
             request.getName(),
             request.getPrice(),
             request.getContent(),
@@ -51,6 +52,7 @@ public class TrainerController {
     //전체 조회
     @GetMapping
     public ResponseEntity<ResponseMessage<Page<TrainerResponseDto>>> getAllTrainer(
+        @PathVariable("gymId") Long gymId,
         @PageableDefault(page = 0, size = 10) Pageable pageable) {
         Page<TrainerResponseDto> response = trainerService.getAllTrainers(pageable);
         ResponseMessage<Page<TrainerResponseDto>> responseMessage =
@@ -62,6 +64,7 @@ public class TrainerController {
     //단일 조회
     @GetMapping("/{id}")
     public ResponseEntity<ResponseMessage<TrainerDetailResponseDto>> getTrainerById(
+        @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id) {
         TrainerDetailResponseDto response = trainerService.findById(id);
         ResponseMessage<TrainerDetailResponseDto> responseMessage =
@@ -73,6 +76,7 @@ public class TrainerController {
     //수정
     @PatchMapping("/{id}")
     public ResponseEntity<ResponseMessage<TrainerResponseDto>> updateTrainer(
+        @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id,
         @Valid @RequestBody TrainerUpdateRequestDto dto) {
         TrainerResponseDto response = trainerService.updateTrainer(id, dto);
@@ -85,8 +89,9 @@ public class TrainerController {
     //사진 수정
     @PutMapping("/{id}/photo")
     public ResponseEntity<ResponseMessage<Void>> updatePhoto(
+        @PathVariable("gymId") Long gymId,
         @Valid @RequestBody GymPhotoUpdateRequestDto request,
-        @PathVariable Long id) {
+        @PathVariable("id") Long id) {
         trainerService.updatePhoto(request.getPhotoUrls(), id);
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS);
@@ -97,6 +102,7 @@ public class TrainerController {
     //삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseMessage<Void>> deleteTrainer(
+        @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id) {
         trainerService.deleteItem(id);
         ResponseMessage<Void> responseMessage =
