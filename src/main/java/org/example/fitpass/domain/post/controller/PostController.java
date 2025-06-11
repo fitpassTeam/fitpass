@@ -46,7 +46,7 @@ public class PostController {
     }
 
     //General 게시물 전체조회
-    @GetMapping("/general/posts")
+    @GetMapping("/general-posts")
     public ResponseEntity<ResponseMessage<Page<PostResponseDto>>> findAllGeneralPost(
         @PageableDefault(page = 0, size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
         @AuthenticationPrincipal CustomUserDetails user,
@@ -60,7 +60,7 @@ public class PostController {
     }
 
     //Notice 게시물 전체조회
-    @GetMapping("/notice/posts")
+    @GetMapping("/notice-posts")
     public ResponseEntity<ResponseMessage<List<PostResponseDto>>> findAllNoticePost(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable("gymId") Long gymId
@@ -89,7 +89,7 @@ public class PostController {
             .body(responseMessage);
     }
 
-    @PatchMapping("posts/{postId}")
+    @PatchMapping("/posts/{postId}")
     public ResponseEntity<ResponseMessage<PostResponseDto>> updatePost(
         @RequestBody PostUpdateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails user,

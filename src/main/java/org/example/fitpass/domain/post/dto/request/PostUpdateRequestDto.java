@@ -9,24 +9,28 @@ import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-
 public class PostUpdateRequestDto {
 
     @NotBlank(message = "게시물의 status가 없습니다.")
-    private PostStatus status;
+    private final PostStatus status;
 
     @NotBlank(message = "게시물의 Type이 없습니다.")
-    private PostType postType;
+    private final PostType postType;
 
     @NotBlank(message = "게시물의 제목이 없습니다.")
     @Size(max = 50, message = "게시물 제목은 50글자까지 작성 가능 합니다.")
-    private String title;
+    private final String title;
 
     @NotBlank(message = "게시물의 내용이 없습니다.")
-    private String content;
+    private final String content;
 
-    private String postImage;
+    private final String postImage;
 
+    public PostUpdateRequestDto(PostStatus status, PostType postType, String title, String content, String postImage) {
+        this.status = status;
+        this.postType = postType;
+        this.title = title;
+        this.content = content;
+        this.postImage = postImage;
+    }
 }
