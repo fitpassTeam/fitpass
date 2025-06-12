@@ -30,10 +30,10 @@ public class PointService {
     public int chargePoint(Long userId, PointChargeRequestDto pointChargeRequestDto, String description ) {
         User user = userRepository.findByIdOrElseThrow(userId);
         // 현재 잔액에서 충전될 포인트 추가
-        int newBalance = user.getPointBalance() + pointChargeRequestDto.getAmount();
+        int newBalance = user.getPointBalance() + pointChargeRequestDto.amount();
 
         // 포인트 이력 저장
-        Point point = new Point(user, pointChargeRequestDto.getAmount(), description, newBalance, PointType.CHARGE);
+        Point point = new Point(user, pointChargeRequestDto.amount(), description, newBalance, PointType.CHARGE);
         pointRepository.save(point);
 
         // 사용자 잔액 업데이트
@@ -47,13 +47,13 @@ public class PointService {
     public int usePoint (Long userId, PointUseRefundRequestDto pointUseRefundRequestDto) {
         User user = userRepository.findByIdOrElseThrow(userId);
         // 잔액 부족 검증
-        if (user.getPointBalance() < pointUseRefundRequestDto.getAmount()) {
+        if (user.getPointBalance() < pointUseRefundRequestDto.amount()) {
             throw new BaseException(ExceptionCode.INSUFFICIENT_POINT_BALANCE);
         }
         // 현재 잔액에서 사용한 포인트 차감
-        int newBalance = user.getPointBalance() - pointUseRefundRequestDto.getAmount();
+        int newBalance = user.getPointBalance() - pointUseRefundRequestDto.amount();
         // 포인트 이력 저장
-        Point point = new Point(user, pointUseRefundRequestDto.getAmount(), pointUseRefundRequestDto.getDescription(), newBalance, PointType.USE);
+        Point point = new Point(user, pointUseRefundRequestDto.amount(), pointUseRefundRequestDto.description(), newBalance, PointType.USE);
         pointRepository.save(point);
         // 사용자 잔액 업데이트
         user.updatePointBalance(newBalance);
@@ -66,9 +66,9 @@ public class PointService {
     public int refundPoint (Long userId, PointUseRefundRequestDto pointUseRefundRequestDto) {
         User user = userRepository.findByIdOrElseThrow(userId);
 
-        int newBalance = user.getPointBalance() + pointUseRefundRequestDto.getAmount();
+        int newBalance = user.getPointBalance() + pointUseRefundRequestDto.amount();
 
-        Point point = new Point(user, pointUseRefundRequestDto.getAmount(), pointUseRefundRequestDto.getDescription(), newBalance, PointType.REFUND);
+        Point point = new Point(user, pointUseRefundRequestDto.amount(), pointUseRefundRequestDto.description(), newBalance, PointType.REFUND);
         pointRepository.save(point);
         // 사용자 잔액 업데이트
         user.updatePointBalance(newBalance);
@@ -82,16 +82,16 @@ public class PointService {
         User user = userRepository.findByIdOrElseThrow(userId);
 
         // 잔액 부족 검증
-        if (user.getPointBalance() < pointCashOutRequestDto.getAmount()) {
+        if (user.getPointBalance() < pointCashOutRequestDto.amount()) {
             throw new BaseException(ExceptionCode.INSUFFICIENT_POINT_BALANCE);
         }
 
-        int requestedAmount = pointCashOutRequestDto.getAmount();
+        int requestedAmount = pointCashOutRequestDto.amount();
         int cashAmount = (int)  (requestedAmount * 0.9);
         int newBalance = user.getPointBalance() - requestedAmount;
 
-        String description = pointCashOutRequestDto.getDescription() != null ?
-            pointCashOutRequestDto.getDescription() : "포인트 현금화";
+        String description = pointCashOutRequestDto.description() != null ?
+            pointCashOutRequestDto.description() : "포인트 현금화";
         Point point = new Point(user, requestedAmount, description, newBalance, PointType.CASH_OUT);
         pointRepository.save(point);
 

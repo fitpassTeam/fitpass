@@ -3,8 +3,6 @@ package org.example.fitpass.domain.fitnessGoal.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,8 +17,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
-import org.example.fitpass.common.entity.Image;
-import org.example.fitpass.domain.fitnessGoal.enums.RecordType;
+import org.example.fitpass.common.Image.entity.Image;
 
 @Getter
 @Entity
@@ -36,10 +33,6 @@ public class DailyRecord extends BaseEntity {
     @JoinColumn(name = "fitness_goal_id", nullable = false)
     private FitnessGoal fitnessGoal;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private RecordType recordType;
-
     @OneToMany(mappedBy = "dailyRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
@@ -49,17 +42,16 @@ public class DailyRecord extends BaseEntity {
     @Column(nullable = false)
     private LocalDate recordDate;
 
-    public DailyRecord(FitnessGoal fitnessGoal, RecordType recordType,
+    public DailyRecord(FitnessGoal fitnessGoal,
         LocalDate recordDate, String memo) {
         this.fitnessGoal = fitnessGoal;
-        this.recordType = recordType;
         this.recordDate = recordDate;
         this.memo = memo;
     }
 
-    public static DailyRecord of(FitnessGoal fitnessGoal, RecordType recordType,
+    public static DailyRecord of(FitnessGoal fitnessGoal,
         LocalDate recordDate, String memo) {
-        return new DailyRecord(fitnessGoal, recordType, recordDate, memo);
+        return new DailyRecord(fitnessGoal, recordDate, memo);
     }
 
 

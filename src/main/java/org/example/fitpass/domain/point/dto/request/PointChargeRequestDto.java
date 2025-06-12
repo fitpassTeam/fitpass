@@ -1,12 +1,5 @@
 package org.example.fitpass.domain.point.dto.request;
 
-import lombok.Getter;
+public record PointChargeRequestDto(int amount) {
 
-@Getter
-public class PointChargeRequestDto {
-    private final int amount;
-
-    public PointChargeRequestDto(int amount) {
-        this.amount = amount;
-    }
 }

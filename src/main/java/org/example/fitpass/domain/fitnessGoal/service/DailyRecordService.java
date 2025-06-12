@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.fitpass.common.entity.Image;
+import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.common.service.S3Service;
+import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.domain.fitnessGoal.dto.request.DailyRecordCreateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.dto.response.DailyRecordResponseDto;
 import org.example.fitpass.domain.fitnessGoal.entity.DailyRecord;
@@ -16,7 +16,6 @@ import org.example.fitpass.domain.fitnessGoal.repository.DailyRecordRepository;
 import org.example.fitpass.domain.fitnessGoal.repository.FitnessGoalRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -30,21 +29,20 @@ public class DailyRecordService {
     // 일일 기록 생성
     @Transactional
     public DailyRecordResponseDto createDailyRecord (DailyRecordCreateRequestDto requestDto, Long userId) {
-        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(requestDto.getFitnessGoalId(), userId);
+        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(requestDto.fitnessGoalId(), userId);
 
-        if(dailyRecordRepository.existsByFitnessGoalIdAndRecordDate(requestDto.getFitnessGoalId(), requestDto.getRecordDate())) {
+        if(dailyRecordRepository.existsByFitnessGoalIdAndRecordDate(requestDto.fitnessGoalId(), requestDto.recordDate())) {
             throw new BaseException(ExceptionCode.DAILY_RECORD_ALREADY_EXISTS);
         }
 
         DailyRecord dailyRecord = DailyRecord.of(
             fitnessGoal,
-            requestDto.getRecordType(),
-            requestDto.getRecordDate(),
-            requestDto.getMemo());
+            requestDto.recordDate(),
+            requestDto.memo());
         DailyRecord savedRecord = dailyRecordRepository.save(dailyRecord);
         // 이미지 S3 업로드
-        if(requestDto.getImageUrls() != null && !requestDto.getImageUrls().isEmpty()) {
-            processImages(requestDto.getImageUrls(), savedRecord);
+        if(requestDto.imageUrls() != null && !requestDto.imageUrls().isEmpty()) {
+            processImages(requestDto.imageUrls(), savedRecord);
         }
 
         return DailyRecordResponseDto.from(savedRecord);
@@ -85,12 +83,10 @@ public class DailyRecordService {
     }
 
     // 이미지 S3 저장 메소드
-    private void processImages (List<MultipartFile> imageFiles, DailyRecord dailyRecord) {
-        for(MultipartFile imageFile : imageFiles) {
-            // S3 업로드
-            String imageUrl = s3Service.uploadSingleFile(imageFile);
+    private void processImages (List<String> imageFiles, DailyRecord dailyRecord) {
+        for(String imageFile : imageFiles) {
 
-            Image image = new Image(imageUrl);
+            Image image = new Image(imageFile);
             image.assignToDailyRecord(dailyRecord);
 
             // DailyRecord에 이미지 추가

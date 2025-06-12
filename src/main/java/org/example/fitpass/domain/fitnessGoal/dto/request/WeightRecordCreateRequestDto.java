@@ -4,22 +4,19 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
-public class WeightRecordCreateRequestDto {
-
+public record WeightRecordCreateRequestDto(
     @NotNull(message = "목표 ID는 필수입니다")
-    private final Long fitnessGoalId;
+    Long fitnessGoalId,
 
     @NotNull(message = "체중은 필수입니다")
     @Positive(message = "체중은 양수여야 합니다")
-    private final Double weight;
+    Double weight,
 
     @NotNull(message = "기록일은 필수입니다")
-    private final LocalDate recordDate;
+    LocalDate recordDate,
 
-    private final String memo;
+    String memo) {
 
     public WeightRecordCreateRequestDto(Long fitnessGoalId, Double weight, LocalDate recordDate,
         String memo) {

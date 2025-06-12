@@ -4,7 +4,7 @@ import static org.example.fitpass.common.error.ExceptionCode.INVALID_GYM_TRAINER
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.entity.Image;
+import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
@@ -29,8 +29,11 @@ public class TrainerService {
         List<Image> trainerImage) {
 
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+
         Trainer trainer = Trainer.of(trainerImage, name, price, content);
+
         trainer.assignToGym(gym);
+
         trainerRepository.save(trainer);
 
         return TrainerResponseDto.of(
@@ -54,7 +57,7 @@ public class TrainerService {
         Trainer trainer = trainerRepository.findByIdOrElseThrow(id);
 
         validateTrainerBelongsToGym(trainer, gym);
-        
+
         return TrainerDetailResponseDto.from(
             trainer.getName(),
             trainer.getPrice(),
