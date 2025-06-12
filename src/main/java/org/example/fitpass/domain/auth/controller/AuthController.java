@@ -23,13 +23,11 @@ public class AuthController {
     private final UserService userService;
 
     // 회원가입
-    @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("/signup")
     public ResponseEntity<ResponseMessage<UserResponseDto>> signup(
-            @Valid
-            @RequestPart("request") UserRequestDto request,
-            @RequestPart(value = "image", required = false) MultipartFile image
+            @Valid @RequestBody UserRequestDto request
     ) {
-        UserResponseDto response = userService.signup(request, image);
+        UserResponseDto response = userService.signup(request);
         return ResponseEntity.status(SuccessCode.SIGNUP_SUCCESS.getHttpStatus())
                 .body(ResponseMessage.success(SuccessCode.SIGNUP_SUCCESS, response));
     }

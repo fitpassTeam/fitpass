@@ -13,6 +13,8 @@ public class UserRequestDto {
     @NotBlank(message = "이메일은 필수입니다")
     private final String email;
 
+    private String userImage;
+
     @NotBlank(message = "비밀번호는 필수입니다")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
             message = "비밀번호는 최소 8자이며, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.")
@@ -39,9 +41,10 @@ public class UserRequestDto {
     private final UserRole userRole;
 
 
-    public UserRequestDto(String email, String password, String name, String phone, int age,
+    public UserRequestDto(String email, String userImage, String password, String name, String phone, int age,
         String address, Gender gender, UserRole userRole) {
         this.email = email;
+        this.userImage = userImage;
         this.password = password;
         this.name = name;
         this.phone = phone;
