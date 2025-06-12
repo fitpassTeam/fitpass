@@ -1,8 +1,11 @@
 package org.example.fitpass.domain.trainer.service;
 
+import static org.example.fitpass.common.error.ExceptionCode.INVALID_GYM_TRAINER_RELATION;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.entity.Image;
+import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerUpdateRequestDto;
@@ -26,11 +29,8 @@ public class TrainerService {
         List<Image> trainerImage) {
 
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-
         Trainer trainer = Trainer.of(trainerImage, name, price, content);
-
         trainer.assignToGym(gym);
-
         trainerRepository.save(trainer);
 
         return TrainerResponseDto.of(
@@ -42,14 +42,19 @@ public class TrainerService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TrainerResponseDto> getAllTrainers(Pageable pageable) {
-        Page<Trainer> trainers = trainerRepository.findAll(pageable);
+    public Page<TrainerResponseDto> getAllTrainersByGym(Long gymId, Pageable pageable) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Page<Trainer> trainers = trainerRepository.findAllByGym(gym, pageable);
         return trainers.map(TrainerResponseDto::fromEntity);
     }
 
     @Transactional(readOnly = true)
-    public TrainerDetailResponseDto findById(Long id) {
-        Trainer trainer = trainerRepository.getByIdOrThrow(id);
+    public TrainerDetailResponseDto getTrainerByIdAndGym(Long gymId, Long id) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(id);
+
+        validateTrainerBelongsToGym(trainer, gym);
+        
         return TrainerDetailResponseDto.from(
             trainer.getName(),
             trainer.getPrice(),
@@ -61,15 +66,23 @@ public class TrainerService {
     }
 
     @Transactional
-    public void updatePhoto(List<String> imageUrls, Long id) {
-        Trainer trainer = trainerRepository.getByIdOrThrow(id);
+    public void updatePhoto(Long gymId, List<String> imageUrls, Long id) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(id);
+
+        validateTrainerBelongsToGym(trainer, gym);
+
         trainer.updatePhoto(imageUrls, trainer);
         trainerRepository.save(trainer);
     }
 
     @Transactional
-    public TrainerResponseDto updateTrainer(Long id, TrainerUpdateRequestDto dto) {
-        Trainer trainer = trainerRepository.getByIdOrThrow(id);
+    public TrainerResponseDto updateTrainer(Long gymId, Long id, TrainerUpdateRequestDto dto) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(id);
+
+        validateTrainerBelongsToGym(trainer, gym);
+
         trainer.update(dto.getTrainerImage(), dto.getName(), dto.getPrice(), dto.getContent(),
             dto.getTrainerStatus());
         return TrainerResponseDto.of(
@@ -81,9 +94,19 @@ public class TrainerService {
     }
 
     @Transactional
-    public void deleteItem(Long id) {
-        Trainer trainer = trainerRepository.getByIdOrThrow(id);
+    public void deleteItem(Long gymId, Long id) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(id);
+
+        validateTrainerBelongsToGym(trainer, gym);
         trainerRepository.delete(trainer);
+    }
+
+    // 트레이너가 해당 체육관에 속해 있는지 검증
+    private void validateTrainerBelongsToGym(Trainer trainer, Gym gym) {
+        if (!trainer.getGym().getId().equals(gym.getId())) {
+            throw new BaseException(INVALID_GYM_TRAINER_RELATION);
+        }
     }
 
 }

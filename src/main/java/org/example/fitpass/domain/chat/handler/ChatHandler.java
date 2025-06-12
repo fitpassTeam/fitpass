@@ -1,5 +1,7 @@
 package org.example.fitpass.domain.chat.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import java.net.URI;
 import java.net.http.WebSocket;
 import java.util.Map;
@@ -8,8 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.fitpass.domain.chat.entity.ChatMessage;
 import org.example.fitpass.domain.chat.entity.ChatRoom;
+import org.example.fitpass.domain.chat.enums.SenderType;
 import org.example.fitpass.domain.chat.repository.ChatMessageRepository;
 import org.example.fitpass.domain.chat.repository.ChatRoomRepository;
+import org.example.fitpass.domain.trainer.entity.Trainer;
+import org.example.fitpass.domain.trainer.repository.TrainerRepository;
+import org.example.fitpass.domain.user.entity.User;
+import org.example.fitpass.domain.user.repository.UserRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
@@ -25,6 +32,10 @@ public class ChatHandler extends TextWebSocketHandler {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+
+    private final UserRepository userRepository;
+    private final TrainerRepository trainerRepository;
+    private final ObjectMapper objectMapper;  // Jackson 라이브러리 필요
 
     private static final Map<Long, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
 
@@ -50,20 +61,31 @@ public class ChatHandler extends TextWebSocketHandler {
             Long senderId = json.getLong("senderId");
             Long receiverId = json.getLong("receiverId");
             String content = json.getString("message");
+            String senderTypeStr = json.getString("senderType");
+            SenderType senderType = SenderType.valueOf(senderTypeStr.toUpperCase());
 
-            //채팅방 조회 또는 생성
-            ChatRoom room = chatRoomRepository.findByUserIdAndTrainerId(senderId, receiverId)
-                .orElseGet(
-                    () -> chatRoomRepository.save(ChatRoom.of(senderId, receiverId)));
+            // 1. 사용자/트레이너 조회
+            User user = userRepository.findById(
+                    senderType == SenderType.USER ? senderId : receiverId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            Trainer trainer = trainerRepository.findById(
+                    senderType == SenderType.USER ? receiverId : senderId)
+                .orElseThrow(() -> new EntityNotFoundException("Trainer not found"));
 
-            //메세지 저장
-            ChatMessage chatMessage = ChatMessage.of(room, senderId, content);
-            chatMessageRepository.save(chatMessage);
+            // 2. 채팅방 조회/생성
+            ChatRoom room = chatRoomRepository.findByUserAndTrainer(user, trainer)
+                .orElseGet(() -> chatRoomRepository.save(ChatRoom.of(user, trainer)));
+
+            // 3. 메시지 저장
+            ChatMessage chatMessage = ChatMessage.of(room, senderId, content, senderType);
+            chatMessage = chatMessageRepository.save(chatMessage);  // 저장 후 갱신
 
             //메세지 전송
             WebSocketSession receiverSession = sessionMap.get(receiverId);
             if (receiverSession != null && receiverSession.isOpen()) {
                 receiverSession.sendMessage(new TextMessage(content));
+            } else {
+                log.info("수신자 {} 오프라인", receiverId);
             }
         } catch (IllegalArgumentException e) { //JSON 내부에서 예상한 필드가 없거나 타입이 잘못됐을 때 발생 가능
             //JSON이 아닌 일반 메세지인 경우 전체 브로드캐스트
@@ -82,8 +104,8 @@ public class ChatHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         Long userId = extractUserId(session);
         if (userId != null) {
-            sessionMap.put(userId, session);
-            log.info("사용자 {} 접속", userId);
+            sessionMap.remove(userId);
+            log.info("사용자 {} 접속 해제", userId);
         }
     }
 

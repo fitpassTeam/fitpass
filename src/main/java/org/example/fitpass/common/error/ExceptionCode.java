@@ -2,6 +2,7 @@ package org.example.fitpass.common.error;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -48,7 +49,7 @@ public enum ExceptionCode implements BaseCode {
     NOT_WEIGHT_RECORD_OWNER(HttpStatus.FORBIDDEN, "403", "체중 기록에 접근 권한이 없습니다."),
     NOT_DAILY_RECORD_OWNER(HttpStatus.FORBIDDEN, "403", "일일 기록에 접근 권한이 없습니다."),
     NOT_FITNESS_GOAL_OWNER(HttpStatus.FORBIDDEN, "403", "해당 목표에 접근 권한이 없습니다."),
-
+    INVALID_GYM_TRAINER_RELATION(HttpStatus.FORBIDDEN, "403", "트레이너가 해당 체육관에 속하지 않습니다."),
     // 404 Not Found
     CANT_FIND_DATA(HttpStatus.NOT_FOUND,"404", "해당 데이터를 찾을 수 없습니다."),
     GYM_NOT_FOUND(HttpStatus.NOT_FOUND,"404","찾으시는 체육관이 존재하지 않습니다."),
