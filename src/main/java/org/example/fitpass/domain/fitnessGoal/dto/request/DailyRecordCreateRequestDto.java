@@ -1,32 +1,26 @@
 package org.example.fitpass.domain.fitnessGoal.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
-import lombok.Getter;
-import org.example.fitpass.domain.fitnessGoal.enums.RecordType;
-import org.springframework.web.multipart.MultipartFile;
 
-@Getter
-public class DailyRecordCreateRequestDto {
-
+public record DailyRecordCreateRequestDto(
     @NotNull(message = "목표 ID는 필수입니다")
-    private final Long fitnessGoalId;
+    Long fitnessGoalId,
 
-    @NotNull(message = "기록 타입은 필수입니다")
-    private final RecordType recordType;
+    List<String> imageUrls,
 
-    private final List<MultipartFile> imageUrls;
-
-    private final String memo;
+    String memo,
 
     @NotNull(message = "기록일은 필수입니다")
-    private final LocalDate recordDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate recordDate
+) {
 
-    public DailyRecordCreateRequestDto(Long fitnessGoalId, RecordType recordType,
-        List<MultipartFile> imageUrls, String memo, LocalDate recordDate) {
+    public DailyRecordCreateRequestDto(Long fitnessGoalId,
+        List<String> imageUrls, String memo, LocalDate recordDate) {
         this.fitnessGoalId = fitnessGoalId;
-        this.recordType = recordType;
         this.imageUrls = imageUrls;
         this.memo = memo;
         this.recordDate = recordDate;

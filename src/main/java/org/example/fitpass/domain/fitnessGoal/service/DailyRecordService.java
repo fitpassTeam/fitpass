@@ -30,21 +30,20 @@ public class DailyRecordService {
     // 일일 기록 생성
     @Transactional
     public DailyRecordResponseDto createDailyRecord (DailyRecordCreateRequestDto requestDto, Long userId) {
-        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(requestDto.getFitnessGoalId(), userId);
+        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(requestDto.fitnessGoalId(), userId);
 
-        if(dailyRecordRepository.existsByFitnessGoalIdAndRecordDate(requestDto.getFitnessGoalId(), requestDto.getRecordDate())) {
+        if(dailyRecordRepository.existsByFitnessGoalIdAndRecordDate(requestDto.fitnessGoalId(), requestDto.recordDate())) {
             throw new BaseException(ExceptionCode.DAILY_RECORD_ALREADY_EXISTS);
         }
 
         DailyRecord dailyRecord = DailyRecord.of(
             fitnessGoal,
-            requestDto.getRecordType(),
-            requestDto.getRecordDate(),
-            requestDto.getMemo());
+            requestDto.recordDate(),
+            requestDto.memo());
         DailyRecord savedRecord = dailyRecordRepository.save(dailyRecord);
         // 이미지 S3 업로드
-        if(requestDto.getImageUrls() != null && !requestDto.getImageUrls().isEmpty()) {
-            processImages(requestDto.getImageUrls(), savedRecord);
+        if(requestDto.imageUrls() != null && !requestDto.imageUrls().isEmpty()) {
+            processImages(requestDto.imageUrls(), savedRecord);
         }
 
         return DailyRecordResponseDto.from(savedRecord);
@@ -85,12 +84,10 @@ public class DailyRecordService {
     }
 
     // 이미지 S3 저장 메소드
-    private void processImages (List<MultipartFile> imageFiles, DailyRecord dailyRecord) {
-        for(MultipartFile imageFile : imageFiles) {
-            // S3 업로드
-            String imageUrl = s3Service.uploadSingleFile(imageFile);
+    private void processImages (List<String> imageFiles, DailyRecord dailyRecord) {
+        for(String imageFile : imageFiles) {
 
-            Image image = new Image(imageUrl);
+            Image image = new Image(imageFile);
             image.assignToDailyRecord(dailyRecord);
 
             // DailyRecord에 이미지 추가

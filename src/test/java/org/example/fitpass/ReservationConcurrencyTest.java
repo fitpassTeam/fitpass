@@ -20,7 +20,6 @@ import org.example.fitpass.domain.reservation.dto.response.ReservationResponseDt
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.service.ReservationService;
 import org.example.fitpass.domain.trainer.entity.Trainer;
-import org.example.fitpass.domain.trainer.enums.TrainerStatus;
 import org.example.fitpass.domain.trainer.repository.TrainerRepository;
 import org.example.fitpass.domain.user.Gender;
 import org.example.fitpass.domain.user.UserRole;
@@ -158,7 +157,7 @@ class ReservationConcurrencyTest {
                     request, user1.getId(), testGym.getId(), testTrainer.getId()
                 );
                 successCount.incrementAndGet();
-                results.add("사용자1 예약 성공! ID: " + result.getReservationId());
+                results.add("사용자1 예약 성공! ID: " + result.reservationId());
             } catch (Exception e) {
                 failCount.incrementAndGet();
                 results.add("사용자1 예약 실패: " + e.getMessage());
@@ -175,7 +174,7 @@ class ReservationConcurrencyTest {
                     request, user2.getId(), testGym.getId(), testTrainer.getId()
                 );
                 successCount.incrementAndGet();
-                results.add("사용자2 예약 성공! ID: " + result.getReservationId());
+                results.add("사용자2 예약 성공! ID: " + result.reservationId());
             } catch (Exception e) {
                 failCount.incrementAndGet();
                 results.add("사용자2 예약 실패: " + e.getMessage());
@@ -240,7 +239,7 @@ class ReservationConcurrencyTest {
                     );
 
                     successCount.incrementAndGet();
-                    results.add("사용자" + userIndex + " 예약 성공! 예약ID: " + result.getReservationId());
+                    results.add("사용자" + userIndex + " 예약 성공! 예약ID: " + result.reservationId());
 
                 } catch (Exception e) {
                     failCount.incrementAndGet();
@@ -378,7 +377,7 @@ class ReservationConcurrencyTest {
                     request, user1.getId(), testGym.getId(), testTrainer.getId()
                 );
                 successCount.incrementAndGet();
-                results.add("Redis락 사용자1 예약 성공! ID: " + result.getReservationId());
+                results.add("Redis락 사용자1 예약 성공! ID: " + result.reservationId());
             } catch (Exception e) {
                 failCount.incrementAndGet();
                 results.add("Redis락 사용자1 예약 실패: " + e.getMessage());
@@ -395,7 +394,7 @@ class ReservationConcurrencyTest {
                     request, user2.getId(), testGym.getId(), testTrainer.getId()
                 );
                 successCount.incrementAndGet();
-                results.add("Redis락 사용자2 예약 성공! ID: " + result.getReservationId());
+                results.add("Redis락 사용자2 예약 성공! ID: " + result.reservationId());
             } catch (Exception e) {
                 failCount.incrementAndGet();
                 results.add("Redis락 사용자2 예약 실패: " + e.getMessage());
@@ -457,7 +456,7 @@ class ReservationConcurrencyTest {
                     );
 
                     successCount.incrementAndGet();
-                    results.add("Redis락 사용자" + userIndex + " 예약 성공! 예약ID: " + result.getReservationId());
+                    results.add("Redis락 사용자" + userIndex + " 예약 성공! 예약ID: " + result.reservationId());
 
                 } catch (Exception e) {
                     failCount.incrementAndGet();
@@ -533,7 +532,7 @@ class ReservationConcurrencyTest {
                     );
 
                     successCount.incrementAndGet();
-                    results.add("하이브리드 사용자" + userIndex + " 예약 성공! 예약ID: " + result.getReservationId());
+                    results.add("하이브리드 사용자" + userIndex + " 예약 성공! 예약ID: " + result.reservationId());
 
                 } catch (Exception e) {
                     failCount.incrementAndGet();

@@ -32,7 +32,6 @@ import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.trainer.repository.TrainerRepository;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +53,7 @@ public class ReservationService {
         LocalDate date) {
         User user = userRepository.findByIdOrElseThrow(userId);
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
+        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
 
         // 체육관 운영 시간 (체육관 엔티티에서 가져오기)
         List<LocalTime> possibleTimes = generateTimeSlots(
@@ -82,12 +81,12 @@ public class ReservationService {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
+        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
 
         // Redis 분산 락 키 생성
         String lockKey = String.format("reservation:lock:%d:%s:%s",
-            trainerId, reservationRequestDto.getReservationDate(),
-            reservationRequestDto.getReservationTime());
+            trainerId, reservationRequestDto.reservationDate(),
+            reservationRequestDto.reservationTime());
 
         RLock lock = redissonClient.getLock(lockKey);
 
@@ -98,8 +97,8 @@ public class ReservationService {
             }
             // 중복 예약 확인 (Redis 락 내에서)
             boolean alreadyExists = reservationRepository.existsByTrainerAndReservationDateAndReservationTime(
-                trainer, reservationRequestDto.getReservationDate(),
-                reservationRequestDto.getReservationTime()
+                trainer, reservationRequestDto.reservationDate(),
+                reservationRequestDto.reservationTime()
             );
 
             if (alreadyExists) {
@@ -141,7 +140,7 @@ public class ReservationService {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
+        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
         // 예약 조회
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
 
@@ -163,7 +162,7 @@ public class ReservationService {
         }
 
         // 새로운 예약 날짜도 2일 후부터 가능한지 검증
-        LocalDate newReservationDate = updateReservationRequestDto.getReservationDate();
+        LocalDate newReservationDate = updateReservationRequestDto.reservationDate();
         if (ChronoUnit.DAYS.between(today, newReservationDate) < 2) {
             throw new BaseException(ExceptionCode.RESERVATION_TOO_EARLY);
         }
@@ -172,7 +171,7 @@ public class ReservationService {
         boolean isDuplicate = reservationRepository.existsByTrainerAndReservationDateAndReservationTimeAndIdNot(
             trainer,
             newReservationDate,
-            updateReservationRequestDto.getReservationTime(),
+            updateReservationRequestDto.reservationTime(),
             reservationId  // 현재 예약은 제외
         );
         if (isDuplicate) {
@@ -180,9 +179,9 @@ public class ReservationService {
         }
         // 예약 정보 업데이트
         reservation.updateReservation(
-            updateReservationRequestDto.getReservationDate(),
-            updateReservationRequestDto.getReservationTime(),
-            updateReservationRequestDto.getReservationStatus());
+            updateReservationRequestDto.reservationDate(),
+            updateReservationRequestDto.reservationTime(),
+            updateReservationRequestDto.reservationStatus());
 
         Reservation updateReservation = reservationRepository.save(reservation);
 
@@ -197,7 +196,7 @@ public class ReservationService {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
+        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
         // 예약 조회
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
 
@@ -246,7 +245,7 @@ public class ReservationService {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         gym.isOwner(userId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
+        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
         // 트레이너가 해당 체육관 소속인지 확인
         if (!trainer.getGym().getId().equals(gymId)) {
             throw new BaseException(ExceptionCode.NOT_GYM_OWNER);

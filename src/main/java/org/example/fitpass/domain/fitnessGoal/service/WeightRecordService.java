@@ -26,7 +26,7 @@ public class WeightRecordService {
     @Transactional
     public WeightRecordResponseDto createWeightRecord (WeightRecordCreateRequestDto requestDto, Long userId) {
         // 목표 존재 여부 및 권한 확인
-        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(requestDto.getFitnessGoalId(), userId);
+        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(requestDto.fitnessGoalId(), userId);
 
         // 만료되거나 취소된 목표에는 체중 기록 생성 불가
         if (fitnessGoal.getGoalStatus() == GoalStatus.EXPIRED || 
@@ -35,21 +35,21 @@ public class WeightRecordService {
         }
 
         if(weightRecordRepository.existsByFitnessGoalIdAndRecordDate(
-            requestDto.getFitnessGoalId(), requestDto.getRecordDate())) {
+            requestDto.fitnessGoalId(), requestDto.recordDate())) {
             throw new BaseException(ExceptionCode.WEIGHT_RECORD_ALREADY_EXISTS);
         }
 
         WeightRecord weightRecord = WeightRecord.of(
             fitnessGoal,
-            requestDto.getWeight(),
-            requestDto.getRecordDate(),
-            requestDto.getMemo()
+            requestDto.weight(),
+            requestDto.recordDate(),
+            requestDto.memo()
         );
 
         WeightRecord savedRecord = weightRecordRepository.save(weightRecord);
 
         // 현재 체중 업데이트 (목표 달성 체크 포함)
-        fitnessGoal.updateCurrentWeight(requestDto.getWeight());
+        fitnessGoal.updateCurrentWeight(requestDto.weight());
         
         return WeightRecordResponseDto.from(savedRecord);
     }
@@ -83,7 +83,7 @@ public class WeightRecordService {
             throw new BaseException(ExceptionCode.NOT_WEIGHT_RECORD_OWNER);
         }
 
-        weightRecord.updateRecord(requestDto.getWeight(), requestDto.getMemo());
+        weightRecord.updateRecord(requestDto.weight(), requestDto.memo());
 
         updateCurrentWeightIfLatest(weightRecord);
 
