@@ -15,7 +15,6 @@ import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +24,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
-    private final S3Service s3Service;
 
     @Transactional
     public UserResponseDto signup(UserRequestDto requestDto) {
 
         String imageUrl = requestDto.getUserImage();
 
-        User newUser = new User(
+        User user = new User(
                 requestDto.getEmail(),
                 imageUrl,
                 passwordEncoder.encode(requestDto.getPassword()),
@@ -44,8 +42,8 @@ public class UserService {
                 requestDto.getUserRole()
         );
 
-        userRepository.save(newUser);
-        return UserResponseDto.from(newUser);
+        userRepository.save(user);
+        return UserResponseDto.from(user);
     }
 
 
