@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.common.entity.Image;
+import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.trainer.enums.TrainerStatus;
 
 @Getter

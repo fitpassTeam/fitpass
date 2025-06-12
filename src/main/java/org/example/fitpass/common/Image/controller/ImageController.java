@@ -1,10 +1,10 @@
-package org.example.fitpass.common.controller;
+package org.example.fitpass.common.Image.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
-import org.example.fitpass.common.service.S3Service;
+import org.example.fitpass.common.s3.service.S3Service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;

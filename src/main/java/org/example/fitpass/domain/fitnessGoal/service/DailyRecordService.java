@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.fitpass.common.entity.Image;
+import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.common.service.S3Service;
+import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.domain.fitnessGoal.dto.request.DailyRecordCreateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.dto.response.DailyRecordResponseDto;
 import org.example.fitpass.domain.fitnessGoal.entity.DailyRecord;
@@ -16,7 +16,6 @@ import org.example.fitpass.domain.fitnessGoal.repository.DailyRecordRepository;
 import org.example.fitpass.domain.fitnessGoal.repository.FitnessGoalRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor

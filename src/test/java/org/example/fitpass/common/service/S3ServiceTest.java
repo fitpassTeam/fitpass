@@ -1,10 +1,10 @@
 package org.example.fitpass.common.service;
 
 
-import com.amazonaws.services.s3.AmazonS3;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import org.example.fitpass.common.s3.service.S3Service;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
