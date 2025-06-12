@@ -4,31 +4,26 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.entity.Reservation;
 
-@Getter
-public class UpdateReservationResponseDto {
+public record UpdateReservationResponseDto
+    (Long reservationId,
+     Long userId,
+     Long gymId,
+     Long trainerId,
 
-    private final Long reservationId;
-    private final Long userId;
-    private final Long gymId;
-    private final Long trainerId;
+     @JsonFormat(pattern = "yyyy-MM-dd")
+     LocalDate reservationDate,
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private final LocalDate reservationDate;
+     @JsonFormat(pattern = "HH:mm")
+     LocalTime reservationTime,
 
-    @JsonFormat(pattern = "HH:mm")
-    private final LocalTime reservationTime;
+     ReservationStatus reservationStatus,
 
-    private final ReservationStatus reservationStatus;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime updatedAt;
+     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+     LocalDateTime updatedAt) {
 
     public UpdateReservationResponseDto(Long reservationId, Long userId, Long gymId, Long trainerId,
         LocalDate reservationDate, LocalTime reservationTime, ReservationStatus reservationStatus,
@@ -45,14 +40,14 @@ public class UpdateReservationResponseDto {
 
     public static UpdateReservationResponseDto from(Reservation reservation) {
         return new UpdateReservationResponseDto(
-                reservation.getId(),
-                reservation.getUser().getId(),
-                reservation.getGym().getId(),
-                reservation.getTrainer().getId(),
-                reservation.getReservationDate(),
-                reservation.getReservationTime(),
-                reservation.getReservationStatus(),
-                reservation.getUpdatedAt()
+            reservation.getId(),
+            reservation.getUser().getId(),
+            reservation.getGym().getId(),
+            reservation.getTrainer().getId(),
+            reservation.getReservationDate(),
+            reservation.getReservationTime(),
+            reservation.getReservationStatus(),
+            reservation.getUpdatedAt()
         );
     }
 }

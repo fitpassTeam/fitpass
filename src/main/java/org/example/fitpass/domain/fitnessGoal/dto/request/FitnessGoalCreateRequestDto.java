@@ -4,34 +4,31 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.example.fitpass.domain.fitnessGoal.enums.GoalType;
 
-@Getter
-public class FitnessGoalCreateRequestDto {
-
+public record FitnessGoalCreateRequestDto(
     @NotBlank(message = "목표 제목은 필수입니다")
-    private final String title;
+    String title,
 
-    private final String description;
+    String description,
 
     @NotNull(message = "목표 타입은 필수입니다")
-    private final GoalType goalType;
+    GoalType goalType,
 
     @NotNull(message = "시작 체중은 필수입니다")
     @Positive(message = "체중은 양수여야 합니다")
-    private final Double startWeight;
+    Double startWeight,
 
     @NotNull(message = "목표 체중은 필수입니다")
     @Positive(message = "체중은 양수여야 합니다")
-    private final Double targetWeight;
+    Double targetWeight,
 
     @NotNull(message = "시작일은 필수입니다")
-    private final LocalDate startDate;
+    LocalDate startDate,
 
     @NotNull(message = "종료일은 필수입니다")
-    private final LocalDate endDate;
+    LocalDate endDate
+) {
 
     public FitnessGoalCreateRequestDto(String title, String description, GoalType goalType,
         Double startWeight, Double targetWeight, LocalDate startDate, LocalDate endDate) {

@@ -32,13 +32,13 @@ public class FitnessGoalService {
 
         FitnessGoal fitnessGoal = FitnessGoal.of(
             user,
-            requestDto.getTitle(),
-            requestDto.getDescription(),
-            requestDto.getGoalType(),
-            requestDto.getStartWeight(),
-            requestDto.getTargetWeight(),
-            requestDto.getStartDate(),
-            requestDto.getEndDate());
+            requestDto.title(),
+            requestDto.description(),
+            requestDto.goalType(),
+            requestDto.startWeight(),
+            requestDto.targetWeight(),
+            requestDto.startDate(),
+            requestDto.endDate());
 
         FitnessGoal savedGoal = fitnessGoalRepository.save(fitnessGoal);
         return FitnessGoalResponseDto.from(savedGoal);
@@ -81,8 +81,8 @@ public class FitnessGoalService {
             throw new BaseException(ExceptionCode.FITNESS_GOAL_ALREADY_CANCELLED);
         }
 
-        fitnessGoal.updateGoal(requestDto.getTitle(), requestDto.getDescription(),
-            requestDto.getTargetWeight(), requestDto.getEndDate());
+        fitnessGoal.updateGoal(requestDto.title(), requestDto.description(),
+            requestDto.targetWeight(), requestDto.endDate());
         return FitnessGoalResponseDto.from(fitnessGoal);
     }
 

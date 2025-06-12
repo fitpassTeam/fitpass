@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-
 public class SearchService {
 
     private final SearchRepository searchRepository;
@@ -25,9 +24,6 @@ public class SearchService {
     private final PostRepository postRepository;
 
     // 검색어 저장 (중복 검색어는 카운트 증가)
-
-
-
     @Transactional(readOnly = true)
     @Cacheable(
             cacheNames = "gymSearch",
@@ -42,7 +38,7 @@ public class SearchService {
 
     @Cacheable(
             value = "postSearch",
-            key = "#keyword + '_' + (#pageable != null ? #pageable.pageNumber : 0) + '_' + (#pageable != null ? #pageable.pageSize : 20)"
+            key = "#keyword + '_' + #pageable.pageNumber + '_' + #pageable.pageSize"
     )
     public Page<PostResponseDto> searchPost (String keyword, Pageable pageable){
 
