@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.example.fitpass.common.entity.Image;
+import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.fitnessGoal.entity.DailyRecord;
 
 public record DailyRecordResponseDto(

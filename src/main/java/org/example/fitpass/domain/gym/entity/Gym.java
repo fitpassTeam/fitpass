@@ -22,7 +22,7 @@ import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.enums.GymStatus;
-import org.example.fitpass.common.entity.Image;
+import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.entity.User;
 import org.hibernate.annotations.SQLDelete;

@@ -2,7 +2,7 @@ package org.example.fitpass.domain.trainer.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.entity.Image;
+import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerUpdateRequestDto;
