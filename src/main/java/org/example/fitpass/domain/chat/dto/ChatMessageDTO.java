@@ -9,7 +9,7 @@ import org.example.fitpass.domain.chat.enums.SenderType;
 @RequiredArgsConstructor
 public class ChatMessageDTO {
     private final Long messageId;
-    private final Long senderId;
+    private final Long Id;
     private final SenderType senderType;
     private final String content;
     private final LocalDateTime timestamp;

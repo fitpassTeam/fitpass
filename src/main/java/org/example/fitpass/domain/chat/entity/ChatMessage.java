@@ -15,8 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.chat.enums.SenderType;
-import org.example.fitpass.domain.trainer.entity.Trainer;
-import org.example.fitpass.domain.user.entity.User;
 
 @Entity
 @Getter
@@ -33,7 +31,7 @@ public class ChatMessage extends BaseEntity {
     private ChatRoom chatRoom;
 
     @Column(nullable = false)
-    private Long senderId;
+    private Long Id;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -42,14 +40,14 @@ public class ChatMessage extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    public ChatMessage(ChatRoom chatRoom, Long senderId, String content, SenderType senderType) {
+    public ChatMessage(ChatRoom chatRoom, Long Id, String content, SenderType senderType) {
         this.chatRoom = chatRoom;
-        this.senderId = senderId;
+        this.Id = Id;
         this.content = content;
         this.senderType = senderType;
     }
 
-    public static ChatMessage of(ChatRoom chatRoom, Long senderId, String content, SenderType senderType) {
-        return new ChatMessage(chatRoom, senderId, content, senderType);
+    public static ChatMessage of(ChatRoom chatRoom, Long Id, String content, SenderType senderType) {
+        return new ChatMessage(chatRoom, Id, content, senderType);
     }
 }

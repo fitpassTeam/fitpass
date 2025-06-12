@@ -3,7 +3,6 @@ package org.example.fitpass.domain.chat.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import java.net.URI;
-import java.net.http.WebSocket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.trainer.repository.TrainerRepository;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -58,7 +56,7 @@ public class ChatHandler extends TextWebSocketHandler {
             //Json 여부 검사
             JSONObject json = new JSONObject(message.getPayload());
 
-            Long senderId = json.getLong("senderId");
+            Long Id = json.getLong("Id");
             Long receiverId = json.getLong("receiverId");
             String content = json.getString("message");
             String senderTypeStr = json.getString("senderType");
@@ -66,10 +64,10 @@ public class ChatHandler extends TextWebSocketHandler {
 
             // 1. 사용자/트레이너 조회
             User user = userRepository.findById(
-                    senderType == SenderType.USER ? senderId : receiverId)
+                    senderType == SenderType.USER ? Id : receiverId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
             Trainer trainer = trainerRepository.findById(
-                    senderType == SenderType.USER ? receiverId : senderId)
+                    senderType == SenderType.USER ? receiverId : Id)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found"));
 
             // 2. 채팅방 조회/생성
@@ -77,7 +75,7 @@ public class ChatHandler extends TextWebSocketHandler {
                 .orElseGet(() -> chatRoomRepository.save(ChatRoom.of(user, trainer)));
 
             // 3. 메시지 저장
-            ChatMessage chatMessage = ChatMessage.of(room, senderId, content, senderType);
+            ChatMessage chatMessage = ChatMessage.of(room, Id, content, senderType);
             chatMessage = chatMessageRepository.save(chatMessage);  // 저장 후 갱신
 
             //메세지 전송
