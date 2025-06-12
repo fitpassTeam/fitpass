@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.redis.RedisService;
-import org.example.fitpass.common.service.S3Service;
+import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
 import org.example.fitpass.domain.user.dto.LoginRequestDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
@@ -15,7 +15,6 @@ import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -25,29 +24,22 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
-    private final S3Service s3Service;
 
     @Transactional
-    public UserResponseDto signup(UserRequestDto dto, MultipartFile image) {
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new BaseException(ExceptionCode.USER_ALREADY_EXISTS);
-        }
+    public UserResponseDto signup(UserRequestDto requestDto) {
 
-        String imageUrl = null;
-        if (image != null && !image.isEmpty()) {
-            imageUrl = s3Service.uploadSingleFile(image);
-        }
+        String imageUrl = requestDto.getUserImage();
 
         User user = new User(
-                dto.getEmail(),
+                requestDto.getEmail(),
                 imageUrl,
-                passwordEncoder.encode(dto.getPassword()),
-                dto.getName(),
-                dto.getPhone(),
-                dto.getAge(),
-                dto.getAddress(),
-                dto.getGender(),
-                dto.getUserRole()
+                passwordEncoder.encode(requestDto.getPassword()),
+                requestDto.getName(),
+                requestDto.getPhone(),
+                requestDto.getAge(),
+                requestDto.getAddress(),
+                requestDto.getGender(),
+                requestDto.getUserRole()
         );
 
         userRepository.save(user);
