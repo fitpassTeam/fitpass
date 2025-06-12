@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.redis.RedisService;
+import org.example.fitpass.common.service.FileUploadService;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
 import org.example.fitpass.domain.user.dto.LoginRequestDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
@@ -14,6 +15,7 @@ import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -23,15 +25,22 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
+    private final FileUploadService fileUploadService;
 
     @Transactional
-    public UserResponseDto signup(UserRequestDto dto) {
+    public UserResponseDto signup(UserRequestDto dto, MultipartFile image) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new BaseException(ExceptionCode.USER_ALREADY_EXISTS);
         }
 
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = fileUploadService.upload(image); // 로컬 경로 또는 S3 업로드
+        }
+
         User user = new User(
                 dto.getEmail(),
+                imageUrl,
                 passwordEncoder.encode(dto.getPassword()),
                 dto.getName(),
                 dto.getPhone(),
@@ -40,9 +49,11 @@ public class UserService {
                 dto.getGender(),
                 dto.getUserRole()
         );
+
         userRepository.save(user);
         return UserResponseDto.from(user);
     }
+
 
     @Transactional(readOnly = true)
     public SigninResponseDto login(LoginRequestDto dto) {
@@ -114,7 +125,10 @@ public class UserService {
     }
 
     @Transactional
-    public void logout(String email) {
+    public void logout(String email, String bearerToken) {
+        String token = jwtTokenProvider.substringToken(bearerToken);
+        long remaining = jwtTokenProvider.getRemainingTime(token);
+        jwtTokenProvider.blacklistAccessToken(token, remaining);
         redisService.deleteRefreshToken(email);
     }
 }
