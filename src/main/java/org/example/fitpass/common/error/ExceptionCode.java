@@ -69,7 +69,8 @@ public enum ExceptionCode implements BaseCode {
     S3_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"500", "S3 업로드를 실패하였습니다."),
     S3_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"500", "S3 삭제를 실패하였습니다."),
     RESERVATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "해당 시간에 이미 예약이 존재합니다."),
-    RESERVATION_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "예약 처리 중 인터럽트가 발생했습니다.");;
+    RESERVATION_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "예약 처리 중 인터럽트가 발생했습니다."),
+    FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "500", "이미지 업로드에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -1,8 +1,8 @@
 package org.example.fitpass.domain.auth.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
-import org.example.fitpass.common.jwt.RefreshTokenRequestDto;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
 import org.example.fitpass.domain.user.dto.LoginRequestDto;
@@ -10,11 +10,10 @@ import org.example.fitpass.domain.user.dto.LogoutRequestDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
 import org.example.fitpass.domain.user.dto.UserResponseDto;
 import org.example.fitpass.domain.user.service.UserService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,11 +23,15 @@ public class AuthController {
     private final UserService userService;
 
     // 회원가입
-    @PostMapping("/signup")
-    public ResponseEntity<ResponseMessage<UserResponseDto>> signup(@RequestBody UserRequestDto request) {
-        UserResponseDto response = userService.signup(request);
+    @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseMessage<UserResponseDto>> signup(
+            @Valid
+            @RequestPart("request") UserRequestDto request,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) {
+        UserResponseDto response = userService.signup(request, image);
         return ResponseEntity.status(SuccessCode.SIGNUP_SUCCESS.getHttpStatus())
-            .body(ResponseMessage.success(SuccessCode.SIGNUP_SUCCESS, response));
+                .body(ResponseMessage.success(SuccessCode.SIGNUP_SUCCESS, response));
     }
 
     // 로그인
@@ -39,16 +42,12 @@ public class AuthController {
             .body(ResponseMessage.success(SuccessCode.LOGIN_SUCCESS, responseDto));
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<SigninResponseDto> refreshToken(@RequestBody RefreshTokenRequestDto request) {
-        SigninResponseDto response = userService.reissueToken(request.getRefreshToken());
-        return ResponseEntity.ok(response);
-    }
-
-    // 로그아웃
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestBody LogoutRequestDto request) {
-        userService.logout(request.getEmail());
+    public ResponseEntity<Void> logout(
+            @RequestHeader("Authorization") String bearerToken,
+            @RequestBody LogoutRequestDto request
+    ) {
+        userService.logout(request.getEmail(), bearerToken);
         return ResponseEntity.ok().build();
     }
 }
