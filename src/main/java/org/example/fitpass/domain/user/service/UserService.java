@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.redis.RedisService;
-import org.example.fitpass.common.service.FileUploadService;
+import org.example.fitpass.common.service.S3Service;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
 import org.example.fitpass.domain.user.dto.LoginRequestDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
@@ -25,7 +25,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
-    private final FileUploadService fileUploadService;
+    private final S3Service s3Service;
 
     @Transactional
     public UserResponseDto signup(UserRequestDto dto, MultipartFile image) {
@@ -35,7 +35,7 @@ public class UserService {
 
         String imageUrl = null;
         if (image != null && !image.isEmpty()) {
-            imageUrl = fileUploadService.upload(image); // 로컬 경로 또는 S3 업로드
+            imageUrl = s3Service.uploadSingleFile(image);
         }
 
         User user = new User(
