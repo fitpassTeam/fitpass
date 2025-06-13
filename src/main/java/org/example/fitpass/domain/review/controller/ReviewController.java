@@ -60,7 +60,7 @@ public class ReviewController {
         @PathVariable Long reviewId,
         @AuthenticationPrincipal CustomUserDetails user
     ) {
-        reviewService.deleteReview(reviewId, user.getId());
+        reviewService.deleteReview(reservationId, reviewId, user.getId());
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.REVIEW_DELETE_SUCCESS, null);
         return ResponseEntity.status(SuccessCode.REVIEW_DELETE_SUCCESS.getHttpStatus()).body(responseMessage);

@@ -23,7 +23,7 @@ public class ReviewGetController {
 
     // 리뷰 단건 조회
     @GetMapping("/{reviewId}")
-    public ResponseEntity<ResponseMessage<ReviewDetailResponseDto>> getReview (
+    public ResponseEntity<ResponseMessage<ReviewDetailResponseDto>> getReview(
         @PathVariable Long reviewId
     ) {
         ReviewDetailResponseDto responseDto = reviewService.getReview(reviewId);
@@ -34,7 +34,7 @@ public class ReviewGetController {
 
     // 사용자가 쓴 리뷰 조회
     @GetMapping("/my")
-    public ResponseEntity<ResponseMessage<List<ReviewDetailResponseDto>>> getMyReviews (
+    public ResponseEntity<ResponseMessage<List<ReviewDetailResponseDto>>> getMyReviews(
         @AuthenticationPrincipal CustomUserDetails user
     ) {
         List<ReviewDetailResponseDto> responseDtos = reviewService.getMyReviews(user.getId());
@@ -45,7 +45,7 @@ public class ReviewGetController {
 
     // 체육관 리뷰들 조회
     @GetMapping("/gyms/{gymId}")
-    public ResponseEntity<ResponseMessage<List<ReviewDetailResponseDto>>> getGymReviews (
+    public ResponseEntity<ResponseMessage<List<ReviewDetailResponseDto>>> getGymReviews(
         @PathVariable Long gymId
     ) {
         List<ReviewDetailResponseDto> responseDtos = reviewService.getGymReviews(gymId);
@@ -56,7 +56,7 @@ public class ReviewGetController {
 
     // 트레이너 별 리뷰 조회
     @GetMapping("/trainers/{trainerId}")
-    public ResponseEntity<ResponseMessage<List<ReviewDetailResponseDto>>> getTrainerReviews (
+    public ResponseEntity<ResponseMessage<List<ReviewDetailResponseDto>>> getTrainerReviews(
         @PathVariable Long trainerId
     ){
       List<ReviewDetailResponseDto> responseDtos = reviewService.getTrainerReviews(trainerId);

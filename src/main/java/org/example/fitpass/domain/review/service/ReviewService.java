@@ -34,7 +34,7 @@ public class ReviewService {
 
     // 리뷰 생성
     @Transactional
-    public ReviewResponseDto createReview (Long reservationId, Long userId, ReviewCreateRequestDto requestDto) {
+    public ReviewResponseDto createReview(Long reservationId, Long userId, ReviewCreateRequestDto requestDto) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         // 예약 조회
@@ -60,7 +60,7 @@ public class ReviewService {
 
     // 리뷰 수정
     @Transactional
-    public ReviewResponseDto updateReview (Long reservationId, Long reviewId, ReviewUpdateRequestDto requestDto, Long userId) {
+    public ReviewResponseDto updateReview(Long reservationId, Long reviewId, ReviewUpdateRequestDto requestDto, Long userId) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         // 예약 조회
@@ -79,9 +79,11 @@ public class ReviewService {
 
     // 리뷰 삭제
     @Transactional
-    public void deleteReview (Long reviewId, Long userId) {
+    public void deleteReview(Long reservationId, Long reviewId, Long userId) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
+        // 예약 조회
+        Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
         // 리뷰 조회
         Review review = reviewRepository.findByIdOrElseThrow(reviewId);
         // 리뷰 작성자 확인
@@ -102,14 +104,14 @@ public class ReviewService {
 
     // 사용자가 쓴 리뷰 조회
     @Transactional(readOnly = true)
-    public List<ReviewDetailResponseDto> getMyReviews (Long userId) {
+    public List<ReviewDetailResponseDto> getMyReviews(Long userId) {
         List<Review> reviews = reviewRepository.findByUserIdOrderByCreatedAtDesc(userId);
         return reviews.stream().map(ReviewDetailResponseDto::from).toList();
     }
 
     // 체육관 리뷰들 조회
     @Transactional(readOnly = true)
-    public List<ReviewDetailResponseDto> getGymReviews (Long gymId) {
+    public List<ReviewDetailResponseDto> getGymReviews(Long gymId) {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         List<Review> reviews = reviewRepository.findByGymIdOrderByCreatedAtDesc(gymId);
         return reviews.stream().map(ReviewDetailResponseDto::from).toList();
