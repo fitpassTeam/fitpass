@@ -92,7 +92,7 @@ public class TrainerController {
         @PathVariable("gymId") Long gymId,
         @Valid @RequestBody GymPhotoUpdateRequestDto request,
         @PathVariable("id") Long id) {
-        trainerService.updatePhoto(request.getPhotoUrls(), id);
+        trainerService.updatePhoto(request.photoUrls(), id);
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS.getHttpStatus())
