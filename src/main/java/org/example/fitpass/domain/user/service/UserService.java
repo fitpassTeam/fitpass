@@ -3,7 +3,7 @@ package org.example.fitpass.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.common.redis.RedisService;
+import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
 import org.example.fitpass.domain.user.dto.LoginRequestDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
@@ -25,24 +25,26 @@ public class UserService {
     private final RedisService redisService;
 
     @Transactional
-    public UserResponseDto signup(UserRequestDto dto) {
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new BaseException(ExceptionCode.USER_ALREADY_EXISTS);
-        }
+    public UserResponseDto signup(UserRequestDto requestDto) {
+
+        String imageUrl = requestDto.getUserImage();
 
         User user = new User(
-                dto.getEmail(),
-                passwordEncoder.encode(dto.getPassword()),
-                dto.getName(),
-                dto.getPhone(),
-                dto.getAge(),
-                dto.getAddress(),
-                dto.getGender(),
-                dto.getUserRole()
+                requestDto.getEmail(),
+                imageUrl,
+                passwordEncoder.encode(requestDto.getPassword()),
+                requestDto.getName(),
+                requestDto.getPhone(),
+                requestDto.getAge(),
+                requestDto.getAddress(),
+                requestDto.getGender(),
+                requestDto.getUserRole()
         );
+
         userRepository.save(user);
         return UserResponseDto.from(user);
     }
+
 
     @Transactional(readOnly = true)
     public SigninResponseDto login(LoginRequestDto dto) {
@@ -114,7 +116,10 @@ public class UserService {
     }
 
     @Transactional
-    public void logout(String email) {
+    public void logout(String email, String bearerToken) {
+        String token = jwtTokenProvider.substringToken(bearerToken);
+        long remaining = jwtTokenProvider.getRemainingTime(token);
+        jwtTokenProvider.blacklistAccessToken(token, remaining);
         redisService.deleteRefreshToken(email);
     }
 }

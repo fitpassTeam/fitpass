@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.common.security.CustomUserDetails;
-import org.example.fitpass.domain.gym.dto.request.GymPhotoUpdateRequestDto;
 import org.example.fitpass.domain.gym.dto.request.GymRequestDto;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
@@ -29,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/gym")
+@RequestMapping("/gyms")
 @RequiredArgsConstructor
 public class GymController {
 

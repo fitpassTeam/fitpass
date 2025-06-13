@@ -2,7 +2,6 @@ package org.example.fitpass.common.error;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -31,6 +30,8 @@ public enum ExceptionCode implements BaseCode {
     FITNESS_GOAL_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "완료된 목표는 취소할 수 없습니다."),
     FITNESS_GOAL_DELETE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "400", "완료된 목표는 삭제할 수 없습니다."),
     VALID_STATUS(HttpStatus.BAD_REQUEST,"400","잘못된 상태 입니다."),
+    RESERVATION_NOT_COMPLETED(HttpStatus.BAD_REQUEST,"400", "완료된 예약만 리뷰를 작성할 수 있습니다."),
+    REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"400", "이미 해당 예약에 대한 리뷰가 존재합니다."),
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰입니다."),
@@ -42,6 +43,7 @@ public enum ExceptionCode implements BaseCode {
     // 403 Forbidden = 권한이 없을 때
     NO_OWNER_AUTHORITY(HttpStatus.FORBIDDEN,"403", "사장의 권한이 없습니다."),
     NOT_GYM_OWNER(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
+    NOT_POST_OWNER(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
     POST_NOT_AUTHOR(HttpStatus.FORBIDDEN,"403","게시물 작성자만 수정이 가능합니다."),
     NOTICE_ONLY_OWNER(HttpStatus.FORBIDDEN, "403", "공지사항은 관리자만 작성할 수 있습니다."),
     NO_ADMIN_AUTHORITY(HttpStatus.FORBIDDEN, "403", "관리자 권한이 필요합니다."),
@@ -50,6 +52,8 @@ public enum ExceptionCode implements BaseCode {
     NOT_DAILY_RECORD_OWNER(HttpStatus.FORBIDDEN, "403", "일일 기록에 접근 권한이 없습니다."),
     NOT_FITNESS_GOAL_OWNER(HttpStatus.FORBIDDEN, "403", "해당 목표에 접근 권한이 없습니다."),
     INVALID_GYM_TRAINER_RELATION(HttpStatus.FORBIDDEN, "403", "트레이너가 해당 체육관에 속하지 않습니다."),
+    NOT_REVIEW_OWNER(HttpStatus.FORBIDDEN, "403", "리뷰 작성자가 아닙니다."),
+
     // 404 Not Found
     CANT_FIND_DATA(HttpStatus.NOT_FOUND,"404", "해당 데이터를 찾을 수 없습니다."),
     GYM_NOT_FOUND(HttpStatus.NOT_FOUND,"404","찾으시는 체육관이 존재하지 않습니다."),
@@ -59,6 +63,7 @@ public enum ExceptionCode implements BaseCode {
     FITNESS_GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "목표를 찾을 수 없습니다."),
     DAILY_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "일일 기록을 찾을 수 없습니다."),
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "예약을 찾을 수 없습니다."),
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "리뷰를 찾을 수 없습니다."),
 
     // 409 Conflict = 서버와 충돌, 데이터가 이미 존재할때(400 보다 명확함)
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"409", "이미 등록된 회원입니다."),
@@ -70,8 +75,8 @@ public enum ExceptionCode implements BaseCode {
     S3_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"500", "S3 업로드를 실패하였습니다."),
     S3_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"500", "S3 삭제를 실패하였습니다."),
     RESERVATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "해당 시간에 이미 예약이 존재합니다."),
-    RESERVATION_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "예약 처리 중 인터럽트가 발생했습니다.");;
-
+    RESERVATION_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "예약 처리 중 인터럽트가 발생했습니다."),
+    FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "500", "이미지 업로드에 실패했습니다.");
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
