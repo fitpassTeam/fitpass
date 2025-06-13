@@ -42,16 +42,24 @@ public class DailyRecord extends BaseEntity {
     @Column(nullable = false)
     private LocalDate recordDate;
 
-    public DailyRecord(FitnessGoal fitnessGoal,
+    public DailyRecord(List<Image> images, FitnessGoal fitnessGoal,
         LocalDate recordDate, String memo) {
         this.fitnessGoal = fitnessGoal;
         this.recordDate = recordDate;
         this.memo = memo;
+
+        for(Image image : images) {
+            image.assignToDailyRecord(this); // DailyRecord 이미지라는 연관매핑
+            this.images.add(image);
+        }
     }
 
-    public static DailyRecord of(FitnessGoal fitnessGoal,
+    public static DailyRecord of(List<String> dailyRecordImage, FitnessGoal fitnessGoal,
         LocalDate recordDate, String memo) {
-        return new DailyRecord(fitnessGoal, recordDate, memo);
+        List<Image> images = dailyRecordImage.stream()
+            .map(Image::new)
+            .toList();
+        return new DailyRecord(images,fitnessGoal, recordDate, memo);
     }
 
 
