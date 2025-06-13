@@ -1,14 +1,12 @@
 package org.example.fitpass.domain.post.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.entity.Image;
+import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.common.service.S3Service;
+import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
-import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
-import org.example.fitpass.domain.post.dto.request.PostUpdateRequestDto;
 import org.example.fitpass.domain.post.dto.response.PostImageResponseDto;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.post.entity.Post;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 

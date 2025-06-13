@@ -3,7 +3,7 @@ package org.example.fitpass.common.security;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.jwt.JwtAuthenticationFilter;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
-import org.example.fitpass.common.redis.RedisService;
+import org.example.fitpass.config.RedisService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
