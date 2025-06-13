@@ -23,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/gyms/{gymId}")
+@RequestMapping("gyms/{gymId}")
 public class PostController {
 
     private final PostService postService;

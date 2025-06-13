@@ -33,9 +33,15 @@ public class SecurityConfig {
             .sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/ws/**").permitAll()
-                .requestMatchers("/error").permitAll()
+                .requestMatchers(
+                    "/auth/**",
+                    "/ws/**",
+                    "/error",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/api-docs/**"
+                ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/gym").permitAll()
                 // 관리자만 접근 가능
                 .requestMatchers("/admin/**").hasRole("ADMIN")
