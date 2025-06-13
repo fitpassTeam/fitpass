@@ -17,13 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+
 public class SearchService {
 
     private final SearchRepository searchRepository;
     private final GymRepository gymRepository;
     private final PostRepository postRepository;
 
-    // 검색어 저장 (중복 검색어는 카운트 증가)
     @Transactional(readOnly = true)
     @Cacheable(
             cacheNames = "gymSearch",
@@ -31,18 +31,18 @@ public class SearchService {
     )
     public Page<GymResponseDto> searchGym (String keyword, Pageable pageable){
 
-        Page<Gym> gymPage = gymRepository.findByGymNameContaining(keyword,pageable);
+        Page<Gym> gymPage = gymRepository.findByNameContaining(keyword,pageable);
 
         return gymPage.map(GymResponseDto::from);
     }
 
     @Cacheable(
             value = "postSearch",
-            key = "#keyword + '_' + #pageable.pageNumber + '_' + #pageable.pageSize"
+            key = "#keyword + '_' + (#pageable != null ? #pageable.pageNumber : 0) + '_' + (#pageable != null ? #pageable.pageSize : 20)"
     )
     public Page<PostResponseDto> searchPost (String keyword, Pageable pageable){
 
-        Page<Post> postPage = postRepository.findByPostNameContaining(keyword,pageable);
+        Page<Post> postPage = postRepository.findBycontentAndPostType(keyword, pageable);
 
         return postPage.map(PostResponseDto::from);
     }
