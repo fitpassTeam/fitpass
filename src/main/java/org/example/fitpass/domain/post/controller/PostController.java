@@ -6,6 +6,7 @@ import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
 import org.example.fitpass.domain.post.dto.request.PostUpdateRequestDto;
+import org.example.fitpass.domain.post.dto.response.PostImageResponseDto;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.post.enums.PostType;
 import org.example.fitpass.domain.post.service.PostService;
@@ -17,8 +18,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Locale;
 
 
 @RestController
@@ -31,12 +34,18 @@ public class PostController {
     //게시물 생성
     @PostMapping("/posts")
     public ResponseEntity<ResponseMessage<PostResponseDto>> creatPost(
-        @RequestBody PostCreateRequestDto requestDto,
+        @RequestBody PostCreateRequestDto request,
         @AuthenticationPrincipal CustomUserDetails user,
-        @PathVariable("gymId") Long gymId
-
-    ) {
-        PostResponseDto postResponseDto = postService.createPost(requestDto, user.getUser(), gymId);
+        @PathVariable("gymId") Long gymId) {
+        PostResponseDto postResponseDto = postService.createPost(
+                request.status(),
+                request.postType(),
+                request.postImage(),
+                request.title(),
+                request.content(),
+                user.getId(),
+                gymId
+        );
 
         ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(
             SuccessCode.POST_CREATE_SUCCESS, postResponseDto);
@@ -75,29 +84,48 @@ public class PostController {
 
     //게시물 단건 조회
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<ResponseMessage<PostResponseDto>> findPostById(
+    public ResponseEntity<ResponseMessage<PostImageResponseDto>> findPostById(
         @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable("gymId") Long gymId,
         @PathVariable("postId") Long postId
     ) {
-        PostResponseDto findPostById = postService.findPostById(user.getUser(), gymId, postId);
+        PostImageResponseDto findPostById = postService.findPostById(user.getUser(), gymId, postId);
 
-        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(
+        ResponseMessage<PostImageResponseDto> responseMessage = ResponseMessage.success(
             SuccessCode.GET_ONLY_POST_SUCCESS, findPostById);
 
         return ResponseEntity.status(SuccessCode.GET_ONLY_POST_SUCCESS.getHttpStatus())
             .body(responseMessage);
     }
 
+    @PutMapping("/posts/{postId}/photo")
+    public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
+            @RequestParam("images")List<MultipartFile> files,
+            @PathVariable Long postId,
+            @AuthenticationPrincipal CustomUserDetails user) {
+        List<String> updatedImageUrls = postService.updatePhoto(files, postId, user.getId());
+        ResponseMessage<List<String>> responseMessage =
+                ResponseMessage.success(SuccessCode.POST_EDIT_PHOTO_SUCCESS, updatedImageUrls);
+        return ResponseEntity.status(SuccessCode.POST_EDIT_PHOTO_SUCCESS.getHttpStatus())
+                .body(responseMessage);
+    }
+
     @PatchMapping("/posts/{postId}")
     public ResponseEntity<ResponseMessage<PostResponseDto>> updatePost(
-        @RequestBody PostUpdateRequestDto requestDto,
+        @RequestBody PostUpdateRequestDto request,
         @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable("gymId") Long gymId,
         @PathVariable("postId") Long postId
     ) {
-        PostResponseDto updateDto = postService.updatePost(requestDto, user.getUser(), gymId,
-            postId);
+        PostResponseDto updateDto = postService.updatePost(
+                postId,
+                request.status(),
+                request.postType(),
+                request.title(),
+                request.content(),
+                user.getId(),
+                gymId
+        );
 
         ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(
             SuccessCode.POST_UPDATE_SUCCESS, updateDto);

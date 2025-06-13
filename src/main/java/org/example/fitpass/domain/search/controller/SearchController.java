@@ -5,7 +5,10 @@ import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
+import org.example.fitpass.domain.post.entity.Post;
+import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.search.service.SearchService;
+//import org.example.fitpass.domain.search.service.TestService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,8 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class SearchController {
 
     private final SearchService searchService;
+//    private final TestService testService;
 
-    @GetMapping("/gyms/search")
+    @GetMapping("/search/gyms/v1")
     public ResponseEntity<ResponseMessage<Page<GymResponseDto>>> searchGym (
             @RequestParam(name = "keyword") String keyword,
             @PageableDefault(page = 0, size = 20) Pageable pageable
@@ -34,7 +38,21 @@ public class SearchController {
         return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
-    @GetMapping("/posts/search")
+//    @GetMapping("/search/gyms/v2")
+//    public ResponseEntity<ResponseMessage<Page<GymResponseDto>>> searchGym2 (
+//            @RequestParam(name = "keyword") String keyword,
+//            @PageableDefault(page = 0, size = 20) Pageable pageable
+//    ){
+//        testService.saveSearchKeyword(keyword);
+//
+//        Page<GymResponseDto> responseDto = testService.searchGym2(keyword, pageable);
+//
+//        ResponseMessage<Page<GymResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.GYM_SEARCH_SUCCESS, responseDto);
+//
+//        return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus()).body(responseMessage);
+//    }
+
+    @GetMapping("/search/posts")
     public ResponseEntity<ResponseMessage<Page<PostResponseDto>>> searchPost (
             @RequestParam(name = "keyword") String keyword,
             @PageableDefault(page = 0, size = 20) Pageable pageable

@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.domain.fitnessGoal.entity.DailyRecord;
 import org.example.fitpass.domain.gym.entity.Gym;
+import org.example.fitpass.domain.post.entity.Post;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 
 @Entity
@@ -32,6 +33,10 @@ public class Image {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trainer_id")
     private Trainer trainer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "daily_record_id")
@@ -72,6 +77,18 @@ public class Image {
         return new Image(url, gym);
     }
 
+    public Image(String url, Post post) {
+        this.url = url;
+        this.post = post;
+    }
+
+    public static Image from(String url, Post post) {
+        return new Image(url, post);
+    }
+
+    public void assignToPost(Post post) {
+        this.post = post;
+    }
 }
 
 
