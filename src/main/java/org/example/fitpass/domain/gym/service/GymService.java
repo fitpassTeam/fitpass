@@ -36,7 +36,8 @@ public class GymService {
             gym.getContent(),
             gym.getAddress(),
             gym.getOpenTime(),
-            gym.getCloseTime()
+            gym.getCloseTime(),
+            gym.getId()
         );
     }
 
@@ -87,7 +88,8 @@ public class GymService {
             gym.getContent(),
             gym.getAddress(),
             gym.getOpenTime(),
-            gym.getCloseTime()
+            gym.getCloseTime(),
+            gym.getId()
         );
     }
 
