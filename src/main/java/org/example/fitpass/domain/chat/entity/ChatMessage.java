@@ -31,23 +31,20 @@ public class ChatMessage extends BaseEntity {
     private ChatRoom chatRoom;
 
     @Column(nullable = false)
-    private Long Id;
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private SenderType senderType; // USER 또는 TRAINER
 
     @Column(nullable = false)
     private String content;
 
-    public ChatMessage(ChatRoom chatRoom, Long Id, String content, SenderType senderType) {
+    public ChatMessage(ChatRoom chatRoom, Long id, String content, SenderType senderType) {
         this.chatRoom = chatRoom;
-        this.Id = Id;
+        this.id = id;
         this.content = content;
         this.senderType = senderType;
     }
 
-    public static ChatMessage of(ChatRoom chatRoom, Long Id, String content, SenderType senderType) {
-        return new ChatMessage(chatRoom, Id, content, senderType);
+    public static ChatMessage of(ChatRoom chatRoom, Long id, String content, SenderType senderType) {
+        return new ChatMessage(chatRoom, id, content, senderType);
     }
 }

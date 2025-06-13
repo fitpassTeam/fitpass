@@ -32,9 +32,8 @@ public class SecurityConfig {
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/error").permitAll()
-                .requestMatchers(HttpMethod.GET, "/gym").permitAll()
+                .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 // 관리자만 접근 가능
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()

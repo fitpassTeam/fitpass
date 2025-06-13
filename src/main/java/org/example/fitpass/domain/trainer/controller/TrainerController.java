@@ -1,10 +1,10 @@
 package org.example.fitpass.domain.trainer.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
-import org.example.fitpass.domain.gym.dto.request.GymPhotoUpdateRequestDto;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerUpdateRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerDetailResponseDto;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerRequestDto;
@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/gyms/{gymId}/trainers")
@@ -79,7 +81,14 @@ public class TrainerController {
         @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id,
         @Valid @RequestBody TrainerUpdateRequestDto dto) {
-        TrainerResponseDto response = trainerService.updateTrainer(gymId, id, dto);
+        TrainerResponseDto response = trainerService.updateTrainer(
+            gymId,
+            id,
+            dto.getName(),
+            dto.getPrice(),
+            dto.getContent(),
+            dto.getTrainerStatus()
+            );
         ResponseMessage<TrainerResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_SUCCESS.getHttpStatus())
@@ -87,13 +96,13 @@ public class TrainerController {
     }
 
     //사진 수정
-    @PutMapping("/{id}/photo")
-    public ResponseEntity<ResponseMessage<Void>> updatePhoto(
+    @PutMapping("/{id}/photos")
+    public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
+        @RequestParam("images")List<MultipartFile> files,
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id,
-        @Valid @RequestBody GymPhotoUpdateRequestDto request) {
-        trainerService.updatePhoto(gymId, request.getPhotoUrls(), id);
-        ResponseMessage<Void> responseMessage =
+        @PathVariable("id") Long id) {
+        trainerService.updatePhoto(files, gymId, id);
+        ResponseMessage<List<String>> responseMessage =
             ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS.getHttpStatus())
             .body(responseMessage);
