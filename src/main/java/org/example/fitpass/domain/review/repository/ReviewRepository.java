@@ -6,6 +6,7 @@ import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.review.entity.Review;
 import org.example.fitpass.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
@@ -21,8 +22,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByUserIdOrderByCreatedAtDesc(Long userId);
 
+    // JOIN을 통해 연관 엔티티의 ID 조회
+    @Query("SELECT r FROM Review r JOIN r.reservation res WHERE res.gym.id = :gymId ORDER BY r.createdAt DESC")
     List<Review> findByGymIdOrderByCreatedAtDesc(Long gymId);
 
+    @Query("SELECT r FROM Review r JOIN r.reservation res WHERE res.trainer.id = :trainerId ORDER BY r.createdAt DESC")
     List<Review> findByTrainerIdOrderByCreatedAtDesc(Long trainerId);
 
 }
