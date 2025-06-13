@@ -1,5 +1,7 @@
 package org.example.fitpass.domain.trainer.entity;
 
+import static org.example.fitpass.common.error.ExceptionCode.INVALID_GYM_TRAINER_RELATION;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.common.Image.entity.Image;
+import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.trainer.enums.TrainerStatus;
 
@@ -77,13 +80,18 @@ public class Trainer extends BaseEntity {
         this.images.addAll(convertedImages);
     }
 
-    public void update(List<Image> images, String name, int price, String content,
+    public void update(String name, int price, String content,
         TrainerStatus trainerStatus) {
-        this.images = images;
         this.name = name;
         this.price = price;
         this.content = content;
         this.trainerStatus = trainerStatus;
+    }
+
+    public void validateTrainerBelongsToGym(Trainer trainer, Gym gym) {
+        if (!trainer.getGym().getId().equals(gym.getId())) {
+            throw new BaseException(INVALID_GYM_TRAINER_RELATION);
+        }
     }
 
     public void assignToGym(Gym gym) {

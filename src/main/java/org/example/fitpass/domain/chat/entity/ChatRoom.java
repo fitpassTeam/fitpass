@@ -1,15 +1,18 @@
 package org.example.fitpass.domain.chat.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
-
+import org.example.fitpass.domain.trainer.entity.Trainer;
+import org.example.fitpass.domain.user.entity.User;
 
 @Entity
 @Getter
@@ -21,18 +24,20 @@ public class ChatRoom extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(nullable = false)
-    private Long trainerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainer_id", nullable = false)
+    private Trainer trainer;
 
-    public ChatRoom(Long userId, Long trainerId) {
-        this.userId = userId;
-        this.trainerId = trainerId;
+    public ChatRoom(User user, Trainer trainer) {
+        this.user = user;
+        this.trainer = trainer;
     }
 
-    public static ChatRoom of(Long userId, Long trainerId) {
-        return new ChatRoom(userId, trainerId);
+    public static ChatRoom of(User user, Trainer trainer) {
+        return new ChatRoom(user, trainer);
     }
 }
