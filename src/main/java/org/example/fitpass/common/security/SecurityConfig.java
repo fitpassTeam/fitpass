@@ -42,7 +42,7 @@ public class SecurityConfig {
                     "/v3/api-docs/**",
                     "/api-docs/**"
                 ).permitAll()
-                .requestMatchers(HttpMethod.GET, "/gym").permitAll()
+                .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 // 관리자만 접근 가능
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
