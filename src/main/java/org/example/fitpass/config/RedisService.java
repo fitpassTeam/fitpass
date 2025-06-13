@@ -1,4 +1,4 @@
-package org.example.fitpass.common.redis;
+package org.example.fitpass.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
