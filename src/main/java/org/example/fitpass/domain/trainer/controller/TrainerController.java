@@ -40,10 +40,10 @@ public class TrainerController {
         @Valid @RequestBody TrainerRequestDto request) {
         TrainerResponseDto response = trainerService.createTrainer(
             gymId,
-            request.getName(),
-            request.getPrice(),
-            request.getContent(),
-            request.getTrainerImage()
+            request.name(),
+            request.price(),
+            request.content(),
+            request.trainerImage()
         );
         ResponseMessage<TrainerResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.POST_TRAINER_SUCCESS, response);
@@ -84,10 +84,10 @@ public class TrainerController {
         TrainerResponseDto response = trainerService.updateTrainer(
             gymId,
             id,
-            dto.getName(),
-            dto.getPrice(),
-            dto.getContent(),
-            dto.getTrainerStatus()
+            dto.name(),
+            dto.price(),
+            dto.content(),
+            dto.trainerStatus()
             );
         ResponseMessage<TrainerResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response);
