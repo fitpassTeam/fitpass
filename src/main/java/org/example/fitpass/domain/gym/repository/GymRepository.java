@@ -34,5 +34,5 @@ public interface GymRepository extends JpaRepository<Gym, Long> {
 //    @Query("SELECT g FROM Gym g WHERE g.name LIKE %:keyword% AND g.deletedAt IS NULL")
 //    Page<Gym> findByGymNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
-    Page<Gym> findByNameContainingAndDeletedAtIsNull(@Param("keyword") String keyword, Pageable pageable);
+    Page<Gym> findByNameContaining(@Param("keyword") String keyword, Pageable pageable);
 }

@@ -2,6 +2,7 @@ package org.example.fitpass.domain.post.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.dto.PageResponse;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
@@ -56,14 +57,15 @@ public class PostController {
 
     //General 게시물 전체조회
     @GetMapping("/general-posts")
-    public ResponseEntity<ResponseMessage<Page<PostResponseDto>>> findAllGeneralPost(
+    public ResponseEntity<ResponseMessage<PageResponse<PostResponseDto>>> findAllGeneralPost(
         @PageableDefault(page = 0, size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
         @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable("gymId") Long gymId
     ) {
         Page<PostResponseDto> findAllGeneralPost = postService.findAllPostByGeneral(pageable, user.getUser(), gymId, PostType.GENERAL);
+        PageResponse<PostResponseDto> pageResponse = new PageResponse<>(findAllGeneralPost);
 
-        ResponseMessage<Page<PostResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.GET_ALL_GENERAL_POST_SUCCESS, findAllGeneralPost);
+        ResponseMessage<PageResponse<PostResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.GET_ALL_GENERAL_POST_SUCCESS, pageResponse);
 
         return ResponseEntity.status(SuccessCode.GET_ALL_GENERAL_POST_SUCCESS.getHttpStatus()).body(responseMessage);
     }

@@ -6,7 +6,6 @@ import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.post.entity.Post;
-import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.repository.PostRepository;
 import org.example.fitpass.domain.search.entity.SearchKeyword;
 import org.example.fitpass.domain.search.repository.SearchRepository;
@@ -25,10 +24,6 @@ public class SearchService {
     private final GymRepository gymRepository;
     private final PostRepository postRepository;
 
-    // 검색어 저장 (중복 검색어는 카운트 증가)
-
-
-
     @Transactional(readOnly = true)
     @Cacheable(
             cacheNames = "gymSearch",
@@ -36,7 +31,7 @@ public class SearchService {
     )
     public Page<GymResponseDto> searchGym (String keyword, Pageable pageable){
 
-        Page<Gym> gymPage = gymRepository.findByNameContainingAndDeletedAtIsNull(keyword,pageable);
+        Page<Gym> gymPage = gymRepository.findByNameContaining(keyword,pageable);
 
         return gymPage.map(GymResponseDto::from);
     }
@@ -47,7 +42,7 @@ public class SearchService {
     )
     public Page<PostResponseDto> searchPost (String keyword, Pageable pageable){
 
-        Page<Post> postPage = postRepository.searchByKeywordExcludeDeleted(keyword, pageable);
+        Page<Post> postPage = postRepository.findBycontentAndPostType(keyword, pageable);
 
         return postPage.map(PostResponseDto::from);
     }
