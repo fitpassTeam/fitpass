@@ -44,6 +44,7 @@ public enum ExceptionCode implements BaseCode {
     // 403 Forbidden = 권한이 없을 때
     NO_OWNER_AUTHORITY(HttpStatus.FORBIDDEN,"403", "사장의 권한이 없습니다."),
     NOT_GYM_OWNER(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
+    NOT_POST_OWNER(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
     POST_NOT_AUTHOR(HttpStatus.FORBIDDEN,"403","게시물 작성자만 수정이 가능합니다."),
     NOTICE_ONLY_OWNER(HttpStatus.FORBIDDEN, "403", "공지사항은 관리자만 작성할 수 있습니다."),
     NO_ADMIN_AUTHORITY(HttpStatus.FORBIDDEN, "403", "관리자 권한이 필요합니다."),
