@@ -3,7 +3,6 @@ package org.example.fitpass.domain.post.repository;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.post.entity.Post;
-import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +31,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByGymIdAndPostType(@Param("gymId")Long gymId, @Param("postType") PostType postType);
 
     @Query("SELECT p FROM Post p WHERE p.content LIKE %:keyword% AND p.postStatus <> 'DELETED'")
-    Page<Post> searchByKeywordExcludeDeleted(@Param("keyword") String keyword, Pageable pageable);
+    Page<Post> findBycontentAndPostType(@Param("keyword") String keyword, Pageable pageable);
 
 }
