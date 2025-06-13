@@ -10,6 +10,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -18,7 +19,7 @@ import java.time.Duration;
 
 @Configuration
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
-public class RedisCacheConfig {
+public class RedisConfig {
 
     @Value("${spring.data.redis.host:localhost}")
     private String redisHost;
@@ -56,5 +57,14 @@ public class RedisCacheConfig {
                 .withCacheConfiguration("popularKeywords",
                         cacheConfiguration.entryTtl(Duration.ofMinutes(30)))
                 .build();
+    }
+
+    @Bean
+    public RedisTemplate<String, String> redisTemplate() {
+        RedisTemplate<String, String> redis = new RedisTemplate<>();
+        redis.setConnectionFactory(redisConnectionFactory());
+        redis.setKeySerializer(new StringRedisSerializer());
+        redis.setValueSerializer(new StringRedisSerializer());
+        return redis;
     }
 }
