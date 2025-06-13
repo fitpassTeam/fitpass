@@ -99,4 +99,14 @@ public class JwtTokenProvider {
     public String resolveToken(HttpServletRequest request) {
         return request.getHeader("Authorization");
     }
+
+    public long getRemainingTime(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody();
+        return claims.getExpiration().getTime() - System.currentTimeMillis();
+    }
+
+    public void blacklistAccessToken(String accessToken, long expiration) {
+        redisService.setBlackList(accessToken, "logout", expiration);
+    }
 }

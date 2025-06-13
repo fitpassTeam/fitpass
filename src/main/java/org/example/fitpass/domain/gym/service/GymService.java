@@ -3,8 +3,8 @@ package org.example.fitpass.domain.gym.service;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.entity.Image;
-import org.example.fitpass.common.service.S3Service;
+import org.example.fitpass.common.Image.entity.Image;
+import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.gym.entity.Gym;
@@ -36,7 +36,8 @@ public class GymService {
             gym.getContent(),
             gym.getAddress(),
             gym.getOpenTime(),
-            gym.getCloseTime()
+            gym.getCloseTime(),
+            gym.getId()
         );
     }
 
@@ -87,7 +88,8 @@ public class GymService {
             gym.getContent(),
             gym.getAddress(),
             gym.getOpenTime(),
-            gym.getCloseTime()
+            gym.getCloseTime(),
+            gym.getId()
         );
     }
 

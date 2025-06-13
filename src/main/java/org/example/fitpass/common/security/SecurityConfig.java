@@ -3,6 +3,7 @@ package org.example.fitpass.common.security;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.jwt.JwtAuthenticationFilter;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
+import org.example.fitpass.common.redis.RedisService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisService redisService;
     private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
@@ -40,11 +42,11 @@ public class SecurityConfig {
                 .requestMatchers("/search/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(
-                new JwtAuthenticationFilter(jwtTokenProvider),
-                UsernamePasswordAuthenticationFilter.class
-            )
-            .build();
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(jwtTokenProvider, redisService, customUserDetailsService),
+                        UsernamePasswordAuthenticationFilter.class
+                )
+                .build();
     }
 
     @Bean

@@ -1,4 +1,4 @@
-package org.example.fitpass.common.entity;
+package org.example.fitpass.common.Image.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
