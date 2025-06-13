@@ -39,13 +39,13 @@ public class GymController {
         @Valid @RequestBody GymRequestDto request,
         @AuthenticationPrincipal CustomUserDetails user) {
         GymResponseDto response = gymService.post(
-            request.getAddress(),
-            request.getName(),
-            request.getContent(),
-            request.getNumber(),
-            request.getGymImage(),
-            request.getOpenTime(),
-            request.getCloseTime(),
+            request.address(),
+            request.name(),
+            request.content(),
+            request.number(),
+            request.gymImage(),
+            request.openTime(),
+            request.closeTime(),
             user.getId()
         );
         ResponseMessage<GymResponseDto> responseMessage =
@@ -92,12 +92,12 @@ public class GymController {
         @PathVariable Long gymId,
         @AuthenticationPrincipal CustomUserDetails user) {
         GymResponseDto response = gymService.updateGym(
-            request.getName(),
-            request.getNumber(),
-            request.getContent(),
-            request.getAddress(),
-            request.getOpenTime(),
-            request.getCloseTime(),
+            request.name(),
+            request.number(),
+            request.content(),
+            request.address(),
+            request.openTime(),
+            request.closeTime(),
             gymId,
             user.getId()
         );

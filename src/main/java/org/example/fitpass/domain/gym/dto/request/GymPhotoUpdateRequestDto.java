@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
-@Getter
-public class GymPhotoUpdateRequestDto {
+public record GymPhotoUpdateRequestDto(
     @NotNull(message = "사진을 골라주세요.")
-    private final List<String> photoUrls = new ArrayList<>();
-}
+    List<String> photoUrls
+) { }
