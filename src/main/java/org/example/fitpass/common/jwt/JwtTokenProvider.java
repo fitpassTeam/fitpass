@@ -13,7 +13,7 @@ import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.common.redis.RedisService;
+import org.example.fitpass.config.RedisService;
 import org.example.fitpass.common.security.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
