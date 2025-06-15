@@ -120,7 +120,7 @@ public class ReviewService {
     // 트레이너별 리뷰 조회
     @Transactional(readOnly = true)
     public List<ReviewDetailResponseDto> getTrainerReviews(Long trainerId) {
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         List<Review> reviews = reviewRepository.findByTrainerIdOrderByCreatedAtDesc(trainerId);
         return reviews.stream().map(ReviewDetailResponseDto::from).toList();
     }

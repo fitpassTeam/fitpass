@@ -53,7 +53,7 @@ public class ReservationService {
         LocalDate date) {
         User user = userRepository.findByIdOrElseThrow(userId);
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
 
         // 체육관 운영 시간 (체육관 엔티티에서 가져오기)
         List<LocalTime> possibleTimes = generateTimeSlots(
@@ -81,7 +81,7 @@ public class ReservationService {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
 
         // Redis 분산 락 키 생성
         String lockKey = String.format("reservation:lock:%d:%s:%s",
@@ -140,7 +140,7 @@ public class ReservationService {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         // 예약 조회
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
 
@@ -196,7 +196,7 @@ public class ReservationService {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         // 예약 조회
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
 
@@ -245,7 +245,7 @@ public class ReservationService {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         gym.isOwner(userId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         // 트레이너가 해당 체육관 소속인지 확인
         if (!trainer.getGym().getId().equals(gymId)) {
             throw new BaseException(ExceptionCode.NOT_GYM_OWNER);

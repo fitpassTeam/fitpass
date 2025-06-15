@@ -1,10 +1,10 @@
 package org.example.fitpass.domain.trainer.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
-import org.example.fitpass.domain.gym.dto.request.GymPhotoUpdateRequestDto;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerUpdateRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerDetailResponseDto;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerRequestDto;
@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/gyms/{gymId}/trainers")
@@ -38,10 +40,10 @@ public class TrainerController {
         @Valid @RequestBody TrainerRequestDto request) {
         TrainerResponseDto response = trainerService.createTrainer(
             gymId,
-            request.getName(),
-            request.getPrice(),
-            request.getContent(),
-            request.getTrainerImage()
+            request.name(),
+            request.price(),
+            request.content(),
+            request.trainerImage()
         );
         ResponseMessage<TrainerResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.POST_TRAINER_SUCCESS, response);
@@ -54,7 +56,7 @@ public class TrainerController {
     public ResponseEntity<ResponseMessage<Page<TrainerResponseDto>>> getAllTrainer(
         @PathVariable("gymId") Long gymId,
         @PageableDefault(page = 0, size = 10) Pageable pageable) {
-        Page<TrainerResponseDto> response = trainerService.getAllTrainers(pageable);
+        Page<TrainerResponseDto> response = trainerService.getAllTrainersByGym(gymId, pageable);
         ResponseMessage<Page<TrainerResponseDto>> responseMessage =
             ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GET_TRAINER_SUCCESS.getHttpStatus())
@@ -66,7 +68,7 @@ public class TrainerController {
     public ResponseEntity<ResponseMessage<TrainerDetailResponseDto>> getTrainerById(
         @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id) {
-        TrainerDetailResponseDto response = trainerService.findById(id);
+        TrainerDetailResponseDto response = trainerService.getTrainerByIdAndGym(gymId, id);
         ResponseMessage<TrainerDetailResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GET_TRAINER_SUCCESS.getHttpStatus())
@@ -79,7 +81,14 @@ public class TrainerController {
         @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id,
         @Valid @RequestBody TrainerUpdateRequestDto dto) {
-        TrainerResponseDto response = trainerService.updateTrainer(id, dto);
+        TrainerResponseDto response = trainerService.updateTrainer(
+            gymId,
+            id,
+            dto.name(),
+            dto.price(),
+            dto.content(),
+            dto.trainerStatus()
+            );
         ResponseMessage<TrainerResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_SUCCESS.getHttpStatus())
@@ -87,13 +96,13 @@ public class TrainerController {
     }
 
     //사진 수정
-    @PutMapping("/{id}/photo")
-    public ResponseEntity<ResponseMessage<Void>> updatePhoto(
+    @PutMapping("/{id}/photos")
+    public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
+        @RequestParam("images")List<MultipartFile> files,
         @PathVariable("gymId") Long gymId,
-        @Valid @RequestBody GymPhotoUpdateRequestDto request,
         @PathVariable("id") Long id) {
-        trainerService.updatePhoto(request.photoUrls(), id);
-        ResponseMessage<Void> responseMessage =
+        trainerService.updatePhoto(files, gymId, id);
+        ResponseMessage<List<String>> responseMessage =
             ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS.getHttpStatus())
             .body(responseMessage);
@@ -104,7 +113,7 @@ public class TrainerController {
     public ResponseEntity<ResponseMessage<Void>> deleteTrainer(
         @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id) {
-        trainerService.deleteItem(id);
+        trainerService.deleteItem(gymId, id);
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.DELETE_TRAINER_SUCCESS);
         return ResponseEntity.status(SuccessCode.DELETE_TRAINER_SUCCESS.getHttpStatus())
