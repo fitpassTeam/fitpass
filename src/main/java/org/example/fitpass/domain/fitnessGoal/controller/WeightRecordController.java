@@ -34,7 +34,12 @@ public class WeightRecordController {
         @Valid @RequestBody WeightRecordCreateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        WeightRecordResponseDto recordResponseDto = weightRecordService.createWeightRecord(requestDto, userDetails.getId());
+        WeightRecordResponseDto recordResponseDto = weightRecordService.createWeightRecord(
+            requestDto.fitnessGoalId(),
+            requestDto.weight(),
+            requestDto.recordDate(),
+            requestDto.memo(),
+            userDetails.getId());
         ResponseMessage<WeightRecordResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_CREATE_SUCCESS, recordResponseDto);
         return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_CREATE_SUCCESS.getHttpStatus()).body(responseMessage);
@@ -71,7 +76,13 @@ public class WeightRecordController {
         @Valid @RequestBody WeightRecordCreateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        WeightRecordResponseDto responseDto = weightRecordService.updateWeightRecord(userDetails.getId(), recordId, requestDto);
+        WeightRecordResponseDto responseDto = weightRecordService.updateWeightRecord(
+            userDetails.getId(),
+            recordId,
+            requestDto.fitnessGoalId(),
+            requestDto.weight(),
+            requestDto.recordDate(),
+            requestDto.memo());
         ResponseMessage<WeightRecordResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_UPDATE_SUCCESS, responseDto);
         return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_UPDATE_SUCCESS.getHttpStatus()).body(responseMessage);

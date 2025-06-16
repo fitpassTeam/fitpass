@@ -35,7 +35,15 @@ public class FitnessGoalController {
     public ResponseEntity<ResponseMessage<FitnessGoalResponseDto>> createGoal (
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @Valid @RequestBody FitnessGoalCreateRequestDto fitnessGoalCreateRequestDto) {
-        FitnessGoalResponseDto responseDto = fitnessGoalService.createGoal(userDetails.getId(), fitnessGoalCreateRequestDto);
+        FitnessGoalResponseDto responseDto = fitnessGoalService.createGoal(
+            userDetails.getId(),
+            fitnessGoalCreateRequestDto.title(),
+            fitnessGoalCreateRequestDto.description(),
+            fitnessGoalCreateRequestDto.goalType(),
+            fitnessGoalCreateRequestDto.startWeight(),
+            fitnessGoalCreateRequestDto.targetWeight(),
+            fitnessGoalCreateRequestDto.startDate(),
+            fitnessGoalCreateRequestDto.endDate());
         ResponseMessage<FitnessGoalResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_CREATE_SUCCESS, responseDto);
 
@@ -73,7 +81,13 @@ public class FitnessGoalController {
         @Valid @RequestBody FitnessGoalUpdateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        FitnessGoalResponseDto responseDto = fitnessGoalService.updateGoal(goalId, requestDto, userDetails.getId());
+        FitnessGoalResponseDto responseDto = fitnessGoalService.updateGoal(
+            goalId,
+            requestDto.title(),
+            requestDto.description(),
+            requestDto.targetWeight(),
+            requestDto.endDate(),
+            userDetails.getId());
         ResponseMessage<FitnessGoalResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_UPDATE_SUCCESS, responseDto);
 

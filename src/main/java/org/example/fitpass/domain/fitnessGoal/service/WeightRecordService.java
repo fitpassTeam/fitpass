@@ -1,5 +1,6 @@
 package org.example.fitpass.domain.fitnessGoal.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,14 @@ public class WeightRecordService {
 
     // 체중 기록 생성
     @Transactional
-    public WeightRecordResponseDto createWeightRecord (WeightRecordCreateRequestDto requestDto, Long userId) {
+    public WeightRecordResponseDto createWeightRecord (
+        Long fitnessGoalId,
+        Double weight,
+        LocalDate recordDate,
+        String memo,
+        Long userId) {
         // 목표 존재 여부 및 권한 확인
-        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(requestDto.fitnessGoalId(), userId);
+        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(fitnessGoalId, userId);
 
         // 만료되거나 취소된 목표에는 체중 기록 생성 불가
         if (fitnessGoal.getGoalStatus() == GoalStatus.EXPIRED || 
@@ -35,21 +41,21 @@ public class WeightRecordService {
         }
 
         if(weightRecordRepository.existsByFitnessGoalIdAndRecordDate(
-            requestDto.fitnessGoalId(), requestDto.recordDate())) {
+            fitnessGoalId, recordDate)) {
             throw new BaseException(ExceptionCode.WEIGHT_RECORD_ALREADY_EXISTS);
         }
 
         WeightRecord weightRecord = WeightRecord.of(
             fitnessGoal,
-            requestDto.weight(),
-            requestDto.recordDate(),
-            requestDto.memo()
+            weight,
+            recordDate,
+            memo
         );
 
         WeightRecord savedRecord = weightRecordRepository.save(weightRecord);
 
         // 현재 체중 업데이트 (목표 달성 체크 포함)
-        fitnessGoal.updateCurrentWeight(requestDto.weight());
+        fitnessGoal.updateCurrentWeight(weight);
         
         return WeightRecordResponseDto.from(savedRecord);
     }
@@ -76,14 +82,20 @@ public class WeightRecordService {
 
     // 체중 기록 수정
     @Transactional
-    public WeightRecordResponseDto updateWeightRecord(Long userId, Long recordId, WeightRecordCreateRequestDto requestDto) {
+    public WeightRecordResponseDto updateWeightRecord(
+        Long userId,
+        Long recordId,
+        Long fitnessGoalId,
+        Double weight,
+        LocalDate recordDate,
+        String memo) {
         WeightRecord weightRecord = weightRecordRepository.findByIdOrElseThrow(recordId);
         // 권한 확인
         if(!weightRecord.getFitnessGoal().getUser().getId().equals(userId)) {
             throw new BaseException(ExceptionCode.NOT_WEIGHT_RECORD_OWNER);
         }
 
-        weightRecord.updateRecord(requestDto.weight(), requestDto.memo());
+        weightRecord.updateRecord(weight, memo);
 
         updateCurrentWeightIfLatest(weightRecord);
 
