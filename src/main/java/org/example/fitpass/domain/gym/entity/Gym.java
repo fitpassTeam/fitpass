@@ -129,4 +129,7 @@ public class Gym extends BaseEntity {
         }
     }
 
+    public User getOwner(){
+        return user;
+    }
 }

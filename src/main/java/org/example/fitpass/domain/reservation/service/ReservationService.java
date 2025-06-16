@@ -9,6 +9,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.domain.notify.NotificationType;
+import org.example.fitpass.domain.notify.service.NotifyService;
 import org.example.fitpass.domain.user.UserRole;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -46,6 +48,7 @@ public class ReservationService {
     private final TrainerRepository trainerRepository;
     private final PointService pointService;
     private final RedissonClient redissonClient; // ⭐ Redis 분산 락용
+    private final NotifyService notifyService;
 
     // 예약 가능 시간 조회
     @Transactional
@@ -115,6 +118,14 @@ public class ReservationService {
             Reservation reservation = ReservationRequestDto.from(reservationRequestDto, user, gym,
                 trainer);
             Reservation createReservation = reservationRepository.save(reservation);
+
+            String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + createReservation.getId();
+
+            String content = "당신의 예약이 완료되었습니다.";
+            notifyService.send(user, NotificationType.RESERVATION, content, url);
+
+            String contentForTrainer = "회원 " + user.getName() + "님의 예약이 신규 발생되었습니다.";
+            notifyService.send(trainer.getGym().getOwner(), NotificationType.RESERVATION, contentForTrainer, url);
 
             return ReservationResponseDto.from(createReservation);
         } catch (InterruptedException e) {
