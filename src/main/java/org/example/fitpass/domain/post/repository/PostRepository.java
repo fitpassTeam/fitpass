@@ -30,6 +30,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p WHERE p.gym.id = :gymId AND p.postType = :postType ORDER BY p.createdAt DESC")
     List<Post> findByGymIdAndPostType(@Param("gymId")Long gymId, @Param("postType") PostType postType);
 
-    @Query("SELECT p FROM Post p WHERE p.content LIKE %:keyword% AND p.postStatus <> 'Deleted'")
-    Page<Post> findByPostNameContaining(@Param("keyword") String keyword, Pageable pageable);
+    @Query("SELECT p FROM Post p WHERE p.content LIKE %:keyword% AND p.postStatus <> 'DELETED'")
+    Page<Post> findBycontentAndPostType(@Param("keyword") String keyword, Pageable pageable);
+
 }

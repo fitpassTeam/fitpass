@@ -3,7 +3,7 @@ package org.example.fitpass.common.security;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.jwt.JwtAuthenticationFilter;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
-import org.example.fitpass.common.redis.RedisService;
+import org.example.fitpass.config.RedisService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -33,6 +33,7 @@ public class SecurityConfig {
             .sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 .requestMatchers(
                     "/auth/**",
                     "/ws/**",
@@ -40,7 +41,8 @@ public class SecurityConfig {
                     "/swagger-ui.html",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
-                    "/api-docs/**"
+                    "/api-docs/**",
+                    "/search/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 // 관리자만 접근 가능

@@ -1,5 +1,6 @@
 package org.example.fitpass.domain.fitnessGoal.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.example.fitpass.domain.fitnessGoal.dto.response.FitnessGoalListRespon
 import org.example.fitpass.domain.fitnessGoal.dto.response.FitnessGoalResponseDto;
 import org.example.fitpass.domain.fitnessGoal.entity.FitnessGoal;
 import org.example.fitpass.domain.fitnessGoal.enums.GoalStatus;
+import org.example.fitpass.domain.fitnessGoal.enums.GoalType;
 import org.example.fitpass.domain.fitnessGoal.repository.FitnessGoalRepository;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
@@ -26,19 +28,28 @@ public class FitnessGoalService {
 
     // 목표 생성
     @Transactional
-    public FitnessGoalResponseDto createGoal(Long userId, FitnessGoalCreateRequestDto requestDto) {
+    public FitnessGoalResponseDto createGoal(
+        Long userId,
+        String title,
+        String description,
+        GoalType goalType,
+        Double startWeight,
+        Double targetWeight,
+        LocalDate startDate,
+        LocalDate endDate
+    ) {
         // 유저 조회
         User user = userRepository.findByIdOrElseThrow(userId);
 
         FitnessGoal fitnessGoal = FitnessGoal.of(
             user,
-            requestDto.title(),
-            requestDto.description(),
-            requestDto.goalType(),
-            requestDto.startWeight(),
-            requestDto.targetWeight(),
-            requestDto.startDate(),
-            requestDto.endDate());
+            title,
+            description,
+            goalType,
+            startWeight,
+            targetWeight,
+            startDate,
+            endDate);
 
         FitnessGoal savedGoal = fitnessGoalRepository.save(fitnessGoal);
         return FitnessGoalResponseDto.from(savedGoal);
@@ -48,7 +59,7 @@ public class FitnessGoalService {
     @Transactional
     public List<FitnessGoalListResponseDto> getMyGoals(Long userId) {
         List<FitnessGoal> goals = fitnessGoalRepository.findByUserIdOrderByCreatedAtDesc(userId);
-        
+
         // 만료 상태 체크 및 업데이트
         goals.forEach(FitnessGoal::checkAndUpdateExpiredStatus);
 
@@ -59,7 +70,7 @@ public class FitnessGoalService {
     @Transactional
     public FitnessGoalResponseDto getGoal(Long userId, Long goalId) {
         FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId, userId);
-        
+
         // 만료 상태 체크 및 업데이트
         fitnessGoal.checkAndUpdateExpiredStatus();
 
@@ -68,7 +79,12 @@ public class FitnessGoalService {
 
     // 목표 수정
     @Transactional
-    public FitnessGoalResponseDto updateGoal(Long goalId, FitnessGoalUpdateRequestDto requestDto,
+    public FitnessGoalResponseDto updateGoal(
+        Long goalId,
+        String title,
+        String description,
+        Double targetWeight,
+        LocalDate endDate,
         Long userId) {
         FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId,
             userId);
@@ -81,8 +97,8 @@ public class FitnessGoalService {
             throw new BaseException(ExceptionCode.FITNESS_GOAL_ALREADY_CANCELLED);
         }
 
-        fitnessGoal.updateGoal(requestDto.title(), requestDto.description(),
-            requestDto.targetWeight(), requestDto.endDate());
+        fitnessGoal.updateGoal(title, description,
+            targetWeight, endDate);
         return FitnessGoalResponseDto.from(fitnessGoal);
     }
 
@@ -90,9 +106,9 @@ public class FitnessGoalService {
     @Transactional
     public FitnessGoalResponseDto cancelGoal(Long goalId, Long userId) {
         FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId, userId);
-        
+
         fitnessGoal.cancelGoal();
-        
+
         return FitnessGoalResponseDto.from(fitnessGoal);
     }
 
@@ -100,12 +116,12 @@ public class FitnessGoalService {
     @Transactional
     public void deleteGoal(Long goalId, Long userId) {
         FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId, userId);
-        
+
         // 완료된 목표는 삭제 불가 (기록 보존을 위해)
         if (fitnessGoal.getGoalStatus() == GoalStatus.COMPLETED) {
             throw new BaseException(ExceptionCode.FITNESS_GOAL_DELETE_NOT_ALLOWED);
         }
-        
+
         fitnessGoalRepository.delete(fitnessGoal);
     }
 

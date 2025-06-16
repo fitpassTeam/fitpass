@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.common.security.CustomUserDetails;
-import org.example.fitpass.domain.gym.dto.request.GymPhotoUpdateRequestDto;
 import org.example.fitpass.domain.gym.dto.request.GymRequestDto;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
@@ -29,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/gym")
+@RequestMapping("/gyms")
 @RequiredArgsConstructor
 public class GymController {
 
@@ -40,13 +39,13 @@ public class GymController {
         @Valid @RequestBody GymRequestDto request,
         @AuthenticationPrincipal CustomUserDetails user) {
         GymResponseDto response = gymService.post(
-            request.getAddress(),
-            request.getName(),
-            request.getContent(),
-            request.getNumber(),
-            request.getGymImage(),
-            request.getOpenTime(),
-            request.getCloseTime(),
+            request.address(),
+            request.name(),
+            request.content(),
+            request.number(),
+            request.gymImage(),
+            request.openTime(),
+            request.closeTime(),
             user.getId()
         );
         ResponseMessage<GymResponseDto> responseMessage =
@@ -93,12 +92,12 @@ public class GymController {
         @PathVariable Long gymId,
         @AuthenticationPrincipal CustomUserDetails user) {
         GymResponseDto response = gymService.updateGym(
-            request.getName(),
-            request.getNumber(),
-            request.getContent(),
-            request.getAddress(),
-            request.getOpenTime(),
-            request.getCloseTime(),
+            request.name(),
+            request.number(),
+            request.content(),
+            request.address(),
+            request.openTime(),
+            request.closeTime(),
             gymId,
             user.getId()
         );

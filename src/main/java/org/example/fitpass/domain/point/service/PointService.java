@@ -27,13 +27,13 @@ public class PointService {
 
     // 포인트 충전
     @Transactional
-    public int chargePoint(Long userId, PointChargeRequestDto pointChargeRequestDto, String description ) {
+    public int chargePoint(Long userId, int amount, String description ) {
         User user = userRepository.findByIdOrElseThrow(userId);
         // 현재 잔액에서 충전될 포인트 추가
-        int newBalance = user.getPointBalance() + pointChargeRequestDto.amount();
+        int newBalance = user.getPointBalance() + amount;
 
         // 포인트 이력 저장
-        Point point = new Point(user, pointChargeRequestDto.amount(), description, newBalance, PointType.CHARGE);
+        Point point = new Point(user, amount, description, newBalance, PointType.CHARGE);
         pointRepository.save(point);
 
         // 사용자 잔액 업데이트
@@ -44,16 +44,16 @@ public class PointService {
 
     // 포인트 사용
     @Transactional
-    public int usePoint (Long userId, PointUseRefundRequestDto pointUseRefundRequestDto) {
+    public int usePoint (Long userId, int amount, String description) {
         User user = userRepository.findByIdOrElseThrow(userId);
         // 잔액 부족 검증
-        if (user.getPointBalance() < pointUseRefundRequestDto.amount()) {
+        if (user.getPointBalance() < amount) {
             throw new BaseException(ExceptionCode.INSUFFICIENT_POINT_BALANCE);
         }
         // 현재 잔액에서 사용한 포인트 차감
-        int newBalance = user.getPointBalance() - pointUseRefundRequestDto.amount();
+        int newBalance = user.getPointBalance() - amount;
         // 포인트 이력 저장
-        Point point = new Point(user, pointUseRefundRequestDto.amount(), pointUseRefundRequestDto.description(), newBalance, PointType.USE);
+        Point point = new Point(user, amount, description, newBalance, PointType.USE);
         pointRepository.save(point);
         // 사용자 잔액 업데이트
         user.updatePointBalance(newBalance);
@@ -63,12 +63,12 @@ public class PointService {
 
     // 포인트 100% 환불
     @Transactional
-    public int refundPoint (Long userId, PointUseRefundRequestDto pointUseRefundRequestDto) {
+    public int refundPoint (Long userId, int amount, String description) {
         User user = userRepository.findByIdOrElseThrow(userId);
 
-        int newBalance = user.getPointBalance() + pointUseRefundRequestDto.amount();
+        int newBalance = user.getPointBalance() + amount;
 
-        Point point = new Point(user, pointUseRefundRequestDto.amount(), pointUseRefundRequestDto.description(), newBalance, PointType.REFUND);
+        Point point = new Point(user, amount, description, newBalance, PointType.REFUND);
         pointRepository.save(point);
         // 사용자 잔액 업데이트
         user.updatePointBalance(newBalance);
@@ -78,21 +78,21 @@ public class PointService {
 
     // 사용자 현금화용 - 90% 환불
     @Transactional
-    public PointCashOutResponseDto cashOutPoint (Long userId, PointCashOutRequestDto pointCashOutRequestDto) {
+    public PointCashOutResponseDto cashOutPoint (Long userId, int amount, String description) {
         User user = userRepository.findByIdOrElseThrow(userId);
 
         // 잔액 부족 검증
-        if (user.getPointBalance() < pointCashOutRequestDto.amount()) {
+        if (user.getPointBalance() < amount) {
             throw new BaseException(ExceptionCode.INSUFFICIENT_POINT_BALANCE);
         }
 
-        int requestedAmount = pointCashOutRequestDto.amount();
-        int cashAmount = (int)  (requestedAmount * 0.9);
+        int requestedAmount = amount;
+        int cashAmount = (int) (requestedAmount * 0.9);
         int newBalance = user.getPointBalance() - requestedAmount;
 
-        String description = pointCashOutRequestDto.description() != null ?
-            pointCashOutRequestDto.description() : "포인트 현금화";
-        Point point = new Point(user, requestedAmount, description, newBalance, PointType.CASH_OUT);
+        String descriptions = description != null ?
+            description : "포인트 현금화";
+        Point point = new Point(user, requestedAmount, descriptions, newBalance, PointType.CASH_OUT);
         pointRepository.save(point);
 
         user.updatePointBalance(newBalance);
