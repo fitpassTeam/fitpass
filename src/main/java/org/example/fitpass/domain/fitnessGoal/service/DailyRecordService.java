@@ -1,5 +1,6 @@
 package org.example.fitpass.domain.fitnessGoal.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,18 +29,23 @@ public class DailyRecordService {
 
     // 일일 기록 생성
     @Transactional
-    public DailyRecordResponseDto createDailyRecord (DailyRecordCreateRequestDto requestDto, Long userId) {
-        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(requestDto.fitnessGoalId(), userId);
+    public DailyRecordResponseDto createDailyRecord (
+        Long fitnessGoalId,
+        List<String> imageUrls,
+        String memo,
+        LocalDate recordDate,
+        Long userId) {
+        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(fitnessGoalId, userId);
 
-        if(dailyRecordRepository.existsByFitnessGoalIdAndRecordDate(requestDto.fitnessGoalId(), requestDto.recordDate())) {
+        if(dailyRecordRepository.existsByFitnessGoalIdAndRecordDate(fitnessGoalId, recordDate)) {
             throw new BaseException(ExceptionCode.DAILY_RECORD_ALREADY_EXISTS);
         }
 
         DailyRecord dailyRecord = DailyRecord.of(
-            requestDto.imageUrls(),
+            imageUrls,
             fitnessGoal,
-            requestDto.recordDate(),
-            requestDto.memo());
+            recordDate,
+            memo);
         DailyRecord savedRecord = dailyRecordRepository.save(dailyRecord);
 
         return DailyRecordResponseDto.from(savedRecord);

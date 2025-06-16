@@ -34,7 +34,12 @@ public class ReviewService {
 
     // 리뷰 생성
     @Transactional
-    public ReviewResponseDto createReview(Long reservationId, Long userId, ReviewCreateRequestDto requestDto) {
+    public ReviewResponseDto createReview(
+        Long reservationId,
+        Long userId,
+        String content,
+        int gymRating,
+        int trainerRating) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         // 예약 조회
@@ -52,7 +57,12 @@ public class ReviewService {
             throw new BaseException(ExceptionCode.REVIEW_ALREADY_EXISTS);
         }
         // 리뷰 저장
-        Review review = Review.of(reservation, requestDto, user);
+        Review review = Review.of(
+            reservation,
+            content,
+            gymRating,
+            trainerRating,
+            user);
         Review savedReview = reviewRepository.save(review);
 
         return ReviewResponseDto.from(savedReview);
@@ -60,7 +70,13 @@ public class ReviewService {
 
     // 리뷰 수정
     @Transactional
-    public ReviewResponseDto updateReview(Long reservationId, Long reviewId, ReviewUpdateRequestDto requestDto, Long userId) {
+    public ReviewResponseDto updateReview(
+        Long reservationId,
+        Long reviewId,
+        String content,
+        int gymRating,
+        int trainerRating,
+        Long userId) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         // 예약 조회
@@ -72,7 +88,7 @@ public class ReviewService {
         if (!review.getUser().getId().equals(userId)) {
             throw new BaseException(ExceptionCode.NOT_REVIEW_OWNER);
         }
-        review.update(requestDto.content(), requestDto.gymRating(), requestDto.trainerRating());
+        review.update(content, gymRating, trainerRating);
 
         return ReviewResponseDto.from(review);
     }
