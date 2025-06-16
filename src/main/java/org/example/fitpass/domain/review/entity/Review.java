@@ -50,11 +50,16 @@ public class Review extends BaseEntity {
         this.reservation = reservation;
     }
 
-    public static Review of(Reservation reservation, ReviewCreateRequestDto requestDto, User user) {
+    public static Review of(Reservation reservation,
+        String content,
+        int gymRating,
+        int trainerRating,
+        User user
+    ) {
         return new Review(
-            requestDto.content(),
-            requestDto.gymRating(),
-            requestDto.trainerRating(),
+            content,
+            gymRating,
+            trainerRating,
             user,
             reservation
         );

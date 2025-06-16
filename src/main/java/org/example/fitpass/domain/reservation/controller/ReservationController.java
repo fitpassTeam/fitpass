@@ -59,7 +59,13 @@ public class ReservationController {
         @PathVariable Long gymId,
         @PathVariable Long trainerId) {
         ReservationResponseDto reservationResponseDto =
-            reservationService.createReservation(reservationRequestDto, user.getId(), gymId, trainerId);
+            reservationService.createReservation(
+                reservationRequestDto.reservationDate(),
+                reservationRequestDto.reservationTime(),
+                reservationRequestDto.reservationStatus(),
+                user.getId(),
+                gymId,
+                trainerId);
 
         ResponseMessage<ReservationResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.RESERVATION_CREATE_SUCCESS, reservationResponseDto);
@@ -77,7 +83,14 @@ public class ReservationController {
         @PathVariable Long reservationId
     ){
         UpdateReservationResponseDto updateReservationResponseDto =
-            reservationService.updateReservation(updateReservationRequestDto, user.getId(), gymId, trainerId, reservationId);
+            reservationService.updateReservation(
+                updateReservationRequestDto.reservationDate(),
+                updateReservationRequestDto.reservationTime(),
+                updateReservationRequestDto.reservationStatus(),
+                user.getId(),
+                gymId,
+                trainerId,
+                reservationId);
 
         ResponseMessage<UpdateReservationResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.RESERVATION_UPDATE_SUCCESS, updateReservationResponseDto);

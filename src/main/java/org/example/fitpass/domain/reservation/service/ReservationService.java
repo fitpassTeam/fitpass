@@ -9,9 +9,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.domain.user.UserRole;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.entity.Gym;
@@ -19,7 +16,6 @@ import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
 import org.example.fitpass.domain.point.service.PointService;
 import org.example.fitpass.domain.reservation.dto.request.ReservationRequestDto;
-import org.example.fitpass.domain.reservation.dto.request.UpdateReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.response.GetReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.response.ReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.response.TrainerReservationResponseDto;
@@ -30,8 +26,11 @@ import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.repository.ReservationRepository;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.trainer.repository.TrainerRepository;
+import org.example.fitpass.domain.user.UserRole;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,7 +73,8 @@ public class ReservationService {
 
     // 예약 생성
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public ReservationResponseDto createReservation(ReservationRequestDto reservationRequestDto,
+    public ReservationResponseDto createReservation(
+        LocalDate reservationDate, LocalTime reservationTime, ReservationStatus status,
         Long userId, Long gymId, Long trainerId) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
@@ -85,8 +85,8 @@ public class ReservationService {
 
         // Redis 분산 락 키 생성
         String lockKey = String.format("reservation:lock:%d:%s:%s",
-            trainerId, reservationRequestDto.reservationDate(),
-            reservationRequestDto.reservationTime());
+            trainerId, reservationDate,
+            reservationTime);
 
         RLock lock = redissonClient.getLock(lockKey);
 
@@ -97,8 +97,8 @@ public class ReservationService {
             }
             // 중복 예약 확인 (Redis 락 내에서)
             boolean alreadyExists = reservationRepository.existsByTrainerAndReservationDateAndReservationTime(
-                trainer, reservationRequestDto.reservationDate(),
-                reservationRequestDto.reservationTime()
+                trainer, reservationDate,
+                reservationTime
             );
 
             if (alreadyExists) {
@@ -109,10 +109,15 @@ public class ReservationService {
             String description = "PT 예약 - " + trainer.getName();
             PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);// 트레이너 이용료
 
-            int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto);
+            int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto.amount(), pointUseRefundRequestDto.description());
 
             // 예약 생성 및 저장
-            Reservation reservation = ReservationRequestDto.from(reservationRequestDto, user, gym,
+            Reservation reservation = ReservationRequestDto.from(
+                reservationDate,
+                reservationTime,
+                status,
+                user,
+                gym,
                 trainer);
             Reservation createReservation = reservationRepository.save(reservation);
 
@@ -132,8 +137,8 @@ public class ReservationService {
     // 예약 수정
     @Transactional
     public UpdateReservationResponseDto updateReservation(
-        UpdateReservationRequestDto updateReservationRequestDto, Long userId, Long gymId,
-        Long trainerId, Long reservationId) {
+        LocalDate reservationDate, LocalTime reservationTime, ReservationStatus status,
+        Long userId, Long gymId, Long trainerId, Long reservationId) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
 
@@ -156,13 +161,13 @@ public class ReservationService {
 
         // 2일 전까지만 변경 가능
         LocalDate today = LocalDate.now();
-        LocalDate reservationDate = reservation.getReservationDate();
-        if (ChronoUnit.DAYS.between(today, reservationDate) < 2) {
+        LocalDate reservationDates = reservation.getReservationDate();
+        if (ChronoUnit.DAYS.between(today, reservationDates) < 2) {
             throw new BaseException(ExceptionCode.RESERVATION_CHANGE_DEADLINE_PASSED);
         }
 
         // 새로운 예약 날짜도 2일 후부터 가능한지 검증
-        LocalDate newReservationDate = updateReservationRequestDto.reservationDate();
+        LocalDate newReservationDate = reservationDate;
         if (ChronoUnit.DAYS.between(today, newReservationDate) < 2) {
             throw new BaseException(ExceptionCode.RESERVATION_TOO_EARLY);
         }
@@ -171,7 +176,7 @@ public class ReservationService {
         boolean isDuplicate = reservationRepository.existsByTrainerAndReservationDateAndReservationTimeAndIdNot(
             trainer,
             newReservationDate,
-            updateReservationRequestDto.reservationTime(),
+            reservationTime,
             reservationId  // 현재 예약은 제외
         );
         if (isDuplicate) {
@@ -179,9 +184,9 @@ public class ReservationService {
         }
         // 예약 정보 업데이트
         reservation.updateReservation(
-            updateReservationRequestDto.reservationDate(),
-            updateReservationRequestDto.reservationTime(),
-            updateReservationRequestDto.reservationStatus());
+            reservationDate,
+            reservationTime,
+            status);
 
         Reservation updateReservation = reservationRepository.save(reservation);
 
@@ -223,7 +228,7 @@ public class ReservationService {
         String description = "PT 예약 취소 환불 - " + trainer.getName();
         PointUseRefundRequestDto pointRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);
 
-        pointService.refundPoint(userId, pointRefundRequestDto);
+        pointService.refundPoint(userId, pointRefundRequestDto.amount(), pointRefundRequestDto.description());
 
         // 예약 상태를 취소로 변경
         reservation.cancelReservation();

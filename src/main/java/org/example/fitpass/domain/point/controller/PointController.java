@@ -38,7 +38,9 @@ public class PointController {
         @RequestBody PointUseRefundRequestDto pointUseRefundRequestDto,
         @AuthenticationPrincipal CustomUserDetails user
     ) {
-        int newBalance = pointService.usePoint(user.getId(), pointUseRefundRequestDto);
+        int newBalance = pointService.usePoint(user.getId(),
+            pointUseRefundRequestDto.amount(),
+            pointUseRefundRequestDto.description());
 
         ResponseMessage<Integer> responseMessage =
             ResponseMessage.success(SuccessCode.POINT_USE_SUCCESS, newBalance);
@@ -51,7 +53,10 @@ public class PointController {
         @RequestBody PointUseRefundRequestDto pointUseRefundRequestDto,
         @AuthenticationPrincipal CustomUserDetails user
     ) {
-        int newBalance = pointService.refundPoint(user.getId(), pointUseRefundRequestDto);
+        int newBalance = pointService.refundPoint(
+            user.getId(),
+            pointUseRefundRequestDto.amount(),
+            pointUseRefundRequestDto.description());
 
         ResponseMessage<Integer> responseMessage =
             ResponseMessage.success(SuccessCode.POINT_REFUND_SUCCESS, newBalance);
@@ -64,7 +69,10 @@ public class PointController {
         @RequestBody PointCashOutRequestDto pointCashOutRequestDto,
         @AuthenticationPrincipal CustomUserDetails user
     ) {
-        PointCashOutResponseDto pointCashOutResponseDto = pointService.cashOutPoint(user.getId(), pointCashOutRequestDto);
+        PointCashOutResponseDto pointCashOutResponseDto = pointService.cashOutPoint(
+            user.getId(),
+            pointCashOutRequestDto.amount(),
+            pointCashOutRequestDto.description());
 
         ResponseMessage<PointCashOutResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.POINT_CASH_OUT_SUCCESS, pointCashOutResponseDto);
