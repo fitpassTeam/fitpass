@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +30,11 @@ public class S3Service {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
+
+    @PostConstruct
+    public void initLog() {
+        log.info("S3Service 초기화 완료, 버킷 이름: {}", bucketName);
+    }
 
     @Transactional
     public List<String> uploadFiles(List<MultipartFile> files){
