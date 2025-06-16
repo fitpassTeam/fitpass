@@ -29,7 +29,9 @@ public class AdminPointController {
         @RequestBody PointChargeRequestDto pointChargeRequestDto,
         @AuthenticationPrincipal CustomUserDetails user
     ) {
-        int newBalance = pointService.chargePoint(targetUserId, pointChargeRequestDto, "포인트 충전");
+        int newBalance = pointService.chargePoint(targetUserId,
+            pointChargeRequestDto.amount(),
+            "포인트 충전");
 
         ResponseMessage<Integer> responseMessage =
             ResponseMessage.success(SuccessCode.POINT_CHARGE_SUCCESS, newBalance);

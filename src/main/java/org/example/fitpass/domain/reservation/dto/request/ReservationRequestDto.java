@@ -30,11 +30,11 @@ public record ReservationRequestDto(
         this.reservationStatus = reservationStatus;
     }
 
-    public static Reservation from(ReservationRequestDto dto, User user, Gym gym, Trainer trainer) {
+    public static Reservation from(LocalDate reservationDate, LocalTime reservationTime, ReservationStatus status, User user, Gym gym, Trainer trainer) {
         return new Reservation(
-            dto.reservationDate,
-            dto.reservationTime,
-            dto.reservationStatus != null ? dto.reservationStatus : ReservationStatus.PENDING,
+            reservationDate,
+            reservationTime,
+            status != null ? status : ReservationStatus.PENDING,
             user,
             gym,
             trainer

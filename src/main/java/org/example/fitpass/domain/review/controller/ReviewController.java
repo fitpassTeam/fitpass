@@ -8,7 +8,6 @@ import org.example.fitpass.domain.review.dto.request.ReviewCreateRequestDto;
 import org.example.fitpass.domain.review.dto.request.ReviewUpdateRequestDto;
 import org.example.fitpass.domain.review.dto.response.ReviewResponseDto;
 import org.example.fitpass.domain.review.service.ReviewService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +32,12 @@ public class ReviewController {
         @RequestBody ReviewCreateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails user
     ) {
-        ReviewResponseDto responseDto = reviewService.createReview(reservationId, user.getId(), requestDto);
+        ReviewResponseDto responseDto = reviewService.createReview(
+            reservationId,
+            user.getId(),
+            requestDto.content(),
+            requestDto.gymRating(),
+            requestDto.trainerRating());
         ResponseMessage<ReviewResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.REVIEW_CREATE_SUCCESS,responseDto);
         return ResponseEntity.status(SuccessCode.REVIEW_CREATE_SUCCESS.getHttpStatus()).body(responseMessage);
@@ -47,7 +51,13 @@ public class ReviewController {
         @RequestBody ReviewUpdateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails user
     ) {
-        ReviewResponseDto responseDto = reviewService.updateReview(reservationId, reviewId, requestDto, user.getId());
+        ReviewResponseDto responseDto = reviewService.updateReview(
+            reservationId,
+            reviewId,
+            requestDto.content(),
+            requestDto.gymRating(),
+            requestDto.trainerRating(),
+            user.getId());
         ResponseMessage<ReviewResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.REVIEW_UPDATE_SUCCESS, responseDto);
         return ResponseEntity.status(SuccessCode.REVIEW_UPDATE_SUCCESS.getHttpStatus()).body(responseMessage);
