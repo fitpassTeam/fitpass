@@ -27,7 +27,7 @@ import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/gyms/{gymId}")
+@RequestMapping("gyms/{gymId}")
 public class PostController {
 
     private final PostService postService;
