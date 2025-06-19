@@ -25,6 +25,7 @@ import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.trainer.enums.TrainerStatus;
+import org.example.fitpass.domain.user.entity.User;
 
 
 @Getter
@@ -56,6 +57,9 @@ public class Trainer extends BaseEntity {
 
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL)
     private List<Image> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "trainer")
+    private List<User> members = new ArrayList<>();
 
     public Trainer(List<Image> trainerImage, String name, int price, String content) {
         this.name = name;
@@ -97,4 +101,5 @@ public class Trainer extends BaseEntity {
     public void assignToGym(Gym gym) {
         this.gym = gym;
     }
+
 }
