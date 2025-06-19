@@ -1,6 +1,6 @@
 package org.example.fitpass.domain.trainer.repository;
 
-import static org.example.fitpass.common.error.ExceptionCode.CANT_FIND_DATA;
+import static org.example.fitpass.common.error.ExceptionCode.TRAINER_NOT_FOUND;
 
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.domain.gym.entity.Gym;
@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 
     default Trainer findByIdOrElseThrow(Long trainerId) {
-        return findById(trainerId).orElseThrow(() -> new BaseException(CANT_FIND_DATA));
+        return findById(trainerId).orElseThrow(() -> new BaseException(TRAINER_NOT_FOUND));
     }
 
     Page<Trainer> findAllByGym(Gym gym, Pageable pageable);

@@ -56,7 +56,7 @@ public class ChatHandler extends TextWebSocketHandler {
             //Json 여부 검사
             JSONObject json = new JSONObject(message.getPayload());
 
-            Long Id = json.getLong("Id");
+            Long senderId = json.getLong("senderId");
             Long receiverId = json.getLong("receiverId");
             String content = json.getString("message");
             String senderTypeStr = json.getString("senderType");
@@ -64,10 +64,10 @@ public class ChatHandler extends TextWebSocketHandler {
 
             // 1. 사용자/트레이너 조회
             User user = userRepository.findById(
-                    senderType == SenderType.USER ? Id : receiverId)
+                    senderType == SenderType.USER ? senderId : receiverId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
             Trainer trainer = trainerRepository.findById(
-                    senderType == SenderType.USER ? receiverId : Id)
+                    senderType == SenderType.USER ? receiverId : senderId)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer not found"));
 
             // 2. 채팅방 조회/생성
@@ -75,7 +75,7 @@ public class ChatHandler extends TextWebSocketHandler {
                 .orElseGet(() -> chatRoomRepository.save(ChatRoom.of(user, trainer)));
 
             // 3. 메시지 저장
-            ChatMessage chatMessage = ChatMessage.of(room, Id, content, senderType);
+            ChatMessage chatMessage = ChatMessage.of(room, content, senderType);
             chatMessage = chatMessageRepository.save(chatMessage);  // 저장 후 갱신
 
             //메세지 전송

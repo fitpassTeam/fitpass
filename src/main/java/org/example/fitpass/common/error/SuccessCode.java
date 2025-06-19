@@ -92,6 +92,8 @@ public enum SuccessCode implements BaseCode {
 
     //10000 : 채팅 성공 코드
     GET_ALL_CHATTING(HttpStatus.OK,"10000", "채팅 내역이 조회되었습니다."),
+    CREATE_CHATROOM(HttpStatus.OK,"10001", "채팅방이 생성되었습니다."),
+    GET_ALL_CHATROOM(HttpStatus.OK,"10002", "채팅방 목록이 조회되었습니다."),
 
     // 11000 : 리뷰 성공 코드
     REVIEW_CREATE_SUCCESS(HttpStatus.CREATED,"11001", "리뷰 등록이 완료되었습니다."),
