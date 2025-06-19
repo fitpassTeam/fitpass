@@ -76,69 +76,67 @@ public class ReservationService {
     }
 
     // 예약 생성
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public ReservationResponseDto createReservation(ReservationRequestDto reservationRequestDto,
-        Long userId, Long gymId, Long trainerId) {
-        // 사용자 조회
-        User user = userRepository.findByIdOrElseThrow(userId);
-        // 체육관 조회
-        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        // 트레이너 조회
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        @Transactional(isolation = Isolation.READ_COMMITTED)
+        public ReservationResponseDto createReservation(ReservationRequestDto reservationRequestDto,
+            Long userId, Long gymId, Long trainerId) {
+            // 사용자 조회
+            User user = userRepository.findByIdOrElseThrow(userId);
+            // 체육관 조회
+            Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+            // 트레이너 조회
+            Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
 
-        // Redis 분산 락 키 생성
-        String lockKey = String.format("reservation:lock:%d:%s:%s",
-            trainerId, reservationRequestDto.reservationDate(),
-            reservationRequestDto.reservationTime());
+            // Redis 분산 락 키 생성
+            String lockKey = String.format("reservation:lock:%d:%s:%s",
+                trainerId, reservationRequestDto.reservationDate(),
+                reservationRequestDto.reservationTime());
 
-        RLock lock = redissonClient.getLock(lockKey);
+            RLock lock = redissonClient.getLock(lockKey);
 
-        try {
-            // 락 획득 시도 (10초 대기, 30초 후 자동 해제)
-            if (!lock.tryLock(10, 30, TimeUnit.SECONDS)) {
-                throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
-            }
-            // 중복 예약 확인 (Redis 락 내에서)
-            boolean alreadyExists = reservationRepository.existsByTrainerAndReservationDateAndReservationTime(
-                trainer, reservationRequestDto.reservationDate(),
-                reservationRequestDto.reservationTime()
-            );
+            try {
+                // 락 획득 시도 (10초 대기, 30초 후 자동 해제)
+                if (!lock.tryLock(10, 30, TimeUnit.SECONDS)) {
+                    throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
+                }
+                // 중복 예약 확인 (Redis 락 내에서)
+                boolean alreadyExists = reservationRepository.existsByTrainerAndReservationDateAndReservationTime(
+                    trainer, reservationRequestDto.reservationDate(),
+                    reservationRequestDto.reservationTime()
+                );
 
-            if (alreadyExists) {
-                throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
-            }
+                if (alreadyExists) {
+                    throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
+                }
 
-            // 포인트 사용
-            String description = "PT 예약 - " + trainer.getName();
-            PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);// 트레이너 이용료
+                // 포인트 사용
+                String description = "PT 예약 - " + trainer.getName();
+                PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);// 트레이너 이용료
 
-            int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto);
+                int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto);
 
-            // 예약 생성 및 저장
-            Reservation reservation = ReservationRequestDto.from(reservationRequestDto, user, gym,
-                trainer);
-            Reservation createReservation = reservationRepository.save(reservation);
+                // 예약 생성 및 저장
+                Reservation reservation = ReservationRequestDto.from(reservationRequestDto, user, gym,
+                    trainer);
+                Reservation createReservation = reservationRepository.save(reservation);
 
-            String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + createReservation.getId();
+                String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + createReservation.getId();
 
-            String content = "당신의 예약이 완료되었습니다.";
-            notifyService.send(user, NotificationType.RESERVATION, content, url);
+                String content = user.getName() + "님의 예약이 완료되었습니다." + "예약 날짜는 " + reservation.getReservationDate() + reservation.getReservationTime() + " 입니다. ";
+                notifyService.send(user, NotificationType.RESERVATION, content, url);
+                notifyService.send(trainer.getGym().getOwner(), NotificationType.RESERVATION, content, url);
 
-            String contentForTrainer = "회원 " + user.getName() + "님의 예약이 신규 발생되었습니다.";
-            notifyService.send(trainer.getGym().getOwner(), NotificationType.RESERVATION, contentForTrainer, url);
-
-            return ReservationResponseDto.from(createReservation);
-        } catch (InterruptedException e) {
-            // 플래그 복원 (다시 설정)
-            Thread.currentThread().interrupt();
-            throw new BaseException(ExceptionCode.RESERVATION_INTERRUPTED);
-        } finally {
-            // 안전한 락 해제
-            if(lock.isHeldByCurrentThread()) {
-                lock.unlock();
+                return ReservationResponseDto.from(createReservation);
+            } catch (InterruptedException e) {
+                // 플래그 복원 (다시 설정)
+                Thread.currentThread().interrupt();
+                throw new BaseException(ExceptionCode.RESERVATION_INTERRUPTED);
+            } finally {
+                // 안전한 락 해제
+                if(lock.isHeldByCurrentThread()) {
+                    lock.unlock();
+                }
             }
         }
-    }
 
     // 예약 수정
     @Transactional
