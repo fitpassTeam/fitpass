@@ -121,7 +121,7 @@ public class ReservationService {
 
                 String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + createReservation.getId();
 
-                String content = user.getName() + "님의 예약이 완료되었습니다." + "예약 날짜는 " + reservation.getReservationDate() + reservation.getReservationTime() + " 입니다. ";
+                String content = user.getName() + "님의 예약이 완료되었습니다." + "예약 날짜는 " + reservation.getReservationDate() +" "+ reservation.getReservationTime() + " 입니다. ";
                 notifyService.send(user, NotificationType.RESERVATION, content, url);
                 notifyService.send(trainer.getGym().getOwner(), NotificationType.RESERVATION, content, url);
 
