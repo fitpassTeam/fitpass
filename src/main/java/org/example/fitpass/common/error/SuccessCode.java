@@ -105,7 +105,12 @@ public enum SuccessCode implements BaseCode {
     POST_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "맴버십 등록이 완료되었습니다."),
     GET_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "맴버십 조회가 완료되었습니다."),
     PATCH_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "맴버십 수정이 완료되었습니다."),
-    DELETE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "맴버십 삭제가 완료되었습니다.");
+    DELETE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "맴버십 삭제가 완료되었습니다."),
+    PURCHASE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "맴버십 수정이 완료되었습니다."),
+    GET_MY_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "맴버십 수정이 완료되었습니다."),
+    GET_ACTIVE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "맴버십 수정이 완료되었습니다.");
+
+
 
     private final HttpStatus httpStatus;
     private final String code;

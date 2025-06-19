@@ -4,11 +4,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
-import org.example.fitpass.domain.membership.dto.request.MembershipRequestDto;
 import org.example.fitpass.domain.membership.dto.response.MembershipResponseDto;
 import org.example.fitpass.domain.membership.entity.Membership;
 import org.example.fitpass.domain.membership.repository.MembershipRepository;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

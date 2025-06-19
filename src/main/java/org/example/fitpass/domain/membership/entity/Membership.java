@@ -9,13 +9,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
-import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.gym.entity.Gym;
-import org.example.fitpass.domain.trainer.entity.Trainer;
 
 @Getter
 @Entity
@@ -23,22 +20,25 @@ import org.example.fitpass.domain.trainer.entity.Trainer;
 @Table(name = "memberships")
 public class Membership extends BaseEntity {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-        @Column(nullable = false)
-        private String name;
+    @Column(nullable = false)
+    private String name;
 
-        @Column(nullable = false)
-        private int price;
+    @Column(nullable = false)
+    private int price;
 
-        @Column(nullable = false)
-        private String content;
+    @Column(nullable = false)
+    private String content;
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "gym_id")
-        private Gym gym;
+    @Column(nullable = false)
+    private int durationInDays;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gym_id")
+    private Gym gym;
 
     public Membership(String name, int price, String content) {
         this.name = name;
@@ -57,6 +57,10 @@ public class Membership extends BaseEntity {
     }
 
     public void validateBelongsToGym(Gym gym) {
+    }
+
+    public int getDurationInDays() {
+        return this.durationInDays;
     }
 
     public void assignToGym(Gym gym) {

@@ -33,9 +33,22 @@ public class MembershipPurchase extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public MembershipPurchase(Membership membership, User user, LocalDateTime startDate) {
+    @Column(name = "start_date", nullable = false)
+    private LocalDateTime startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private LocalDateTime endDate;
+
+    public MembershipPurchase(Membership membership, User user, LocalDateTime now, int durationDays) {
         this.membership = membership;
         this.user = user;
+        this.startDate = now;
+        this.endDate = now.plusDays(durationDays);
+    }
+
+    public boolean isActive() {
+        LocalDateTime now = LocalDateTime.now();
+        return now.isAfter(startDate) && now.isBefore(endDate);
     }
 
 }
