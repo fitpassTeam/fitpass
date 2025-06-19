@@ -64,7 +64,6 @@ public class SecurityConfig {
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 // 관리자만 접근 가능
-                .requestMatchers("/notify/**").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
