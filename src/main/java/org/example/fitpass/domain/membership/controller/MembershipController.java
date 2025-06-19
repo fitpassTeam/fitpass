@@ -33,7 +33,8 @@ public class MembershipController {
             gymId,
             dto.name(),
             dto.price(),
-            dto.content()
+            dto.content(),
+            dto.durationInDays()
         );
         ResponseMessage<MembershipResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.POST_MEMBERSHIP_SUCCESS, response);
@@ -72,7 +73,8 @@ public class MembershipController {
             id,
             dto.name(),
             dto.price(),
-            dto.content()
+            dto.content(),
+            dto.durationInDays()
         );
         ResponseMessage<MembershipResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.PATCH_MEMBERSHIP_SUCCESS, response);

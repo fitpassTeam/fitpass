@@ -1,9 +1,13 @@
 package org.example.fitpass.domain.membership.dto.request;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
 public record MembershipRequestDto(
-    String name,
-    int price,
-    String content
+    @NotBlank String name,
+    @Min(10000) int price,
+    @NotBlank String content,
+    @Min(1) int durationInDays
 ) {
 
 }

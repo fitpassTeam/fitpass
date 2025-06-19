@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MembershipPurchaseRepository extends JpaRepository {
+public interface MembershipPurchaseRepository extends JpaRepository<MembershipPurchase, Long>{
 
     List<MembershipPurchase> findAllByUser(User user);
 

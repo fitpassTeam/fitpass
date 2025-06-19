@@ -1,5 +1,7 @@
 package org.example.fitpass.domain.membership.entity;
 
+import static org.example.fitpass.common.error.ExceptionCode.NOT_BELONG_TO_GYM;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,6 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.domain.gym.entity.Gym;
 
 @Getter
@@ -40,30 +43,32 @@ public class Membership extends BaseEntity {
     @JoinColumn(name = "gym_id")
     private Gym gym;
 
-    public Membership(String name, int price, String content) {
+    public Membership(String name, int price, String content, int durationInDays) {
         this.name = name;
         this.price = price;
         this.content = content;
+        this.durationInDays = durationInDays;
     }
 
-    public static Membership of(String name, int price, String content) {
-        return new Membership(name, price, content);
+    public static Membership of(String name, int price, String content, int durationInDays) {
+        return new Membership(name, price, content, durationInDays);
     }
 
-    public void update(String name, int price, String content) {
+    public void update(String name, int price, String content, int durationInDays) {
         this.name = name;
         this.price = price;
         this.content = content;
-    }
-
-    public void validateBelongsToGym(Gym gym) {
-    }
-
-    public int getDurationInDays() {
-        return this.durationInDays;
+        this.durationInDays = durationInDays;
     }
 
     public void assignToGym(Gym gym) {
         this.gym = gym;
     }
+
+    public void validateBelongsToGym(Gym gym) {
+        if (!this.gym.equals(gym)) {
+            throw new BaseException(NOT_BELONG_TO_GYM);
+        }
+    }
+
 }
