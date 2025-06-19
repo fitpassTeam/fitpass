@@ -56,7 +56,6 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/auth/**",
                     "/ws/**",
-                    "/notify/**",
                     "/error",
                     "/swagger-ui.html",
                     "/swagger-ui/**",
@@ -65,6 +64,7 @@ public class SecurityConfig {
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 // 관리자만 접근 가능
+                .requestMatchers("/notify/**").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
