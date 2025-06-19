@@ -38,10 +38,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-            .cors(cors -> {}) // CORS 설정은 아래 Bean에서 처리
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // 공개 API (GET /gyms 포함)
                 .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 .requestMatchers(
                     "/auth/**",
@@ -53,19 +54,24 @@ public class SecurityConfig {
                     "/api-docs/**",
                     "/search/**"
                 ).permitAll()
+                // 관리자만 접근 가능
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                // 나머지는 인증 필요
                 .anyRequest().authenticated()
             )
+            // JWT 인증 필터 추가
             .addFilterBefore(
                 new JwtAuthenticationFilter(jwtTokenProvider, redisService, customUserDetailsService),
                 UsernamePasswordAuthenticationFilter.class
             )
+            // OAuth2 로그인 설정
             .oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )
                 .successHandler(oAuthSuccessHandler)
             )
+            // OAuth2 redirect 필터 추가
             .addFilterBefore(redirectUrlCookieFilter, OAuth2AuthorizationRequestRedirectFilter.class)
             .build();
     }
@@ -89,16 +95,20 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        // 프론트엔드 주소 허용 (필요에 따라 추가)
+        configuration.setAllowedOrigins(List.of(
+            "http://localhost:3000",
+            "http://127.0.0.1:5500"
+        ));
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization", "Refresh-Token", "Content-Type"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**",configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
