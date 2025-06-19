@@ -23,8 +23,6 @@ public class RedirectUrlCookieFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
 
-        log.info("[RedirectUrlCookieFilter] 요청 URI: {}", request.getRequestURI());
-
         if (request.getRequestURI().startsWith("/oauth2/authorization")) {
             try {
                 log.info("요청 URI {} ", request.getRequestURI());
