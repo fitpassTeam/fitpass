@@ -44,8 +44,9 @@ public class MembershipPurchase extends BaseEntity {
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
 
-    public MembershipPurchase(Membership membership, User user, LocalDateTime now, int durationDays) {
+    public MembershipPurchase(Membership membership, Gym gym, User user, LocalDateTime now, int durationDays) {
         this.membership = membership;
+        this.gym = gym;
         this.user = user;
         this.startDate = LocalDateTime.now();
         this.endDate = now.plusDays(membership.getDurationInDays());

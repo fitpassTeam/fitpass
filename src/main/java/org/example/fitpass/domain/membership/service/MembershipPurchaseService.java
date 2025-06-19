@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.membership.dto.response.MembershipPurchaseResponseDto;
 import org.example.fitpass.domain.membership.entity.Membership;
 import org.example.fitpass.domain.membership.entity.MembershipPurchase;
@@ -33,10 +34,12 @@ public class MembershipPurchaseService {
             throw new BaseException(INVALID_GYM_MEMBERSHIP);
         }
 
+        Gym gym = membership.getGym();
+
         LocalDateTime now = LocalDateTime.now();
         int duration = membership.getDurationInDays();
 
-        MembershipPurchase purchase = new MembershipPurchase(membership, user, now, duration);
+        MembershipPurchase purchase = new MembershipPurchase(membership, gym, user, now, duration);
         purchaseRepository.save(purchase);
         return MembershipPurchaseResponseDto.from(purchase);
     }

@@ -68,6 +68,7 @@ public enum ExceptionCode implements BaseCode {
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "예약을 찾을 수 없습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "리뷰를 찾을 수 없습니다."),
     MEMBERSHIP_NOT_ACTIVE(HttpStatus.NOT_FOUND, "404", "활성화된 이용권을 찾을 수 없습니다."),
+    MEMBERSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "이용권을 찾을 수 없습니다."),
 
     // 409 Conflict = 서버와 충돌, 데이터가 이미 존재할때(400 보다 명확함)
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"409", "이미 등록된 회원입니다."),
