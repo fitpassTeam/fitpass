@@ -3,6 +3,7 @@ package org.example.fitpass.domain.gym.controller;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.dto.PageResponse;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.common.security.CustomUserDetails;
@@ -64,12 +65,13 @@ public class GymController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseMessage<Page<GymResponseDto>>> getAllGyms(
+    public ResponseEntity<ResponseMessage<PageResponse<GymResponseDto>>> getAllGyms(
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
         Page<GymResponseDto> response = gymService.getAllGyms(pageable);
-        ResponseMessage<Page<GymResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.GYM_FIND_ALL_SUCCESS, response);
+        PageResponse<GymResponseDto> pageResponse = new PageResponse<>(response);
+        ResponseMessage<PageResponse<GymResponseDto>> responseMessage =
+            ResponseMessage.success(SuccessCode.GYM_FIND_ALL_SUCCESS, pageResponse);
         return ResponseEntity.status(SuccessCode.GYM_FIND_ALL_SUCCESS.getHttpStatus())
             .body(responseMessage);
     }
