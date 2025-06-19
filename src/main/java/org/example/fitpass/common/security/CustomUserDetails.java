@@ -50,4 +50,8 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() { return true; }
+
+    public String getUserRoleName() {
+        return user.getUserRole().name();
+    }
 }

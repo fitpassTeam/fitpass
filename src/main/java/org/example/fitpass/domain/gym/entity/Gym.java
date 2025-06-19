@@ -65,8 +65,7 @@ public class Gym extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trainer_id")
+    @OneToMany(mappedBy = "gym",fetch = FetchType.LAZY)
     private List <Trainer> trainers = new ArrayList<>();
 
     @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -129,4 +128,7 @@ public class Gym extends BaseEntity {
         }
     }
 
+    public User getOwner(){
+        return user;
+    }
 }

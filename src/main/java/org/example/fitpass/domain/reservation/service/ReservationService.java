@@ -9,6 +9,11 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.domain.notify.NotificationType;
+import org.example.fitpass.domain.notify.service.NotifyService;
+import org.example.fitpass.domain.user.UserRole;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.entity.Gym;
@@ -26,11 +31,8 @@ import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.repository.ReservationRepository;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.trainer.repository.TrainerRepository;
-import org.example.fitpass.domain.user.UserRole;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +47,7 @@ public class ReservationService {
     private final TrainerRepository trainerRepository;
     private final PointService pointService;
     private final RedissonClient redissonClient; // ⭐ Redis 분산 락용
+    private final NotifyService notifyService;
 
     // 예약 가능 시간 조회
     @Transactional
@@ -88,7 +91,7 @@ public class ReservationService {
             trainerId, reservationDate,
             reservationTime);
 
-        RLock lock = redissonClient.getLock(lockKey);
+            RLock lock = redissonClient.getLock(lockKey);
 
         try {
             // 락 획득 시도 (10초 대기, 30초 후 자동 해제)
@@ -101,13 +104,13 @@ public class ReservationService {
                 reservationTime
             );
 
-            if (alreadyExists) {
-                throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
-            }
+                if (alreadyExists) {
+                    throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
+                }
 
-            // 포인트 사용
-            String description = "PT 예약 - " + trainer.getName();
-            PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);// 트레이너 이용료
+                // 포인트 사용
+                String description = "PT 예약 - " + trainer.getName();
+                PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);// 트레이너 이용료
 
             int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto.amount(), pointUseRefundRequestDto.description());
 
@@ -121,18 +124,24 @@ public class ReservationService {
                 trainer);
             Reservation createReservation = reservationRepository.save(reservation);
 
-            return ReservationResponseDto.from(createReservation);
-        } catch (InterruptedException e) {
-            // 플래그 복원 (다시 설정)
-            Thread.currentThread().interrupt();
-            throw new BaseException(ExceptionCode.RESERVATION_INTERRUPTED);
-        } finally {
-            // 안전한 락 해제
-            if(lock.isHeldByCurrentThread()) {
-                lock.unlock();
+                String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + createReservation.getId();
+
+                String content = user.getName() + "님의 예약이 완료되었습니다." + "예약 날짜는 " + reservation.getReservationDate() +" "+ reservation.getReservationTime() + " 입니다. ";
+                notifyService.send(user, NotificationType.RESERVATION, content, url);
+                notifyService.send(trainer.getGym().getOwner(), NotificationType.RESERVATION, content, url);
+
+                return ReservationResponseDto.from(createReservation);
+            } catch (InterruptedException e) {
+                // 플래그 복원 (다시 설정)
+                Thread.currentThread().interrupt();
+                throw new BaseException(ExceptionCode.RESERVATION_INTERRUPTED);
+            } finally {
+                // 안전한 락 해제
+                if(lock.isHeldByCurrentThread()) {
+                    lock.unlock();
+                }
             }
         }
-    }
 
     // 예약 수정
     @Transactional

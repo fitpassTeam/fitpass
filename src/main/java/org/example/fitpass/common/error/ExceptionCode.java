@@ -55,6 +55,7 @@ public enum ExceptionCode implements BaseCode {
     INVALID_GYM_TRAINER_RELATION(HttpStatus.FORBIDDEN, "403", "트레이너가 해당 체육관에 속하지 않습니다."),
     NOT_BELONG_TO_GYM(HttpStatus.FORBIDDEN, "403", "해당 체육관의 이용권 아닙니다."),
     NOT_REVIEW_OWNER(HttpStatus.FORBIDDEN, "403", "리뷰 작성자가 아닙니다."),
+    NOT_HAS_AUTHORITY(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
 
     // 404 Not Found
     CANT_FIND_DATA(HttpStatus.NOT_FOUND,"404", "해당 데이터를 찾을 수 없습니다."),

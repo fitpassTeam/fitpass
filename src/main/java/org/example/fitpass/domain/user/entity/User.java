@@ -7,10 +7,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.Gender;
 import org.example.fitpass.domain.user.UserRole;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
@@ -54,6 +57,27 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @ManyToOne
+    @JoinColumn(name = "trainer_id")
+    private Trainer trainer;
+
+    @Column
+    private String authProvider;
+
+    public User(String email, String name, String authProvider) {
+        this.email = email;
+        this.name = name;
+        this.authProvider = authProvider;
+
+        // 기본값 세팅
+        this.password = "SOCIAL_LOGIN";
+        this.phone = "000-0000-0000";
+        this.age = 0;
+        this.address = "주소 미입력";
+        this.pointBalance = 0;
+        this.gender = Gender.NONE;
+        this.userRole = UserRole.USER;
+    }
     public User(String email, String userImage, String password, String name, String phone, int age, String address, Gender gender, UserRole userRole) {
         this.email = email;
         this.userImage = userImage;
