@@ -100,7 +100,7 @@ public class TrainerService {
     }
 
     @Transactional
-    public void deleteItem(Long gymId, Long id) {
+    public void deleteTrainer(Long gymId, Long id) {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         Trainer trainer = trainerRepository.findByIdOrElseThrow(id);
         trainer.validateTrainerBelongsToGym(trainer, gym);

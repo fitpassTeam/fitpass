@@ -37,13 +37,13 @@ public class TrainerController {
     @PostMapping
     public ResponseEntity<ResponseMessage<TrainerResponseDto>> createTrainer(
         @PathVariable("gymId") Long gymId,
-        @Valid @RequestBody TrainerRequestDto request) {
+        @Valid @RequestBody TrainerRequestDto dto) {
         TrainerResponseDto response = trainerService.createTrainer(
             gymId,
-            request.name(),
-            request.price(),
-            request.content(),
-            request.trainerImage()
+            dto.name(),
+            dto.price(),
+            dto.content(),
+            dto.trainerImage()
         );
         ResponseMessage<TrainerResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.POST_TRAINER_SUCCESS, response);
@@ -113,7 +113,7 @@ public class TrainerController {
     public ResponseEntity<ResponseMessage<Void>> deleteTrainer(
         @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id) {
-        trainerService.deleteItem(gymId, id);
+        trainerService.deleteTrainer(gymId, id);
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.DELETE_TRAINER_SUCCESS);
         return ResponseEntity.status(SuccessCode.DELETE_TRAINER_SUCCESS.getHttpStatus())
