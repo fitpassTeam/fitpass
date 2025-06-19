@@ -1,5 +1,6 @@
 package org.example.fitpass.domain.membership.service;
 
+import static org.example.fitpass.common.error.ExceptionCode.INVALID_GYM_MEMBERSHIP;
 import static org.example.fitpass.common.error.ExceptionCode.MEMBERSHIP_NOT_ACTIVE;
 
 import java.time.LocalDateTime;
@@ -24,12 +25,16 @@ public class MembershipPurchaseService {
     private final UserRepository userRepository;
 
     @Transactional
-    public MembershipPurchaseResponseDto purchase(Long membershipId, Long userId) {
+    public MembershipPurchaseResponseDto purchase(Long membershipId, Long userId, Long gymId) {
         User user = userRepository.findByIdOrElseThrow(userId);
         Membership membership = membershipRepository.findByIdOrElseThrow(membershipId);
 
+        if (!membership.getGym().getId().equals(gymId)) {
+            throw new BaseException(INVALID_GYM_MEMBERSHIP);
+        }
+
         LocalDateTime now = LocalDateTime.now();
-        int duration = 30; // 임시값. 추후 membership.getDuration() 도입 시 대체
+        int duration = membership.getDurationInDays();
 
         MembershipPurchase purchase = new MembershipPurchase(membership, user, now, duration);
         purchaseRepository.save(purchase);

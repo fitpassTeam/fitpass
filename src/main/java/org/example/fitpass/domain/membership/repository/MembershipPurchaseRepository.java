@@ -13,7 +13,12 @@ public interface MembershipPurchaseRepository extends JpaRepository<MembershipPu
 
     List<MembershipPurchase> findAllByUser(User user);
 
-    @Query("SELECT m FROM MembershipPurchase m WHERE m.user = :user AND :now BETWEEN m.startDate AND m.endDate")
+    @Query("""
+    SELECT m FROM MembershipPurchase m
+    WHERE m.user = :user
+      AND :now BETWEEN m.startDate AND m.endDate
+    ORDER BY m.startDate DESC
+    """)
     Optional<MembershipPurchase> findActiveByUser(@Param("user") User user, @Param("now") LocalDateTime now);
 
 

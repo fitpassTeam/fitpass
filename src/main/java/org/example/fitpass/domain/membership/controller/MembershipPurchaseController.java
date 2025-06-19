@@ -20,18 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/gyms/{gymId}/memberships/")
 public class MembershipPurchaseController {
 
     private final MembershipPurchaseService membershipPurchaseService;
 
     // 이용권 구매
-    @PostMapping("/{membershipId}/purchase")
+    @PostMapping("/gyms/{gymId}/memberships/{membershipId}/purchase")
     public ResponseEntity<ResponseMessage<MembershipPurchaseResponseDto>> purchase(
         @PathVariable("membershipId") Long membershipId,
+        @PathVariable("gymId") Long gymId,
         @AuthenticationPrincipal CustomUserDetails userDetails) {
         MembershipPurchaseResponseDto response = membershipPurchaseService.purchase(membershipId,
-            userDetails.getId());
+            userDetails.getId(), gymId);
         ResponseMessage<MembershipPurchaseResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.PURCHASE_MEMBERSHIP_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.PURCHASE_MEMBERSHIP_SUCCESS.getHttpStatus())
@@ -39,7 +39,7 @@ public class MembershipPurchaseController {
     }
 
     // 구매 이력 조회
-    @GetMapping("/purchases")
+    @GetMapping("/memberships/purchases/me")
     public ResponseEntity<ResponseMessage<List<MembershipPurchaseResponseDto>>> getMyPurchases(
         @AuthenticationPrincipal CustomUserDetails userDetails) {
         List<MembershipPurchaseResponseDto> response =
@@ -51,7 +51,7 @@ public class MembershipPurchaseController {
     }
 
     // 현재 활성 이용권
-    @GetMapping("/purchases/active")
+    @GetMapping("/memberships/purchases/active")
     public ResponseEntity<ResponseMessage<MembershipPurchaseResponseDto>> getMyActiveMembership(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {

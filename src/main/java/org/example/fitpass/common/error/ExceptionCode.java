@@ -32,6 +32,7 @@ public enum ExceptionCode implements BaseCode {
     VALID_STATUS(HttpStatus.BAD_REQUEST,"400","잘못된 상태 입니다."),
     RESERVATION_NOT_COMPLETED(HttpStatus.BAD_REQUEST,"400", "완료된 예약만 리뷰를 작성할 수 있습니다."),
     REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"400", "이미 해당 예약에 대한 리뷰가 존재합니다."),
+    INVALID_GYM_MEMBERSHIP(HttpStatus.BAD_REQUEST, "400", "해당 체육관에 속한 이용권이 아닙니다."),
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰입니다."),

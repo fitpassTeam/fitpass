@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.user.entity.User;
 
 @Entity
@@ -33,6 +34,10 @@ public class MembershipPurchase extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gym_id", nullable = false)
+    private Gym gym;
+
     @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
 
@@ -42,13 +47,12 @@ public class MembershipPurchase extends BaseEntity {
     public MembershipPurchase(Membership membership, User user, LocalDateTime now, int durationDays) {
         this.membership = membership;
         this.user = user;
-        this.startDate = now;
-        this.endDate = now.plusDays(durationDays);
+        this.startDate = LocalDateTime.now();
+        this.endDate = now.plusDays(membership.getDurationInDays());
     }
 
-    public boolean isActive() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.isAfter(startDate) && now.isBefore(endDate);
+    public boolean isActive(LocalDateTime targetTime) {
+        return targetTime.isAfter(startDate) && targetTime.isBefore(endDate);
     }
 
 }
