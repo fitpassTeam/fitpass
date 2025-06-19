@@ -54,6 +54,23 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @Column
+    private String authProvider;
+
+    public User(String email, String name, String authProvider) {
+        this.email = email;
+        this.name = name;
+        this.authProvider = authProvider;
+
+        // 기본값 세팅
+        this.password = "SOCIAL_LOGIN";
+        this.phone = "000-0000-0000";
+        this.age = 0;
+        this.address = "주소 미입력";
+        this.pointBalance = 0;
+        this.gender = Gender.NONE;
+        this.userRole = UserRole.USER;
+    }
     public User(String email, String userImage, String password, String name, String phone, int age, String address, Gender gender, UserRole userRole) {
         this.email = email;
         this.userImage = userImage;
