@@ -44,7 +44,7 @@ public enum SuccessCode implements BaseCode {
     GYM_FIND_ALL_SUCCESS(HttpStatus.OK, "5003", "체육관 전체조회 완료되었습니다."),
     GYM_EDIT_PHOTO_SUCCESS(HttpStatus.OK, "5004", "체육관 사진 수정 완료되었습니다."),
     GYM_EDIT_INFO_SUCCESS(HttpStatus.OK, "5005", "체육관 정보 수정 완료되었습니다."),
-    GYM_DELETE_SUCCESS(HttpStatus.OK, "5006", "체육관 등록 삭제 처리되었습니다."),
+    GYM_DELETE_SUCCESS(HttpStatus.OK, "5006", "체육관이 삭제 처리되었습니다."),
     GYM_SEARCH_SUCCESS(HttpStatus.OK, "5007", "체육관 검색이 완료되었습니다."),
 
     // 6000 trainer 성공 코드
@@ -57,6 +57,7 @@ public enum SuccessCode implements BaseCode {
     // 7000: 게시물 성공 코드
     POST_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "게시물 등록이 완료되었습니다."),
     POST_UPDATE_SUCCESS(HttpStatus.OK, "7002", "게시물 정보 수정이 완료되었습니다."),
+    POST_EDIT_PHOTO_SUCCESS(HttpStatus.OK, "7004", "게시물 사진 수정 완료되었습니다."),
     GET_ALL_GENERAL_POST_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 일반 게시물이 조회되었습니다."),
     GET_ALL_NOTICE_POST_SUCCESS(HttpStatus.OK, "7004", "등록된 모든 공지사항 게시물이 조회되었습니다."),
     GET_ONLY_POST_SUCCESS(HttpStatus.OK, "7005", "등록된 게시물 조회가 되었습니다."),
@@ -90,7 +91,13 @@ public enum SuccessCode implements BaseCode {
     S3_DELETE_SUCCESS(HttpStatus.OK,"9002","이미지 삭제가 완료되었습니다."),
 
     //10000 : 채팅 성공 코드
-    GET_ALL_CHATTING(HttpStatus.OK,"10000", "채팅 내역이 조회되었습니다.");
+    GET_ALL_CHATTING(HttpStatus.OK,"10000", "채팅 내역이 조회되었습니다."),
+
+    // 11000 : 리뷰 성공 코드
+    REVIEW_CREATE_SUCCESS(HttpStatus.CREATED,"11001", "리뷰 등록이 완료되었습니다."),
+    REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "11002", "리뷰 수정이 완료되었습니다."),
+    REVIEW_DELETE_SUCCESS(HttpStatus.OK, "11003", "리뷰 삭제가 완료되었습니다."),
+    REVIEW_GET_SUCCESS(HttpStatus.OK, "11004", "리뷰 조회가 완료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

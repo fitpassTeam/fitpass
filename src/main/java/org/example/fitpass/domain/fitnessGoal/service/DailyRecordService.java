@@ -1,5 +1,6 @@
 package org.example.fitpass.domain.fitnessGoal.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,22 +29,24 @@ public class DailyRecordService {
 
     // 일일 기록 생성
     @Transactional
-    public DailyRecordResponseDto createDailyRecord (DailyRecordCreateRequestDto requestDto, Long userId) {
-        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(requestDto.fitnessGoalId(), userId);
+    public DailyRecordResponseDto createDailyRecord (
+        Long fitnessGoalId,
+        List<String> imageUrls,
+        String memo,
+        LocalDate recordDate,
+        Long userId) {
+        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(fitnessGoalId, userId);
 
-        if(dailyRecordRepository.existsByFitnessGoalIdAndRecordDate(requestDto.fitnessGoalId(), requestDto.recordDate())) {
+        if(dailyRecordRepository.existsByFitnessGoalIdAndRecordDate(fitnessGoalId, recordDate)) {
             throw new BaseException(ExceptionCode.DAILY_RECORD_ALREADY_EXISTS);
         }
 
         DailyRecord dailyRecord = DailyRecord.of(
+            imageUrls,
             fitnessGoal,
-            requestDto.recordDate(),
-            requestDto.memo());
+            recordDate,
+            memo);
         DailyRecord savedRecord = dailyRecordRepository.save(dailyRecord);
-        // 이미지 S3 업로드
-        if(requestDto.imageUrls() != null && !requestDto.imageUrls().isEmpty()) {
-            processImages(requestDto.imageUrls(), savedRecord);
-        }
 
         return DailyRecordResponseDto.from(savedRecord);
     }
@@ -76,34 +79,9 @@ public class DailyRecordService {
         if (!dailyRecord.getFitnessGoal().getUser().getId().equals(userId)) {
             throw new BaseException(ExceptionCode.NOT_DAILY_RECORD_OWNER);
         }
-        // S3에서 이미지 파일들 삭제
-        deleteImagesFromS3(dailyRecord.getImages());
-
         dailyRecordRepository.delete(dailyRecord);
     }
 
-    // 이미지 S3 저장 메소드
-    private void processImages (List<String> imageFiles, DailyRecord dailyRecord) {
-        for(String imageFile : imageFiles) {
-
-            Image image = new Image(imageFile);
-            image.assignToDailyRecord(dailyRecord);
-
-            // DailyRecord에 이미지 추가
-            dailyRecord.getImages().add(image);
-        }
-    }
-    // 이미지 S3 삭제 메서드
-    private void deleteImagesFromS3(List<Image> images) {
-        for (Image image : images) {
-            try {
-                s3Service.deleteFileFromS3(image.getUrl());
-            } catch (Exception e) {
-                log.warn("S3 이미지 삭제 실패: {}", image.getUrl(), e);
-                // 이미지 삭제 실패해도 레코드는 삭제 진행
-            }
-        }
-    }
 
 
 }

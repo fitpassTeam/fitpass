@@ -21,7 +21,6 @@ import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
 import org.example.fitpass.domain.point.service.PointService;
 import org.example.fitpass.domain.reservation.dto.request.ReservationRequestDto;
-import org.example.fitpass.domain.reservation.dto.request.UpdateReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.response.GetReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.response.ReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.response.TrainerReservationResponseDto;
@@ -56,7 +55,7 @@ public class ReservationService {
         LocalDate date) {
         User user = userRepository.findByIdOrElseThrow(userId);
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
 
         // 체육관 운영 시간 (체육관 엔티티에서 가져오기)
         List<LocalTime> possibleTimes = generateTimeSlots(
@@ -76,33 +75,34 @@ public class ReservationService {
     }
 
     // 예약 생성
-        @Transactional(isolation = Isolation.READ_COMMITTED)
-        public ReservationResponseDto createReservation(ReservationRequestDto reservationRequestDto,
-            Long userId, Long gymId, Long trainerId) {
-            // 사용자 조회
-            User user = userRepository.findByIdOrElseThrow(userId);
-            // 체육관 조회
-            Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-            // 트레이너 조회
-            Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public ReservationResponseDto createReservation(
+        LocalDate reservationDate, LocalTime reservationTime, ReservationStatus status,
+        Long userId, Long gymId, Long trainerId) {
+        // 사용자 조회
+        User user = userRepository.findByIdOrElseThrow(userId);
+        // 체육관 조회
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        // 트레이너 조회
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
 
-            // Redis 분산 락 키 생성
-            String lockKey = String.format("reservation:lock:%d:%s:%s",
-                trainerId, reservationRequestDto.reservationDate(),
-                reservationRequestDto.reservationTime());
+        // Redis 분산 락 키 생성
+        String lockKey = String.format("reservation:lock:%d:%s:%s",
+            trainerId, reservationDate,
+            reservationTime);
 
             RLock lock = redissonClient.getLock(lockKey);
 
-            try {
-                // 락 획득 시도 (10초 대기, 30초 후 자동 해제)
-                if (!lock.tryLock(10, 30, TimeUnit.SECONDS)) {
-                    throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
-                }
-                // 중복 예약 확인 (Redis 락 내에서)
-                boolean alreadyExists = reservationRepository.existsByTrainerAndReservationDateAndReservationTime(
-                    trainer, reservationRequestDto.reservationDate(),
-                    reservationRequestDto.reservationTime()
-                );
+        try {
+            // 락 획득 시도 (10초 대기, 30초 후 자동 해제)
+            if (!lock.tryLock(10, 30, TimeUnit.SECONDS)) {
+                throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
+            }
+            // 중복 예약 확인 (Redis 락 내에서)
+            boolean alreadyExists = reservationRepository.existsByTrainerAndReservationDateAndReservationTime(
+                trainer, reservationDate,
+                reservationTime
+            );
 
                 if (alreadyExists) {
                     throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
@@ -112,12 +112,17 @@ public class ReservationService {
                 String description = "PT 예약 - " + trainer.getName();
                 PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);// 트레이너 이용료
 
-                int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto);
+            int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto.amount(), pointUseRefundRequestDto.description());
 
-                // 예약 생성 및 저장
-                Reservation reservation = ReservationRequestDto.from(reservationRequestDto, user, gym,
-                    trainer);
-                Reservation createReservation = reservationRepository.save(reservation);
+            // 예약 생성 및 저장
+            Reservation reservation = ReservationRequestDto.from(
+                reservationDate,
+                reservationTime,
+                status,
+                user,
+                gym,
+                trainer);
+            Reservation createReservation = reservationRepository.save(reservation);
 
                 String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + createReservation.getId();
 
@@ -141,15 +146,15 @@ public class ReservationService {
     // 예약 수정
     @Transactional
     public UpdateReservationResponseDto updateReservation(
-        UpdateReservationRequestDto updateReservationRequestDto, Long userId, Long gymId,
-        Long trainerId, Long reservationId) {
+        LocalDate reservationDate, LocalTime reservationTime, ReservationStatus status,
+        Long userId, Long gymId, Long trainerId, Long reservationId) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
 
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         // 예약 조회
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
 
@@ -165,13 +170,13 @@ public class ReservationService {
 
         // 2일 전까지만 변경 가능
         LocalDate today = LocalDate.now();
-        LocalDate reservationDate = reservation.getReservationDate();
-        if (ChronoUnit.DAYS.between(today, reservationDate) < 2) {
+        LocalDate reservationDates = reservation.getReservationDate();
+        if (ChronoUnit.DAYS.between(today, reservationDates) < 2) {
             throw new BaseException(ExceptionCode.RESERVATION_CHANGE_DEADLINE_PASSED);
         }
 
         // 새로운 예약 날짜도 2일 후부터 가능한지 검증
-        LocalDate newReservationDate = updateReservationRequestDto.reservationDate();
+        LocalDate newReservationDate = reservationDate;
         if (ChronoUnit.DAYS.between(today, newReservationDate) < 2) {
             throw new BaseException(ExceptionCode.RESERVATION_TOO_EARLY);
         }
@@ -180,7 +185,7 @@ public class ReservationService {
         boolean isDuplicate = reservationRepository.existsByTrainerAndReservationDateAndReservationTimeAndIdNot(
             trainer,
             newReservationDate,
-            updateReservationRequestDto.reservationTime(),
+            reservationTime,
             reservationId  // 현재 예약은 제외
         );
         if (isDuplicate) {
@@ -188,9 +193,9 @@ public class ReservationService {
         }
         // 예약 정보 업데이트
         reservation.updateReservation(
-            updateReservationRequestDto.reservationDate(),
-            updateReservationRequestDto.reservationTime(),
-            updateReservationRequestDto.reservationStatus());
+            reservationDate,
+            reservationTime,
+            status);
 
         Reservation updateReservation = reservationRepository.save(reservation);
 
@@ -205,7 +210,7 @@ public class ReservationService {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         // 예약 조회
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
 
@@ -232,7 +237,7 @@ public class ReservationService {
         String description = "PT 예약 취소 환불 - " + trainer.getName();
         PointUseRefundRequestDto pointRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);
 
-        pointService.refundPoint(userId, pointRefundRequestDto);
+        pointService.refundPoint(userId, pointRefundRequestDto.amount(), pointRefundRequestDto.description());
 
         // 예약 상태를 취소로 변경
         reservation.cancelReservation();
@@ -254,7 +259,7 @@ public class ReservationService {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         gym.isOwner(userId);
         // 트레이너 조회
-        Trainer trainer = trainerRepository.getByIdOrThrow(trainerId);
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         // 트레이너가 해당 체육관 소속인지 확인
         if (!trainer.getGym().getId().equals(gymId)) {
             throw new BaseException(ExceptionCode.NOT_GYM_OWNER);

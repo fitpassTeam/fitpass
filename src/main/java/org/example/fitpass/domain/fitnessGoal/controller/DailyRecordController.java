@@ -32,7 +32,12 @@ public class DailyRecordController {
         @Valid @RequestBody DailyRecordCreateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        DailyRecordResponseDto responseDto = dailyRecordService.createDailyRecord(requestDto, userDetails.getId());
+        DailyRecordResponseDto responseDto = dailyRecordService.createDailyRecord(
+            requestDto.fitnessGoalId(),
+            requestDto.imageUrls(),
+            requestDto.memo(),
+            requestDto.recordDate(),
+            userDetails.getId());
         ResponseMessage<DailyRecordResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_CREATE_SUCCESS, responseDto);
         return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_CREATE_SUCCESS.getHttpStatus()).body(responseMessage);
