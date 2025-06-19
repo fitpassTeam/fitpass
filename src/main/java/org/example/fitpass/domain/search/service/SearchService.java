@@ -1,6 +1,7 @@
 package org.example.fitpass.domain.search.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.domain.gym.dto.response.GymResDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
@@ -29,11 +30,11 @@ public class SearchService {
             cacheNames = "gymSearch",
             keyGenerator =  "customKeyGenerator"
     )
-    public Page<GymResponseDto> searchGym (String keyword, Pageable pageable){
+    public Page<GymResDto> searchGym (String keyword, Pageable pageable){
 
         Page<Gym> gymPage = gymRepository.findByNameContaining(keyword,pageable);
 
-        return gymPage.map(GymResponseDto::from);
+        return gymPage.map(GymResDto::from);
     }
 
     @Cacheable(

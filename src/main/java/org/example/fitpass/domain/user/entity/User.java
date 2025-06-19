@@ -9,10 +9,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.domain.likes.entity.Like;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.Gender;
 import org.example.fitpass.domain.user.UserRole;
@@ -63,6 +67,9 @@ public class User extends BaseEntity {
 
     @Column
     private String authProvider;
+
+    @OneToMany
+    private List<Like> likes = new ArrayList<>();
 
     public User(String email, String name, String authProvider) {
         this.email = email;
@@ -121,4 +128,5 @@ public class User extends BaseEntity {
     public static User of(long userId, String userImage, Gender gender, UserRole userRole) {
         return new User(userId, userImage, gender, userRole);
     }
+
 }
