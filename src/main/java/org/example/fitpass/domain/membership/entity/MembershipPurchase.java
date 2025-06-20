@@ -27,33 +27,45 @@ public class MembershipPurchase extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "membership_id")
+    @JoinColumn(name = "membership_id", nullable = false)
     private Membership membership;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gym_id", nullable = false)
     private Gym gym;
 
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "purchase_date", nullable = false)
+    private LocalDateTime purchaseDate;
+
+    @Column(name = "start_date")
     private LocalDateTime startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    public MembershipPurchase(Membership membership, Gym gym, User user, LocalDateTime now, int durationDays) {
+    public MembershipPurchase(Membership membership, Gym gym, User user, LocalDateTime now) {
         this.membership = membership;
         this.gym = gym;
         this.user = user;
-        this.startDate = LocalDateTime.now();
+        this.purchaseDate = now;
+    }
+
+    public void activate(LocalDateTime now){
+        this.startDate = now;
         this.endDate = now.plusDays(membership.getDurationInDays());
     }
 
-    public boolean isActive(LocalDateTime targetTime) {
-        return targetTime.isAfter(startDate) && targetTime.isBefore(endDate);
+    public boolean isActive() {
+        return startDate != null && endDate != null
+            && LocalDateTime.now().isAfter(startDate)
+            && LocalDateTime.now().isBefore(endDate);
     }
 
+    public boolean isNotStarted(){
+        return startDate == null;
+    }
 }

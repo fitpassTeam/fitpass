@@ -1,7 +1,10 @@
 package org.example.fitpass.domain.membership.service;
 
+import static org.example.fitpass.common.error.ExceptionCode.ALREADY_STARTED;
 import static org.example.fitpass.common.error.ExceptionCode.INVALID_GYM_MEMBERSHIP;
+import static org.example.fitpass.common.error.ExceptionCode.INVALID_TOKEN;
 import static org.example.fitpass.common.error.ExceptionCode.MEMBERSHIP_NOT_ACTIVE;
+import static org.example.fitpass.common.error.ExceptionCode.NOT_FOUND_PURCHASE;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,14 +37,39 @@ public class MembershipPurchaseService {
             throw new BaseException(INVALID_GYM_MEMBERSHIP);
         }
 
+
         Gym gym = membership.getGym();
-
         LocalDateTime now = LocalDateTime.now();
-        int duration = membership.getDurationInDays();
 
-        MembershipPurchase purchase = new MembershipPurchase(membership, gym, user, now, duration);
+
+        MembershipPurchase purchase = new MembershipPurchase(membership, gym, user, now);
         purchaseRepository.save(purchase);
         return MembershipPurchaseResponseDto.from(purchase);
+    }
+
+    @Transactional
+    public MembershipPurchaseResponseDto startMembership(Long purchaseId, Long userId){
+        MembershipPurchase purchase = purchaseRepository.findByIdOrElseThrow(purchaseId);
+
+        if (!purchase.getUser().getId().equals(userId)) {
+            throw new BaseException(INVALID_TOKEN);
+        }
+
+        if (!purchase.isNotStarted()) {
+            throw new BaseException(ALREADY_STARTED);
+        }
+
+        purchase.activate(LocalDateTime.now());
+        return MembershipPurchaseResponseDto.from(purchase);
+    }
+
+    @Transactional
+    public List<MembershipPurchaseResponseDto> getNotStartedMemberships(Long userId){
+        User user = userRepository.findByIdOrElseThrow(userId);
+        List<MembershipPurchase> purchases = purchaseRepository.findAllNotStartedByUser(user);
+        return purchases.stream()
+            .map(MembershipPurchaseResponseDto::from)
+            .toList();
     }
 
     @Transactional(readOnly = true)
@@ -55,8 +83,12 @@ public class MembershipPurchaseService {
     @Transactional(readOnly = true)
     public MembershipPurchaseResponseDto getMyActive(Long userId) {
         User user = userRepository.findByIdOrElseThrow(userId);
-        MembershipPurchase active = purchaseRepository.findActiveByUser(user, LocalDateTime.now())
+        List<MembershipPurchase> activeList = purchaseRepository.findAllActiveByUser(user, LocalDateTime.now());
+
+        MembershipPurchase active = activeList.stream()
+            .findFirst()
             .orElseThrow(() -> new BaseException(MEMBERSHIP_NOT_ACTIVE));
+
         return MembershipPurchaseResponseDto.from(active);
     }
 }

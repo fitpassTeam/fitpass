@@ -34,6 +34,31 @@ public class MembershipPurchaseController {
             .body(responseMessage);
     }
 
+    // 이용권 사용
+    @PostMapping("/memberships/purchases/{purchaseId}/start")
+    public ResponseEntity<ResponseMessage<MembershipPurchaseResponseDto>> startMembership(
+        @PathVariable("purchaseId") Long purchaseId,
+        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        MembershipPurchaseResponseDto response = membershipPurchaseService.startMembership(purchaseId,
+            userDetails.getId());
+        ResponseMessage<MembershipPurchaseResponseDto> responseMessage =
+            ResponseMessage.success(SuccessCode.START_MEMBERSHIP_SUCCESS, response);
+        return ResponseEntity.status(SuccessCode.START_MEMBERSHIP_SUCCESS.getHttpStatus())
+            .body(responseMessage);
+    }
+
+    // 사용 가능한 이용권 조회
+    @GetMapping("/memberships/purchases/not-started")
+    public ResponseEntity<ResponseMessage<List<MembershipPurchaseResponseDto>>> getNotStartedMemberships(
+        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<MembershipPurchaseResponseDto> response =
+            membershipPurchaseService.getNotStartedMemberships(userDetails.getId());
+        ResponseMessage<List<MembershipPurchaseResponseDto>> responseMessage =
+            ResponseMessage.success(SuccessCode.GET_NOT_STARTED_MEMBERSHIP_SUCCESS, response);
+        return ResponseEntity.status(SuccessCode.GET_NOT_STARTED_MEMBERSHIP_SUCCESS.getHttpStatus())
+            .body(responseMessage);
+    }
+
     // 구매 이력 조회
     @GetMapping("/memberships/purchases/me")
     public ResponseEntity<ResponseMessage<List<MembershipPurchaseResponseDto>>> getMyPurchases(

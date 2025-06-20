@@ -80,17 +80,11 @@ public enum SuccessCode implements BaseCode {
     FITNESSGOAL_DAILYRECORD_GET_SUCCESS(HttpStatus.OK, "8014", "일일 기록 상세 조회가 완료되었습니다."),
     FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS(HttpStatus.OK, "8015", "일일 기록 삭제가 완료되었습니다."),
 
-    // 7000: ADMIN 성공 코드
-    BOOK_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "책 등록이 완료되었습니다."),
-    BOOK_UPDATE_SUCCESS(HttpStatus.OK, "7002", "책 정보 수정이 완료되었습니다."),
-    GET_ALL_BOOKS_SUCCESS(HttpStatus.OK, "7003", "등록된 모든 책이 조회되었습니다."),
-    BOOK_DELETE_SUCCESS(HttpStatus.OK, "7004", "등록된 책이 삭제되었습니다."),
-
-    // 8000 s3 성공 코드
+    // 9000 s3 성공 코드
     S3_UPLOAD_SUCCESS(HttpStatus.CREATED,"9001", "이미지 업로드가 완료되었습니다"),
     S3_DELETE_SUCCESS(HttpStatus.OK,"9002","이미지 삭제가 완료되었습니다."),
 
-    //10000 : 채팅 성공 코드
+    // 10000 : 채팅 성공 코드
     GET_ALL_CHATTING(HttpStatus.OK,"10000", "채팅 내역이 조회되었습니다."),
     CREATE_CHATROOM(HttpStatus.OK,"10001", "채팅방이 생성되었습니다."),
     GET_ALL_CHATROOM(HttpStatus.OK,"10002", "채팅방 목록이 조회되었습니다."),
@@ -101,14 +95,16 @@ public enum SuccessCode implements BaseCode {
     REVIEW_DELETE_SUCCESS(HttpStatus.OK, "11003", "리뷰 삭제가 완료되었습니다."),
     REVIEW_GET_SUCCESS(HttpStatus.OK, "11004", "리뷰 조회가 완료되었습니다."),
 
-    // 11000 : 맴버십 성공 코드
+    // 12000 : 맴버십 성공 코드
     POST_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "이용권 등록이 완료되었습니다."),
-    GET_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "이용권 조회가 완료되었습니다."),
-    PATCH_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "이용권 수정이 완료되었습니다."),
-    DELETE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "이용권 삭제가 완료되었습니다."),
-    PURCHASE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "이용권 구매가 완료되었습니다."),
-    GET_MY_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "구매 이력 조회가 완료되었습니다."),
-    GET_ACTIVE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "활성화 된 이용권 조회가 완료되었습니다.");
+    GET_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12002", "이용권 조회가 완료되었습니다."),
+    PATCH_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12003", "이용권 수정이 완료되었습니다."),
+    DELETE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12004", "이용권 삭제가 완료되었습니다."),
+    PURCHASE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12005", "이용권 구매가 완료되었습니다."),
+    GET_MY_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12006", "구매 이력 조회가 완료되었습니다."),
+    GET_ACTIVE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12007", "활성화 된 이용권 조회가 완료되었습니다."),
+    START_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12008", "이용권 사용 시작"),
+    GET_NOT_STARTED_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12009", "아직 시작하지 않은 이용권 목록 조회가 완료되었습니다.");
 
 
 

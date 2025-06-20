@@ -14,6 +14,8 @@ public record MembershipPurchaseResponseDto(
 
 ) {
     public static MembershipPurchaseResponseDto from(MembershipPurchase purchase) {
+        boolean isActive = purchase.getStartDate() != null && purchase.getEndDate() != null && purchase.isActive();
+
         return new MembershipPurchaseResponseDto(
             purchase.getId(),
             purchase.getMembership().getName(),
@@ -21,7 +23,7 @@ public record MembershipPurchaseResponseDto(
             purchase.getMembership().getDurationInDays(),
             purchase.getStartDate(),
             purchase.getEndDate(),
-            purchase.isActive(LocalDateTime.now())
+            isActive
         );
     }
 }

@@ -33,6 +33,7 @@ public enum ExceptionCode implements BaseCode {
     RESERVATION_NOT_COMPLETED(HttpStatus.BAD_REQUEST,"400", "완료된 예약만 리뷰를 작성할 수 있습니다."),
     REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"400", "이미 해당 예약에 대한 리뷰가 존재합니다."),
     INVALID_GYM_MEMBERSHIP(HttpStatus.BAD_REQUEST, "400", "해당 체육관에 속한 이용권이 아닙니다."),
+    ALREADY_STARTED(HttpStatus.BAD_REQUEST, "400", "이미 사용된 이용권입니다."),
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰입니다."),
@@ -70,6 +71,7 @@ public enum ExceptionCode implements BaseCode {
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "리뷰를 찾을 수 없습니다."),
     MEMBERSHIP_NOT_ACTIVE(HttpStatus.NOT_FOUND, "404", "활성화된 이용권을 찾을 수 없습니다."),
     MEMBERSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "이용권을 찾을 수 없습니다."),
+    NOT_FOUND_PURCHASE(HttpStatus.NOT_FOUND, "404", "구매한 이용권을 찾을 수 없습니다."),
 
     // 409 Conflict = 서버와 충돌, 데이터가 이미 존재할때(400 보다 명확함)
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"409", "이미 등록된 회원입니다."),
