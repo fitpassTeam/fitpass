@@ -68,8 +68,8 @@ public class FitnessGoalService {
 
     // 목표 상세 조회 (만료 상태 체크 포함)
     @Transactional
-    public FitnessGoalResponseDto getGoal(Long userId, Long goalId) {
-        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId, userId);
+    public FitnessGoalResponseDto getGoal(Long userId, Long fitnessGoalId) {
+        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(fitnessGoalId, userId);
 
         // 만료 상태 체크 및 업데이트
         fitnessGoal.checkAndUpdateExpiredStatus();
@@ -80,13 +80,13 @@ public class FitnessGoalService {
     // 목표 수정
     @Transactional
     public FitnessGoalResponseDto updateGoal(
-        Long goalId,
+        Long fitnessGoalId,
         String title,
         String description,
         Double targetWeight,
         LocalDate endDate,
         Long userId) {
-        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId,
+        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(fitnessGoalId,
             userId);
 
         // 완료되거나 취소된 목표는 수정 불가
@@ -104,8 +104,8 @@ public class FitnessGoalService {
 
     // 목표 취소
     @Transactional
-    public FitnessGoalResponseDto cancelGoal(Long goalId, Long userId) {
-        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId, userId);
+    public FitnessGoalResponseDto cancelGoal(Long fitnessGoalId, Long userId) {
+        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(fitnessGoalId, userId);
 
         fitnessGoal.cancelGoal();
 
@@ -114,8 +114,8 @@ public class FitnessGoalService {
 
     // 목표 삭제
     @Transactional
-    public void deleteGoal(Long goalId, Long userId) {
-        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId, userId);
+    public void deleteGoal(Long fitnessGoalId, Long userId) {
+        FitnessGoal fitnessGoal = fitnessGoalRepository.findByIdAndUserIdOrElseThrow(fitnessGoalId, userId);
 
         // 완료된 목표는 삭제 불가 (기록 보존을 위해)
         if (fitnessGoal.getGoalStatus() == GoalStatus.COMPLETED) {

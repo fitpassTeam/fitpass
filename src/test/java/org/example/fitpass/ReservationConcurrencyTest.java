@@ -58,6 +58,7 @@
 //        // 체육관 소유자 생성
 //        User owner = new User(
 //            "owner@test.com",
+//            "...",
 //            "password123",
 //            "체육관소유자",
 //            "010-1111-1111",
@@ -105,6 +106,7 @@
 //    private User createTestUser(String email) {
 //        User user = new User(
 //            email,
+//            "...",
 //            "password123",
 //            "테스트유저",
 //            "010-1234-5678",
@@ -154,7 +156,7 @@
 //            try {
 //                ReservationRequestDto request = createReservationRequest(reservationDate, reservationTime);
 //                ReservationResponseDto result = reservationService.createReservation(
-//                    request, user1.getId(), testGym.getId(), testTrainer.getId()
+//                    request.reservationDate(), request.reservationTime(), ReservationStatus.PENDING, user1.getId(), testGym.getId(), testTrainer.getId()
 //                );
 //                successCount.incrementAndGet();
 //                results.add("사용자1 예약 성공! ID: " + result.reservationId());
@@ -171,7 +173,7 @@
 //            try {
 //                ReservationRequestDto request = createReservationRequest(reservationDate, reservationTime);
 //                ReservationResponseDto result = reservationService.createReservation(
-//                    request, user2.getId(), testGym.getId(), testTrainer.getId()
+//                    request.reservationDate(), request.reservationTime(), ReservationStatus.PENDING, user2.getId(), testGym.getId(), testTrainer.getId()
 //                );
 //                successCount.incrementAndGet();
 //                results.add("사용자2 예약 성공! ID: " + result.reservationId());
@@ -235,7 +237,7 @@
 //
 //                    // 예약 시도
 //                    ReservationResponseDto result = reservationService.createReservation(
-//                        request, user.getId(), testGym.getId(), testTrainer.getId()
+//                        request.reservationDate(), request.reservationTime(), ReservationStatus.PENDING, user.getId(), testGym.getId(), testTrainer.getId()
 //                    );
 //
 //                    successCount.incrementAndGet();
@@ -308,7 +310,7 @@
 //                    startLatch.await();
 //
 //                    ReservationRequestDto request = createReservationRequest(reservationDate, reservationTime);
-//                    reservationService.createReservation(request, user.getId(), testGym.getId(), testTrainer.getId());
+//                    reservationService.createReservation(request.reservationDate(), request.reservationTime(), ReservationStatus.PENDING, user.getId(), testGym.getId(), testTrainer.getId());
 //                    successCount.incrementAndGet();
 //
 //                } catch (Exception e) {
@@ -374,7 +376,7 @@
 //            try {
 //                ReservationRequestDto request = createReservationRequest(reservationDate, reservationTime);
 //                ReservationResponseDto result = reservationService.createReservation(
-//                    request, user1.getId(), testGym.getId(), testTrainer.getId()
+//                    request.reservationDate(), request.reservationTime(), ReservationStatus.PENDING, user1.getId(), testGym.getId(), testTrainer.getId()
 //                );
 //                successCount.incrementAndGet();
 //                results.add("Redis락 사용자1 예약 성공! ID: " + result.reservationId());
@@ -391,7 +393,7 @@
 //            try {
 //                ReservationRequestDto request = createReservationRequest(reservationDate, reservationTime);
 //                ReservationResponseDto result = reservationService.createReservation(
-//                    request, user2.getId(), testGym.getId(), testTrainer.getId()
+//                    request.reservationDate(), request.reservationTime(), ReservationStatus.PENDING, user2.getId(), testGym.getId(), testTrainer.getId()
 //                );
 //                successCount.incrementAndGet();
 //                results.add("Redis락 사용자2 예약 성공! ID: " + result.reservationId());
@@ -452,7 +454,7 @@
 //
 //                    // Redis 분산 락 버전으로 예약 시도
 //                    ReservationResponseDto result = reservationService.createReservation(
-//                        request, user.getId(), testGym.getId(), testTrainer.getId()
+//                        request.reservationDate(), request.reservationTime(), ReservationStatus.PENDING, user.getId(), testGym.getId(), testTrainer.getId()
 //                    );
 //
 //                    successCount.incrementAndGet();
@@ -528,7 +530,7 @@
 //
 //                    // 하이브리드 방식(Redis + DB) 사용
 //                    ReservationResponseDto result = reservationService.createReservation(
-//                        request, user.getId(), testGym.getId(), testTrainer.getId()
+//                        request.reservationDate(), request.reservationTime(), ReservationStatus.PENDING, user.getId(), testGym.getId(), testTrainer.getId()
 //                    );
 //
 //                    successCount.incrementAndGet();
