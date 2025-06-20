@@ -11,6 +11,7 @@ import org.example.fitpass.domain.gym.dto.request.GymRequestDto;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.gym.service.GymService;
+import org.example.fitpass.domain.review.dto.response.GymRatingResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -117,6 +118,18 @@ public class GymController {
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.GYM_DELETE_SUCCESS);
         return ResponseEntity.status(SuccessCode.GYM_DELETE_SUCCESS.getHttpStatus())
+            .body(responseMessage);
+    }
+
+    @GetMapping("/{gymId}/rating")
+    public ResponseEntity<ResponseMessage<GymRatingResponseDto>> getGymRating(
+        @PathVariable Long gymId,
+        @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        GymRatingResponseDto response = gymService.getGymRating(gymId, user.getId());
+        ResponseMessage<GymRatingResponseDto> responseMessage =
+            ResponseMessage.success(SuccessCode.GYM_RATING_GET_SUCCESS, response);
+        return ResponseEntity.status(SuccessCode.GYM_RATING_GET_SUCCESS.getHttpStatus())
             .body(responseMessage);
     }
 }
