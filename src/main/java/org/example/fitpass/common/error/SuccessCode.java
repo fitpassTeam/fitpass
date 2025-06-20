@@ -46,6 +46,7 @@ public enum SuccessCode implements BaseCode {
     GYM_EDIT_INFO_SUCCESS(HttpStatus.OK, "5005", "체육관 정보 수정 완료되었습니다."),
     GYM_DELETE_SUCCESS(HttpStatus.OK, "5006", "체육관이 삭제 처리되었습니다."),
     GYM_SEARCH_SUCCESS(HttpStatus.OK, "5007", "체육관 검색이 완료되었습니다."),
+    GYM_RATING_GET_SUCCESS(HttpStatus.OK, "5008", "체육관 평점 검색이 완료되었습니다."),
 
     // 6000 trainer 성공 코드
     POST_TRAINER_SUCCESS(HttpStatus.CREATED, "6001", "트레이너 생성이 완료되었습니다."),

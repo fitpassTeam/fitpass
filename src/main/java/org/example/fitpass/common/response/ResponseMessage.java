@@ -1,11 +1,13 @@
 package org.example.fitpass.common.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 import org.example.fitpass.common.error.SuccessCode;
 
 @Builder
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseMessage<T> {
 
 	private int statusCode;

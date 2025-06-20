@@ -63,9 +63,9 @@ public class DailyRecordService {
 
     // 일일 기록 상세 조회
     @Transactional(readOnly = true)
-    public DailyRecordResponseDto getDailyRecord (Long recordId, Long userId) {
+    public DailyRecordResponseDto getDailyRecord (Long recordId, Long fitnessGoalId, Long userId) {
         DailyRecord dailyRecord = dailyRecordRepository.findByIdOrElseThrow(recordId);
-
+        fitnessGoalRepository.findByIdAndUserIdOrElseThrow(fitnessGoalId, userId);
         if (!dailyRecord.getFitnessGoal().getUser().getId().equals(userId)) {
             throw new BaseException(ExceptionCode.NOT_DAILY_RECORD_OWNER);
         }
@@ -73,8 +73,9 @@ public class DailyRecordService {
     }
 
     // 일일 기록 삭제
-    @Transactional(readOnly = true)
-    public void deleteDailyRecord (Long recordId, Long userId) {
+    @Transactional
+    public void deleteDailyRecord (Long recordId, Long fitnessGoalId, Long userId) {
+        fitnessGoalRepository.findByIdAndUserIdOrElseThrow(fitnessGoalId, userId);
         DailyRecord dailyRecord = dailyRecordRepository.findByIdOrElseThrow(recordId);
         if (!dailyRecord.getFitnessGoal().getUser().getId().equals(userId)) {
             throw new BaseException(ExceptionCode.NOT_DAILY_RECORD_OWNER);
