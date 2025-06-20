@@ -72,8 +72,11 @@ public class Trainer extends BaseEntity {
         }
     }
 
-    public static Trainer of(List<Image> trainerImage, String name, int price, String content) {
-        return new Trainer(trainerImage, name, price, content);
+    public static Trainer of(List<String> trainerImage, String name, int price, String content) {
+        List<Image> images = trainerImage.stream()
+            .map(Image::new)
+            .toList();
+        return new Trainer(images, name, price, content);
     }
 
     public void updatePhoto(List<String> imageUrls, Trainer trainer) {
