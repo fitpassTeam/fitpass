@@ -27,7 +27,7 @@ public class TrainerService {
 
     @Transactional
     public TrainerResponseDto createTrainer(Long gymId, String name, int price, String content,
-        List<Image> trainerImage) {
+        List<String> trainerImage) {
 
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         Trainer trainer = Trainer.of(trainerImage, name, price, content);
@@ -61,7 +61,9 @@ public class TrainerService {
             trainer.getPrice(),
             trainer.getContent(),
             trainer.getTrainerStatus(),
-            trainer.getImages(),
+            trainer.getImages().stream()
+                .map(Image::getUrl)
+                .toList(),
             trainer.getCreatedAt()
         );
     }

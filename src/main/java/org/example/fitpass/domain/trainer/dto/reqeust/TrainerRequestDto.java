@@ -18,9 +18,9 @@ public record TrainerRequestDto (
     @Size(max = 200, message = "트레이너 소개는 200글자 내로 입력해주세요.")
     String content,
 
-    List<Image> trainerImage
+    List<String> trainerImage
 ){
-    public TrainerRequestDto(String name, int price, String content, List<Image> trainerImage){
+    public TrainerRequestDto(String name, int price, String content, List<String> trainerImage){
         this.name = name;
         this.price = price;
         this.content = content;
