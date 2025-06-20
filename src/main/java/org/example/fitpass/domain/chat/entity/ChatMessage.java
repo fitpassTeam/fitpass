@@ -37,14 +37,13 @@ public class ChatMessage extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    public ChatMessage(ChatRoom chatRoom, Long id, String content, SenderType senderType) {
+    public ChatMessage(ChatRoom chatRoom, String content, SenderType senderType) {
         this.chatRoom = chatRoom;
-        this.id = id;
         this.content = content;
         this.senderType = senderType;
     }
 
-    public static ChatMessage of(ChatRoom chatRoom, Long id, String content, SenderType senderType) {
-        return new ChatMessage(chatRoom, id, content, senderType);
+    public static ChatMessage of(ChatRoom chatRoom, String content, SenderType senderType) {
+        return new ChatMessage(chatRoom, content, senderType);
     }
 }

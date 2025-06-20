@@ -53,7 +53,8 @@ public class SecurityConfig {
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
                     "/api-docs/**",
-                    "/search/**"
+                    "/search/**",
+                    "/memberships/purchases/**"
                 ).permitAll()
                 // 관리자만 접근 가능
                 .requestMatchers("/admin/**").hasRole("ADMIN")
