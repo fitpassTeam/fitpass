@@ -62,12 +62,12 @@ public class FitnessGoalController {
     }
 
     // 목표 상세 조회
-    @GetMapping("/{goalId}")
+    @GetMapping("/{fitnessGoalId}")
     public ResponseEntity<ResponseMessage<FitnessGoalResponseDto>> getGoal (
-        @PathVariable Long goalId,
+        @PathVariable Long fitnessGoalId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        FitnessGoalResponseDto responseDto = fitnessGoalService.getGoal(userDetails.getId(), goalId);
+        FitnessGoalResponseDto responseDto = fitnessGoalService.getGoal(userDetails.getId(), fitnessGoalId);
         ResponseMessage<FitnessGoalResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_GET_SUCCESS, responseDto);
 
@@ -75,14 +75,14 @@ public class FitnessGoalController {
     }
 
     // 목표 수정
-    @PutMapping("/{goalId}")
+    @PutMapping("/{fitnessGoalId}")
     public ResponseEntity<ResponseMessage<FitnessGoalResponseDto>> updateGoal (
-        @PathVariable Long goalId,
+        @PathVariable Long fitnessGoalId,
         @Valid @RequestBody FitnessGoalUpdateRequestDto requestDto,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         FitnessGoalResponseDto responseDto = fitnessGoalService.updateGoal(
-            goalId,
+            fitnessGoalId,
             requestDto.title(),
             requestDto.description(),
             requestDto.targetWeight(),
@@ -95,12 +95,12 @@ public class FitnessGoalController {
     }
 
     // 목표 취소
-    @PatchMapping("/{goalId}/cancel")
+    @PatchMapping("/{fitnessGoalId}/cancel")
     public ResponseEntity<ResponseMessage<FitnessGoalResponseDto>> cancelGoal (
-        @PathVariable Long goalId,
+        @PathVariable Long fitnessGoalId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        FitnessGoalResponseDto responseDto = fitnessGoalService.cancelGoal(goalId, userDetails.getId());
+        FitnessGoalResponseDto responseDto = fitnessGoalService.cancelGoal(fitnessGoalId, userDetails.getId());
         ResponseMessage<FitnessGoalResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_CANCEL_SUCCESS, responseDto);
 
@@ -108,12 +108,12 @@ public class FitnessGoalController {
     }
 
     // 목표 삭제
-    @DeleteMapping("/{goalId}")
+    @DeleteMapping("/{fitnessGoalId}")
     public ResponseEntity<ResponseMessage<Void>> deleteGoal (
-        @PathVariable Long goalId,
+        @PathVariable Long fitnessGoalId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        fitnessGoalService.deleteGoal(goalId, userDetails.getId());
+        fitnessGoalService.deleteGoal(fitnessGoalId, userDetails.getId());
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_DELETE_SUCCESS);
 

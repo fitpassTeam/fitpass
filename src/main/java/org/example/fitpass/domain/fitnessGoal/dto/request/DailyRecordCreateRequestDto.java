@@ -6,8 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record DailyRecordCreateRequestDto(
-    @NotNull(message = "목표 ID는 필수입니다")
-    Long fitnessGoalId,
 
     List<String> imageUrls,
 
@@ -18,9 +16,8 @@ public record DailyRecordCreateRequestDto(
     LocalDate recordDate
 ) {
 
-    public DailyRecordCreateRequestDto(Long fitnessGoalId,
+    public DailyRecordCreateRequestDto(
         List<String> imageUrls, String memo, LocalDate recordDate) {
-        this.fitnessGoalId = fitnessGoalId;
         this.imageUrls = imageUrls;
         this.memo = memo;
         this.recordDate = recordDate;

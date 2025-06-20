@@ -15,6 +15,8 @@ import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.likes.LikeType;
 import org.example.fitpass.domain.likes.repository.LikeRepository;
 import org.example.fitpass.domain.likes.service.LikeService;
+import org.example.fitpass.domain.review.dto.response.GymRatingResponseDto;
+import org.example.fitpass.domain.review.repository.ReviewRepository;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,7 @@ public class GymService {
 
     private final GymRepository gymRepository;
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
     private final S3Service s3Service;
     private final LikeRepository likeRepository;
 
@@ -51,6 +54,7 @@ public class GymService {
     @Transactional(readOnly = true)
     public GymDetailResponDto getGym(Long gymId) {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        GymRatingResponseDto rating = reviewRepository.findGymRatingByGymIdOrElseThrow(gymId);
         return GymDetailResponDto.from(
             gym.getName(),
             gym.getNumber(),
@@ -60,7 +64,9 @@ public class GymService {
             gym.getCloseTime(),
             gym.getImages().stream().map(Image::getUrl).toList(),
             gym.getTrainers().stream().map(trainer -> trainer.getName()).toList(),
-            gym.getGymStatus()
+            gym.getGymStatus(),
+            rating.averageGymRating(),
+            rating.totalReviewCount().intValue()
         );
     }
 
@@ -111,5 +117,12 @@ public class GymService {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         gym.isOwner(userId);
         gymRepository.delete(gym);
+    }
+
+    @Transactional(readOnly = true)
+    public GymRatingResponseDto getGymRating(Long gymId, Long userId) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        User user = userRepository.findByIdOrElseThrow(userId);
+        return reviewRepository.findGymRatingByGymIdOrElseThrow(gymId);
     }
 }

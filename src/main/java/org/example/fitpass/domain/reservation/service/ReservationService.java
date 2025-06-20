@@ -19,6 +19,7 @@ import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
+import org.example.fitpass.domain.point.dto.response.PointBalanceResponseDto;
 import org.example.fitpass.domain.point.service.PointService;
 import org.example.fitpass.domain.reservation.dto.request.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.response.GetReservationResponseDto;
@@ -112,8 +113,8 @@ public class ReservationService {
                 String description = "PT 예약 - " + trainer.getName();
                 PointUseRefundRequestDto pointUseRefundRequestDto = new PointUseRefundRequestDto(trainer.getPrice(), description);// 트레이너 이용료
 
-            int newBalance = pointService.usePoint(userId, pointUseRefundRequestDto.amount(), pointUseRefundRequestDto.description());
-
+            PointBalanceResponseDto dto = pointService.usePoint(userId, pointUseRefundRequestDto.amount(), pointUseRefundRequestDto.description());
+            int newBalance = dto.balance();
             // 예약 생성 및 저장
             Reservation reservation = ReservationRequestDto.from(
                 reservationDate,

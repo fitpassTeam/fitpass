@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.reservation.entity.Reservation;
-import org.example.fitpass.domain.review.dto.request.ReviewCreateRequestDto;
 import org.example.fitpass.domain.user.entity.User;
 
 @Getter

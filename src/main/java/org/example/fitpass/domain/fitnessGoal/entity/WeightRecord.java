@@ -49,8 +49,9 @@ public class WeightRecord extends BaseEntity {
         return new WeightRecord(fitnessGoal, weight, recordDate, memo);
     }
 
-    public void updateRecord(double weight, String memo) {
+    public void updateRecord(double weight, LocalDate recordDate, String memo) {
         this.weight = weight;
+        this.recordDate = recordDate;
         this.memo = memo;
     }
 
