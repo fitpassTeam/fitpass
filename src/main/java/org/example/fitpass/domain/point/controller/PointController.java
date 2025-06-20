@@ -11,6 +11,7 @@ import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.point.dto.request.PointCashOutRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
+import org.example.fitpass.domain.point.dto.response.PointBalanceResponseDto;
 import org.example.fitpass.domain.point.dto.response.PointCashOutResponseDto;
 import org.example.fitpass.domain.point.dto.response.PointResponseDto;
 import org.example.fitpass.domain.point.entity.Point;
@@ -34,32 +35,32 @@ public class PointController {
 
     // 포인트 사용
     @PostMapping("/use")
-    public ResponseEntity<ResponseMessage<Integer>> usePoint(
+    public ResponseEntity<ResponseMessage<PointBalanceResponseDto>> usePoint(
         @RequestBody PointUseRefundRequestDto pointUseRefundRequestDto,
         @AuthenticationPrincipal CustomUserDetails user
     ) {
-        int newBalance = pointService.usePoint(user.getId(),
+        PointBalanceResponseDto responseDto = pointService.usePoint(user.getId(),
             pointUseRefundRequestDto.amount(),
             pointUseRefundRequestDto.description());
 
-        ResponseMessage<Integer> responseMessage =
-            ResponseMessage.success(SuccessCode.POINT_USE_SUCCESS, newBalance);
+        ResponseMessage<PointBalanceResponseDto> responseMessage =
+            ResponseMessage.success(SuccessCode.POINT_USE_SUCCESS, responseDto);
         return ResponseEntity.status(SuccessCode.POINT_USE_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     // 포인트 100% 환불 (PT 취소)
     @PostMapping("/refund")
-    public ResponseEntity<ResponseMessage<Integer>> refundPoint(
+    public ResponseEntity<ResponseMessage<PointBalanceResponseDto>> refundPoint(
         @RequestBody PointUseRefundRequestDto pointUseRefundRequestDto,
         @AuthenticationPrincipal CustomUserDetails user
     ) {
-        int newBalance = pointService.refundPoint(
+        PointBalanceResponseDto responseDto = pointService.refundPoint(
             user.getId(),
             pointUseRefundRequestDto.amount(),
             pointUseRefundRequestDto.description());
 
-        ResponseMessage<Integer> responseMessage =
-            ResponseMessage.success(SuccessCode.POINT_REFUND_SUCCESS, newBalance);
+        ResponseMessage<PointBalanceResponseDto> responseMessage =
+            ResponseMessage.success(SuccessCode.POINT_REFUND_SUCCESS, responseDto);
         return ResponseEntity.status(SuccessCode.POINT_REFUND_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
@@ -81,11 +82,11 @@ public class PointController {
 
     // 포인트 잔액 조회
     @GetMapping
-    public ResponseEntity<ResponseMessage<Integer>> getPointBalance (
+    public ResponseEntity<ResponseMessage<PointBalanceResponseDto>> getPointBalance (
         @AuthenticationPrincipal CustomUserDetails user) {
-        int balance = pointService.getPointBalance(user.getId());
-        ResponseMessage<Integer> responseMessage =
-            ResponseMessage.success(SuccessCode.POINT_BALANCE_GET_SUCCESS,balance);
+        PointBalanceResponseDto responseDto = pointService.getPointBalance(user.getId());
+        ResponseMessage<PointBalanceResponseDto> responseMessage =
+            ResponseMessage.success(SuccessCode.POINT_BALANCE_GET_SUCCESS,responseDto);
 
         return ResponseEntity.status(SuccessCode.POINT_BALANCE_GET_SUCCESS.getHttpStatus()).body(responseMessage);
     }

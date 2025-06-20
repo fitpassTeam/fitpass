@@ -8,6 +8,7 @@ import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.point.dto.request.PointCashOutRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
+import org.example.fitpass.domain.point.dto.response.PointBalanceResponseDto;
 import org.example.fitpass.domain.point.dto.response.PointCashOutResponseDto;
 import org.example.fitpass.domain.point.dto.response.PointResponseDto;
 import org.example.fitpass.domain.point.entity.Point;
@@ -27,7 +28,7 @@ public class PointService {
 
     // 포인트 충전
     @Transactional
-    public int chargePoint(Long userId, int amount, String description ) {
+    public PointBalanceResponseDto chargePoint(Long userId, int amount, String description ) {
         User user = userRepository.findByIdOrElseThrow(userId);
         // 현재 잔액에서 충전될 포인트 추가
         int newBalance = user.getPointBalance() + amount;
@@ -39,12 +40,12 @@ public class PointService {
         // 사용자 잔액 업데이트
         user.updatePointBalance(newBalance);
 
-        return newBalance;
+        return new PointBalanceResponseDto(newBalance);
     }
 
     // 포인트 사용
     @Transactional
-    public int usePoint (Long userId, int amount, String description) {
+    public PointBalanceResponseDto usePoint (Long userId, int amount, String description) {
         User user = userRepository.findByIdOrElseThrow(userId);
         // 잔액 부족 검증
         if (user.getPointBalance() < amount) {
@@ -58,12 +59,12 @@ public class PointService {
         // 사용자 잔액 업데이트
         user.updatePointBalance(newBalance);
 
-        return newBalance;
+        return new PointBalanceResponseDto(newBalance);
     }
 
     // 포인트 100% 환불
     @Transactional
-    public int refundPoint (Long userId, int amount, String description) {
+    public PointBalanceResponseDto refundPoint (Long userId, int amount, String description) {
         User user = userRepository.findByIdOrElseThrow(userId);
 
         int newBalance = user.getPointBalance() + amount;
@@ -73,7 +74,7 @@ public class PointService {
         // 사용자 잔액 업데이트
         user.updatePointBalance(newBalance);
 
-        return newBalance;
+        return new PointBalanceResponseDto(newBalance);
     }
 
     // 사용자 현금화용 - 90% 환불
@@ -106,9 +107,9 @@ public class PointService {
 
     // 포인트 잔액 조회
     @Transactional
-    public int getPointBalance(Long userId) {
+    public PointBalanceResponseDto getPointBalance(Long userId) {
         User user = userRepository.findByIdOrElseThrow(userId);
-        return user.getPointBalance();
+        return new PointBalanceResponseDto(user.getPointBalance());
     }
 
     // 포인트 이력 조회

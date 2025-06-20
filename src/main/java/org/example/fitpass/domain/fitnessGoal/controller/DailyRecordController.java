@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/daily-records")
+@RequestMapping("/fitness-goals/{fitnessGoalId}/daily-records")
 @RequiredArgsConstructor
 public class DailyRecordController {
 
@@ -30,10 +30,11 @@ public class DailyRecordController {
     @PostMapping
     public ResponseEntity<ResponseMessage<DailyRecordResponseDto>> createDailyRecord (
         @Valid @RequestBody DailyRecordCreateRequestDto requestDto,
+        @PathVariable Long fitnessGoalId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         DailyRecordResponseDto responseDto = dailyRecordService.createDailyRecord(
-            requestDto.fitnessGoalId(),
+            fitnessGoalId,
             requestDto.imageUrls(),
             requestDto.memo(),
             requestDto.recordDate(),
@@ -44,7 +45,7 @@ public class DailyRecordController {
     }
 
     // 특정 목표의 일일 기록 목록 조회
-    @GetMapping("/goals/{fitnessGoalId}")
+    @GetMapping
     public ResponseEntity<ResponseMessage<List<DailyRecordResponseDto>>> getDailyRecords(
         @PathVariable Long fitnessGoalId,
         @AuthenticationPrincipal CustomUserDetails userDetails
@@ -56,24 +57,26 @@ public class DailyRecordController {
     }
 
     // 일일 기록 상세 조회
-    @GetMapping("/{recordId}")
+    @GetMapping("/{dailyRecordId}")
     public ResponseEntity<ResponseMessage<DailyRecordResponseDto>> getDailyRecord (
-        @PathVariable Long recordId,
+        @PathVariable Long dailyRecordId,
+        @PathVariable Long fitnessGoalId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ){
-        DailyRecordResponseDto responseDto = dailyRecordService.getDailyRecord(recordId, userDetails.getId());
+        DailyRecordResponseDto responseDto = dailyRecordService.getDailyRecord(dailyRecordId, fitnessGoalId, userDetails.getId());
         ResponseMessage<DailyRecordResponseDto> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_GET_SUCCESS, responseDto);
         return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_GET_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
     // 일일 기록 삭제
-    @DeleteMapping("/{recordId}")
+    @DeleteMapping("/{dailyRecordId}")
     public ResponseEntity<ResponseMessage<Void>> deleteDailyRecord (
-        @PathVariable Long recordId,
+        @PathVariable Long dailyRecordId,
+        @PathVariable Long fitnessGoalId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        dailyRecordService.deleteDailyRecord(recordId, userDetails.getId());
+        dailyRecordService.deleteDailyRecord(dailyRecordId, fitnessGoalId, userDetails.getId());
         ResponseMessage<Void> responseMessage =
             ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS);
         return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS.getHttpStatus()).body(responseMessage);

@@ -62,20 +62,23 @@ public class WeightRecordService {
 
     // 체중 기록 목록 조회
     @Transactional
-    public List<WeightRecordResponseDto> getWeightRecords (Long goalId, Long userId) {
-        fitnessGoalRepository.findByIdAndUserIdOrElseThrow(goalId, userId);
+    public List<WeightRecordResponseDto> getWeightRecords (Long fitnessGoalId, Long userId) {
+        fitnessGoalRepository.findByIdAndUserIdOrElseThrow(fitnessGoalId, userId);
 
-        List<WeightRecord> weightRecords = weightRecordRepository.findByFitnessGoalIdOrderByRecordDateDesc(goalId);
+        List<WeightRecord> weightRecords = weightRecordRepository.findByFitnessGoalIdOrderByRecordDateDesc(fitnessGoalId);
         return weightRecords.stream().map(WeightRecordResponseDto::from).collect(Collectors.toList());
     }
 
     // 체중 기록 상세 조회
-    @Transactional
-    public WeightRecordResponseDto getWeightRecord(Long userId, Long recordId) {
-        WeightRecord weightRecord = weightRecordRepository.findByIdOrElseThrow(recordId);
+    @Transactional(readOnly = true)
+    public WeightRecordResponseDto getWeightRecord(Long userId, Long fitnessGoalId, Long weightRecordId) {
+        WeightRecord weightRecord = weightRecordRepository.findByIdOrElseThrow(weightRecordId);
 
         if(!weightRecord.getFitnessGoal().getUser().getId().equals(userId)) {
             throw new BaseException(ExceptionCode.NOT_WEIGHT_RECORD_OWNER);
+        }
+        if (!weightRecord.getFitnessGoal().getId().equals(fitnessGoalId)) {
+            throw new BaseException(ExceptionCode.FITNESS_GOAL_MISMATCH);
         }
         return WeightRecordResponseDto.from(weightRecord);
     }
@@ -84,18 +87,22 @@ public class WeightRecordService {
     @Transactional
     public WeightRecordResponseDto updateWeightRecord(
         Long userId,
-        Long recordId,
+        Long weightRecordId,
         Long fitnessGoalId,
         Double weight,
         LocalDate recordDate,
         String memo) {
-        WeightRecord weightRecord = weightRecordRepository.findByIdOrElseThrow(recordId);
+
+        WeightRecord weightRecord = weightRecordRepository.findByIdOrElseThrow(weightRecordId);
         // 권한 확인
         if(!weightRecord.getFitnessGoal().getUser().getId().equals(userId)) {
             throw new BaseException(ExceptionCode.NOT_WEIGHT_RECORD_OWNER);
         }
+        if (!weightRecord.getFitnessGoal().getId().equals(fitnessGoalId)) {
+            throw new BaseException(ExceptionCode.FITNESS_GOAL_MISMATCH);
+        }
 
-        weightRecord.updateRecord(weight, memo);
+        weightRecord.updateRecord(weight, recordDate, memo);
 
         updateCurrentWeightIfLatest(weightRecord);
 
@@ -104,14 +111,15 @@ public class WeightRecordService {
 
     // 체중 기록 삭제
     @Transactional
-    public void deleteWeightRecord (Long userId, Long recordId) {
-        WeightRecord weightRecord = weightRecordRepository.findByIdOrElseThrow(recordId);
+    public void deleteWeightRecord (Long userId, Long weightRecordId, Long fitnessGoalId) {
+        WeightRecord weightRecord = weightRecordRepository.findByIdOrElseThrow(weightRecordId);
         // 권한 확인
         if(!weightRecord.getFitnessGoal().getUser().getId().equals(userId)) {
             throw new BaseException(ExceptionCode.NOT_WEIGHT_RECORD_OWNER);
         }
-
-        Long fitnessGoalId = weightRecord.getFitnessGoal().getId();
+        if (!weightRecord.getFitnessGoal().getId().equals(fitnessGoalId)) {
+            throw new BaseException(ExceptionCode.FITNESS_GOAL_MISMATCH);
+        }
 
         weightRecordRepository.delete(weightRecord);
         updateCurrentWeightToLatest(fitnessGoalId);
@@ -136,9 +144,8 @@ public class WeightRecordService {
                     goal.updateCurrentWeight(latestRecord.getWeight());
                 },
                 () -> {
-                    // 기록이 없으면 시작 체중으로 복원
                     FitnessGoal goal = fitnessGoalRepository.findById(fitnessGoalId)
-                        .orElseThrow();
+                        .orElseThrow(() -> new BaseException(ExceptionCode.FITNESS_GOAL_NOT_FOUND));
                     goal.updateCurrentWeight(goal.getStartWeight());
                 }
             );
