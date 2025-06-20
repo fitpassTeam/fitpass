@@ -13,12 +13,14 @@ public record GymDetailResponDto(
     LocalTime closeTime,
     List<String> gymImage,
     List<String> trainerNames,
-    GymStatus gymStatus
+    GymStatus gymStatus,
+    Double averageGymRating,
+    Integer totalReviewCount
 ) {
 
     public static GymDetailResponDto from(String name, String number, String content,
         String address, LocalTime openTime, LocalTime closeTime, List<String> gymImage,
-        List<String> trainerNames, GymStatus gymStatus) {
+        List<String> trainerNames, GymStatus gymStatus, Double averageGymRating, Integer totalReviewCount) {
         return new GymDetailResponDto(
             name,
             number,
@@ -28,7 +30,9 @@ public record GymDetailResponDto(
             closeTime,
             gymImage,
             trainerNames,
-            gymStatus
+            gymStatus,
+            averageGymRating,
+            totalReviewCount
         );
     }
 }
