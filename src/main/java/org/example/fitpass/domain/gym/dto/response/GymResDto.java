@@ -5,7 +5,7 @@ import java.util.List;
 import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.gym.entity.Gym;
 
-public record GymResponseDto(
+public record GymResDto(
     String name,
     String number,
     String content,
@@ -13,17 +13,16 @@ public record GymResponseDto(
     LocalTime openTime,
     LocalTime closeTime,
     Long gymId,
-    List<String> gymImage,
-    boolean isLiked
+    List<String> gymImage
 ) {
 
-    public static GymResponseDto of(String name, String number, String content, String address,
-            LocalTime openTime, LocalTime closeTime, Long gymId, boolean isLiked) {
-            return new GymResponseDto(name, number, content, address, openTime, closeTime, gymId, List.of(), false);
-        }
+    public static GymResDto of(String name, String number, String content, String address,
+        LocalTime openTime, LocalTime closeTime, Long gymId) {
+        return new GymResDto(name, number, content, address, openTime, closeTime, gymId, List.of());
+    }
 
-    public static GymResponseDto from(Gym gym, boolean isLiked) {
-        return new GymResponseDto(
+    public static GymResDto from(Gym gym) {
+        return new GymResDto(
             gym.getName(),
             gym.getNumber(),
             gym.getContent(),
@@ -33,8 +32,7 @@ public record GymResponseDto(
             gym.getId(),
             gym.getImages().stream()
                 .map(Image::getUrl)
-                .toList(),
-            isLiked
+                .toList()
         );
     }
 }

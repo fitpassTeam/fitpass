@@ -1,14 +1,20 @@
 package org.example.fitpass.domain.gym.service;
 
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
+import org.example.fitpass.domain.gym.dto.response.GymResDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
+import org.example.fitpass.domain.likes.LikeType;
+import org.example.fitpass.domain.likes.repository.LikeRepository;
+import org.example.fitpass.domain.likes.service.LikeService;
 import org.example.fitpass.domain.review.dto.response.GymRatingResponseDto;
 import org.example.fitpass.domain.review.repository.ReviewRepository;
 import org.example.fitpass.domain.user.entity.User;
@@ -27,13 +33,14 @@ public class GymService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final S3Service s3Service;
+    private final LikeRepository likeRepository;
 
     @Transactional
-    public GymResponseDto post(String address, String name, String content, String number, List<String> gymImage, LocalTime openTime, LocalTime closeTime, Long userId) {
+    public GymResDto post(String address, String name, String content, String number, List<String> gymImage, LocalTime openTime, LocalTime closeTime, Long userId) {
         User user = userRepository.findByIdOrElseThrow(userId);
         Gym gym = Gym.of(gymImage,name,number,content,address,openTime,closeTime,user);
         gymRepository.save(gym);
-        return GymResponseDto.of(
+        return GymResDto.of(
             gym.getName(),
             gym.getNumber(),
             gym.getContent(),
@@ -64,9 +71,15 @@ public class GymService {
     }
 
     @Transactional(readOnly = true)
-    public Page<GymResponseDto> getAllGyms(Pageable pageable) {
+    public Page<GymResponseDto> getAllGyms(Pageable pageable, Long userId) {
         Page<Gym> gyms = gymRepository.findAll(pageable);
-        return gyms.map(GymResponseDto::from);
+        Set<Long> likedGymIds = (userId != null) // null 값이 들어와도 에러가 발생하지 않고 사용하기 위하여 Set 사용
+            ? likeRepository.findTargetIdsByUserIdAndLikeType(userId, LikeType.GYM)
+            : Collections.emptySet();
+        return gyms.map(gym -> {
+            boolean isLiked = likedGymIds.contains(gym.getId());
+            return GymResponseDto.from(gym, isLiked);
+        });
     }
 
     @Transactional
@@ -83,12 +96,12 @@ public class GymService {
     }
 
     @Transactional
-    public GymResponseDto updateGym(String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, Long gymId, Long userId){
+    public GymResDto updateGym(String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, Long gymId, Long userId){
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         gym.isOwner(userId);
         gym.update(name,number,content,address,openTime,closeTime);
         gymRepository.save(gym);
-        return GymResponseDto.of(
+        return GymResDto.of(
             gym.getName(),
             gym.getNumber(),
             gym.getContent(),

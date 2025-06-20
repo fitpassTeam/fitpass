@@ -105,9 +105,10 @@ public enum SuccessCode implements BaseCode {
     GET_MY_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12006", "구매 이력 조회가 완료되었습니다."),
     GET_ACTIVE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12007", "활성화 된 이용권 조회가 완료되었습니다."),
     START_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12008", "이용권 사용 시작"),
-    GET_NOT_STARTED_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12009", "아직 시작하지 않은 이용권 목록 조회가 완료되었습니다.");
+    GET_NOT_STARTED_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12009", "아직 시작하지 않은 이용권 목록 조회가 완료되었습니다."),
 
-
+    // 13000: 좋아요
+    LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "12001","좋아요 상태가 변경되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

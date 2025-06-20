@@ -9,6 +9,7 @@ import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.gym.dto.request.GymRequestDto;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
+import org.example.fitpass.domain.gym.dto.response.GymResDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.gym.service.GymService;
 import org.example.fitpass.domain.review.dto.response.GymRatingResponseDto;
@@ -37,10 +38,10 @@ public class GymController {
     private final GymService gymService;
 
     @PostMapping
-    public ResponseEntity<ResponseMessage<GymResponseDto>> postGym(
+    public ResponseEntity<ResponseMessage<GymResDto>> postGym(
         @Valid @RequestBody GymRequestDto request,
         @AuthenticationPrincipal CustomUserDetails user) {
-        GymResponseDto response = gymService.post(
+        GymResDto response = gymService.post(
             request.address(),
             request.name(),
             request.content(),
@@ -50,7 +51,7 @@ public class GymController {
             request.closeTime(),
             user.getId()
         );
-        ResponseMessage<GymResponseDto> responseMessage =
+        ResponseMessage<GymResDto> responseMessage =
             ResponseMessage.success(SuccessCode.GYM_POST_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GYM_POST_SUCCESS.getHttpStatus())
             .body(responseMessage);
@@ -67,9 +68,10 @@ public class GymController {
 
     @GetMapping
     public ResponseEntity<ResponseMessage<PageResponse<GymResponseDto>>> getAllGyms(
-        @PageableDefault(page = 0, size = 10) Pageable pageable
+        @PageableDefault(page = 0, size = 10) Pageable pageable,
+        @AuthenticationPrincipal CustomUserDetails user
     ) {
-        Page<GymResponseDto> response = gymService.getAllGyms(pageable);
+        Page<GymResponseDto> response = gymService.getAllGyms(pageable, user.getId());
         PageResponse<GymResponseDto> pageResponse = new PageResponse<>(response);
         ResponseMessage<PageResponse<GymResponseDto>> responseMessage =
             ResponseMessage.success(SuccessCode.GYM_FIND_ALL_SUCCESS, pageResponse);
@@ -77,7 +79,7 @@ public class GymController {
             .body(responseMessage);
     }
 
-    @PutMapping("/{gymId}/photo")
+    @PatchMapping("/{gymId}/photo")
     public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
         @RequestParam("images")List<MultipartFile> files,
         @PathVariable Long gymId,
@@ -90,11 +92,11 @@ public class GymController {
     }
 
     @PatchMapping("/{gymId}")
-    public ResponseEntity<ResponseMessage<GymResponseDto>> updateGym(
+    public ResponseEntity<ResponseMessage<GymResDto>> updateGym(
         @RequestBody GymRequestDto request,
         @PathVariable Long gymId,
         @AuthenticationPrincipal CustomUserDetails user) {
-        GymResponseDto response = gymService.updateGym(
+        GymResDto response = gymService.updateGym(
             request.name(),
             request.number(),
             request.content(),
@@ -104,7 +106,7 @@ public class GymController {
             gymId,
             user.getId()
         );
-        ResponseMessage<GymResponseDto> responseMessage =
+        ResponseMessage<GymResDto> responseMessage =
             ResponseMessage.success(SuccessCode.GYM_EDIT_INFO_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GYM_EDIT_INFO_SUCCESS.getHttpStatus())
             .body(responseMessage);
