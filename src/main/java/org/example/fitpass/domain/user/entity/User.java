@@ -77,6 +77,7 @@ public class User extends BaseEntity {
         this.name = name;
         this.authProvider = authProvider;
 
+
         // OAuth2 기본값 세팅 (새로운 OAuth2 시스템과 일치)
         this.password = "OAUTH2_TEMP";
         this.phone = "NEED_INPUT";
@@ -152,4 +153,5 @@ public class User extends BaseEntity {
             this.userImage = userImage;
         }
     }
+
 }
