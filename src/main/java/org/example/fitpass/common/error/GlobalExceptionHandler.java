@@ -1,5 +1,6 @@
 package org.example.fitpass.common.error;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -9,6 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -52,5 +54,32 @@ public class GlobalExceptionHandler {
         }
         return new ResponseEntity<>(body, errorCode.getHttpStatus());
     }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadableException(
+        HttpMessageNotReadableException ex, HttpServletRequest request) {
+
+        log.warn("HttpMessageNotReadableException: {}", ex.getMessage(), ex);
+
+        // JSON 파싱 중 InvalidFormatException이 포함된 경우, 상세 메시지 추출
+        String detailMessage = "Request body is malformed or has incorrect types.";
+        Throwable cause = ex.getCause();
+        if (cause instanceof InvalidFormatException invalidFormatException) {
+            detailMessage = String.format("Invalid value for field '%s': expected type %s",
+                invalidFormatException.getPath().stream()
+                    .map(ref -> ref.getFieldName())
+                    .collect(Collectors.joining(".")),
+                invalidFormatException.getTargetType().getSimpleName()
+            );
+        }
+
+        Map<String, String> errorDetail = Map.of(
+            "field", "requestBody",
+            "message", detailMessage
+        );
+
+        return buildErrorResponse(ExceptionCode.INVALID_JSON, request.getRequestURI(), List.of(errorDetail));
+    }
+
 }
 
