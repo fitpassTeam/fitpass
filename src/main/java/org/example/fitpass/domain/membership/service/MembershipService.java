@@ -1,0 +1,78 @@
+package org.example.fitpass.domain.membership.service;
+
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.example.fitpass.domain.gym.entity.Gym;
+import org.example.fitpass.domain.gym.repository.GymRepository;
+import org.example.fitpass.domain.membership.dto.response.MembershipResponseDto;
+import org.example.fitpass.domain.membership.entity.Membership;
+import org.example.fitpass.domain.membership.repository.MembershipRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class MembershipService {
+
+    private final GymRepository gymRepository;
+    private final MembershipRepository membershipRepository;
+
+    @Transactional
+    public MembershipResponseDto createMembership(Long gymId, String name, int price, String content, int durationInDays) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Membership membership = Membership.of( name,price,content,durationInDays);
+        membership.assignToGym(gym);
+        membershipRepository.save(membership);
+        return MembershipResponseDto.fromEntity(
+            membership.getId(),
+            membership.getName(),
+            membership.getPrice(),
+            membership.getContent(),
+            membership.getDurationInDays());
+    }
+
+    @Transactional(readOnly = true)
+    public List<MembershipResponseDto> getAllByGym(Long gymId) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        return membershipRepository.findAllByGym(gym).stream()
+            .map(MembershipResponseDto::of)
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public MembershipResponseDto getById(Long gymId, Long id) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Membership membership = membershipRepository.findByIdOrElseThrow(id);
+        membership.validateBelongsToGym(gym);
+        return MembershipResponseDto.fromEntity(
+            membership.getId(),
+            membership.getName(),
+            membership.getPrice(),
+            membership.getContent(),
+            membership.getDurationInDays());
+    }
+
+    @Transactional
+    public MembershipResponseDto updateMembership(Long gymId, Long id, String name, int price,
+        String content, int durationInDays) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Membership membership = membershipRepository.findByIdOrElseThrow(id);
+        membership.validateBelongsToGym(gym);
+        membership.update(name, price, content, durationInDays);
+        return MembershipResponseDto.fromEntity(
+            membership.getId(),
+            membership.getName(),
+            membership.getPrice(),
+            membership.getContent(),
+            membership.getDurationInDays()
+        );
+    }
+
+    @Transactional
+    public void deleteMembership(Long gymId, Long id) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Membership membership = membershipRepository.findByIdOrElseThrow(id);
+        membership.validateBelongsToGym(gym);
+        membershipRepository.delete(membership);
+    }
+}

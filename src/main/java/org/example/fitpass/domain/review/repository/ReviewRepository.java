@@ -1,8 +1,10 @@
 package org.example.fitpass.domain.review.repository;
 
 import java.util.List;
+import java.util.Optional;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.domain.review.dto.response.GymRatingResponseDto;
 import org.example.fitpass.domain.review.entity.Review;
 import org.example.fitpass.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,5 +30,17 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r JOIN r.reservation res WHERE res.trainer.id = :trainerId ORDER BY r.createdAt DESC")
     List<Review> findByTrainerIdOrderByCreatedAtDesc(Long trainerId);
+
+    // 체육관 평점 평균 계산
+    @Query("SELECT new org.example.fitpass.domain.review.dto.response.GymRatingResponseDto(" +
+        "g.id, g.name, AVG(r.gymRating), COUNT(r)) " +
+        "FROM Review r JOIN r.reservation res JOIN res.gym g " +
+        "WHERE g.id = :gymId GROUP BY g.id, g.name")
+    Optional<GymRatingResponseDto> findGymRatingByGymId(Long gymId);
+
+    default GymRatingResponseDto findGymRatingByGymIdOrElseThrow(Long gymId) {
+        return findGymRatingByGymId(gymId)
+            .orElse(new GymRatingResponseDto(gymId, "평점 없음", 0.0, 0L));
+    }
 
 }

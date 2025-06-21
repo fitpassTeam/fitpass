@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.dto.PageResponse;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
+import org.example.fitpass.domain.gym.dto.response.GymResDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.search.service.SearchService;
@@ -23,16 +24,16 @@ public class SearchController {
 //    private final TestService testService;
 
     @GetMapping("/search/gyms/v1")
-    public ResponseEntity<ResponseMessage<PageResponse<GymResponseDto>>> searchGym (
+    public ResponseEntity<ResponseMessage<PageResponse<GymResDto>>> searchGym (
             @RequestParam(name = "keyword") String keyword,
             @PageableDefault(page = 0, size = 20) Pageable pageable
     ){
         searchService.saveSearchKeyword(keyword);
 
-        Page<GymResponseDto> page = searchService.searchGym(keyword, pageable);
-        PageResponse<GymResponseDto> pageResponse = new PageResponse<>(page);
+        Page<GymResDto> page = searchService.searchGym(keyword, pageable);
+        PageResponse<GymResDto> pageResponse = new PageResponse<>(page);
 
-        ResponseMessage<PageResponse<GymResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.GYM_SEARCH_SUCCESS, pageResponse);
+        ResponseMessage<PageResponse<GymResDto>> responseMessage = ResponseMessage.success(SuccessCode.GYM_SEARCH_SUCCESS, pageResponse);
         return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 

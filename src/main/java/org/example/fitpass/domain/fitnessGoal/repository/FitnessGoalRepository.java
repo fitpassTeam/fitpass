@@ -21,8 +21,8 @@ public interface FitnessGoalRepository extends JpaRepository<FitnessGoal, Long> 
 
     Optional<FitnessGoal> findByIdAndUserId(Long goalId, Long userId);
 
-    default FitnessGoal findByIdAndUserIdOrElseThrow (Long goalId, Long userId) {
-        FitnessGoal fitnessGoal = findByIdAndUserId(goalId, userId)
+    default FitnessGoal findByIdAndUserIdOrElseThrow (Long fitnessGoalId, Long userId) {
+        FitnessGoal fitnessGoal = findByIdAndUserId(fitnessGoalId, userId)
             .orElseThrow(() -> new BaseException(ExceptionCode.FITNESS_GOAL_NOT_FOUND));
         return fitnessGoal;
     }
