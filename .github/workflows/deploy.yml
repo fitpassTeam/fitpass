@@ -70,9 +70,6 @@ jobs:
             # 중지 및 제거
             docker-compose down || true
 
-            # "이전 네트워크 제거 (없으면 무시)"
-            docker network rm fitpass_default || true
-
             # 이전 이미지 삭제 (선택 사항)
             docker rm -f mysql || true
             docker rm -f redis || true
