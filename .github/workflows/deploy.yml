@@ -71,7 +71,7 @@ jobs:
             docker-compose down || true
 
             # "이전 네트워크 제거 (없으면 무시)"
-            docker network rm legend-book_default || true
+            docker network rm fitpass_default || true
 
             # 이전 이미지 삭제 (선택 사항)
             docker rm -f mysql || true
@@ -82,5 +82,5 @@ jobs:
             docker-compose up --build -d
 
             # 로그 확인
-            docker-compose logs --tail=30
+            docker-compose logs --tail=50
 
