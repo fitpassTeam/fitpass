@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - dev
+      - feature/text-ec2
 
 jobs:
   deploy:
