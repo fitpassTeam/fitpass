@@ -83,3 +83,4 @@ jobs:
 
             # 로그 확인
             docker-compose logs --tail=30
+
