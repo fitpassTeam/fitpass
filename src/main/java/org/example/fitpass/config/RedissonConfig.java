@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RedissonConfig {
 
-    @Value("${REDIS_HOST:localhost}")
+    @Value("${spring.data.redis.host:localhost}")
     private String redisHost;
 
     private static final String REDISSON_HOST_PREFIX = "redis://";
