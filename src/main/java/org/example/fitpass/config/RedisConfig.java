@@ -22,7 +22,7 @@ import java.time.Duration;
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
 public class RedisConfig {
 
-    @Value("${spring.data.redis.host:localhost}")
+    @Value("${REDIS_HOST:localhost}")
     private String redisHost;
 
     @Value("${spring.data.redis.port:6379}")
