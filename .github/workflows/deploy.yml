@@ -40,6 +40,10 @@ jobs:
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
           echo "SQL_PORT=${{ secrets.SQL_PORT }}" >> .env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "ACCESS_KEY=${{secrets.ACCESS_KEY}}" >> .env
+          echo "AWS_SECRET_KEY=${{secrets.AWS_SECRET_KEY}}" >> .env
+          echo "OAUTH_NAVER_CLIENT_ID=${{secrets.OAUTH_NAVER_CLIENT_ID}}" >> .env
+          echo "OAUTH_NAVER_CLIENT_SECRET=${{secrets.OAUTH_NAVER_CLIENT_SECRET}}" >> .env
         shell: bash
 
       - name: Debug check exact .env location
