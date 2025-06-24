@@ -21,8 +21,8 @@
 //import org.example.fitpass.domain.reservation.service.ReservationService;
 //import org.example.fitpass.domain.trainer.entity.Trainer;
 //import org.example.fitpass.domain.trainer.repository.TrainerRepository;
-//import org.example.fitpass.domain.user.Gender;
-//import org.example.fitpass.domain.user.UserRole;
+//import org.example.fitpass.domain.user.enums.Gender;
+//import org.example.fitpass.domain.user.enums.UserRole;
 //import org.example.fitpass.domain.user.entity.User;
 //import org.example.fitpass.domain.user.repository.UserRepository;
 //import org.junit.jupiter.api.BeforeEach;

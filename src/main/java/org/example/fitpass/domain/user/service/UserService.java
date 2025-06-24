@@ -1,14 +1,13 @@
 package org.example.fitpass.domain.user.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.config.RedisService;
-import org.example.fitpass.domain.user.Gender;
-import org.example.fitpass.domain.user.UserRole;
+import org.example.fitpass.domain.user.enums.Gender;
+import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.dto.response.SigninResponseDto;
-import org.example.fitpass.domain.user.dto.request.LoginRequestDto;
-import org.example.fitpass.domain.user.dto.request.UserRequestDto;
 import org.example.fitpass.domain.user.dto.response.UserResponseDto;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
@@ -36,8 +35,7 @@ public class UserService {
         String phone,
         int age,
         String address,
-        Gender gender,
-        UserRole userRole
+        Gender gender
     ) {
         User user = new User(
                 email,
@@ -48,7 +46,7 @@ public class UserService {
                 age,
                 address,
                 gender,
-                userRole
+                UserRole.USER
         );
         userRepository.save(user);
         return UserResponseDto.from(user);
@@ -141,5 +139,52 @@ public class UserService {
         long remaining = jwtTokenProvider.getRemainingTime(token);
         jwtTokenProvider.blacklistAccessToken(token, remaining);
         redisService.deleteRefreshToken(email);
+    }
+
+    // Owner로 전환 승인 요청
+    @Transactional
+    public UserResponseDto requestOwnerUpgrade(String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        if (user.getUserRole() != UserRole.USER) {
+            throw new BaseException(ExceptionCode.INVALID_UPGRADE_REQUEST);
+        }
+
+        user.requestOwnerUpgrade();
+        return UserResponseDto.from(user);
+    }
+
+    // Admin용 승인 메서드
+    @Transactional
+    public UserResponseDto approveOwnerUpgrade(Long userId) {
+        User user = userRepository.findByIdOrElseThrow(userId);
+
+        if (user.getUserRole() != UserRole.PENDING_OWNER) {
+            throw new BaseException(ExceptionCode.INVALID_APPROVAL_REQUEST);
+        }
+
+        user.approveOwnerUpgrade();
+        return UserResponseDto.from(user);
+    }
+    // Admin용 거절 메서드
+    @Transactional
+    public UserResponseDto rejectOwnerUpgrade(Long userId) {
+        User user = userRepository.findByIdOrElseThrow(userId);
+
+        if (user.getUserRole() != UserRole.PENDING_OWNER) {
+            throw new BaseException(ExceptionCode.INVALID_REJECTION_REQUEST);
+        }
+
+        user.rejectOwnerUpgrade();
+        return UserResponseDto.from(user);
+    }
+
+    // 승인 대기 목록 조회
+    @Transactional(readOnly = true)
+    public List<UserResponseDto> getPendingOwnerRequests() {
+        List<User> pendingUsers = userRepository.findByUserRole(UserRole.PENDING_OWNER);
+        return pendingUsers.stream()
+            .map(UserResponseDto::from)
+            .toList();
     }
 }

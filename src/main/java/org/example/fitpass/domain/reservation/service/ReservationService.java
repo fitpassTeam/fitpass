@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.notify.NotificationType;
 import org.example.fitpass.domain.notify.service.NotifyService;
-import org.example.fitpass.domain.user.UserRole;
+import org.example.fitpass.domain.user.enums.UserRole;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.example.fitpass.common.error.BaseException;

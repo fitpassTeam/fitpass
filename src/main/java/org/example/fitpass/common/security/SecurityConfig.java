@@ -1,5 +1,6 @@
 package org.example.fitpass.common.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.jwt.JwtAuthenticationFilter;
@@ -48,6 +49,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 .requestMatchers(
                     "/auth/**",
+                    "/login",
                     "/ws/**",
                     "/error",
                     "/swagger-ui.html",
@@ -67,6 +69,15 @@ public class SecurityConfig {
                 new JwtAuthenticationFilter(jwtTokenProvider, redisService, customUserDetailsService),
                 UsernamePasswordAuthenticationFilter.class
             )
+
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"인증이 필요합니다.\"}");
+                })
+            )
+
             // OAuth2 로그인 설정
             .oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfo -> userInfo
