@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.jwt.JwtAuthenticationFilter;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.config.RedisService;
-import org.example.fitpass.domain.user.service.CustomOAuth2UserService;
+import org.example.fitpass.common.oAuth2.CustomOAuth2UserService;
+import org.example.fitpass.common.oAuth2.OAuth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,7 +32,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
     private final CustomUserDetailsService customUserDetailsService;
-    private final OAuthSuccessHandler oAuthSuccessHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final RedirectUrlCookieFilter redirectUrlCookieFilter;
 
@@ -71,7 +72,7 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )
-                .successHandler(oAuthSuccessHandler)
+                .successHandler(oAuth2SuccessHandler)
             )
             // OAuth2 redirect 필터 추가
             .addFilterBefore(redirectUrlCookieFilter, OAuth2AuthorizationRequestRedirectFilter.class)

@@ -3,7 +3,7 @@ package org.example.fitpass.domain.user.entity;
 
 import java.util.Collection;
 
-import org.example.fitpass.common.dto.OAuthAttributes;
+import org.example.fitpass.common.oAuth2.OAuthAttributes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
