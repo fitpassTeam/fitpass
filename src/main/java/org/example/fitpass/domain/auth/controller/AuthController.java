@@ -38,8 +38,7 @@ public class AuthController {
             request.phone(),
             request.age(),
             request.address(),
-            request.gender(),
-            request.userRole()
+            request.gender()
         );
         return ResponseEntity.status(SuccessCode.SIGNUP_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.SIGNUP_SUCCESS, response));
