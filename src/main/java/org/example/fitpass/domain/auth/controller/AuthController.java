@@ -5,15 +5,17 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
-import org.example.fitpass.domain.user.dto.LoginRequestDto;
-import org.example.fitpass.domain.user.dto.LogoutRequestDto;
-import org.example.fitpass.domain.user.dto.UserRequestDto;
-import org.example.fitpass.domain.user.dto.UserResponseDto;
+import org.example.fitpass.domain.user.dto.request.LoginRequestDto;
+import org.example.fitpass.domain.user.dto.request.LogoutRequestDto;
+import org.example.fitpass.domain.user.dto.request.UserRequestDto;
+import org.example.fitpass.domain.user.dto.response.UserResponseDto;
 import org.example.fitpass.domain.user.service.UserService;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,7 +47,7 @@ public class AuthController {
             @RequestHeader("Authorization") String bearerToken,
             @RequestBody LogoutRequestDto request
     ) {
-        userService.logout(request.getEmail(), bearerToken);
+        userService.logout(request.email(), bearerToken);
         return ResponseEntity.ok().build();
     }
 }

@@ -20,7 +20,7 @@ import org.example.fitpass.domain.likes.entity.Like;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.Gender;
 import org.example.fitpass.domain.user.UserRole;
-import org.example.fitpass.domain.user.dto.UserRequestDto;
+import org.example.fitpass.domain.user.dto.request.UserRequestDto;
 
 @Getter
 @Entity
@@ -119,11 +119,11 @@ public class User extends BaseEntity {
     }
 
     public void updateInfo(UserRequestDto dto) {
-        this.name = dto.getName();
-        this.age = dto.getAge();
-        this.address = dto.getAddress();
-        this.gender = dto.getGender();
-        this.userRole = dto.getUserRole();
+        this.name = dto.name();
+        this.age = dto.age();
+        this.address = dto.address();
+        this.gender = dto.gender();
+        this.userRole = dto.userRole();
     }
 
     public void updatePhone(String newPhone) {

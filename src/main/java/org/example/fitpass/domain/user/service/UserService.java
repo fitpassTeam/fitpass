@@ -5,9 +5,10 @@ import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
-import org.example.fitpass.domain.user.dto.LoginRequestDto;
-import org.example.fitpass.domain.user.dto.UserRequestDto;
-import org.example.fitpass.domain.user.dto.UserResponseDto;
+import org.example.fitpass.domain.user.UserRole;
+import org.example.fitpass.domain.user.dto.request.LoginRequestDto;
+import org.example.fitpass.domain.user.dto.request.UserRequestDto;
+import org.example.fitpass.domain.user.dto.response.UserResponseDto;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
@@ -27,18 +28,18 @@ public class UserService {
     @Transactional
     public UserResponseDto signup(UserRequestDto requestDto) {
 
-        String imageUrl = requestDto.getUserImage();
+        String imageUrl = requestDto.userImage();
 
         User user = new User(
-                requestDto.getEmail(),
+                requestDto.email(),
                 imageUrl,
-                passwordEncoder.encode(requestDto.getPassword()),
-                requestDto.getName(),
-                requestDto.getPhone(),
-                requestDto.getAge(),
-                requestDto.getAddress(),
-                requestDto.getGender(),
-                requestDto.getUserRole()
+                passwordEncoder.encode(requestDto.password()),
+                requestDto.name(),
+                requestDto.phone(),
+                requestDto.age(),
+                requestDto.address(),
+                requestDto.gender(),
+                requestDto.userRole()
         );
 
         userRepository.save(user);
@@ -48,9 +49,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public SigninResponseDto login(LoginRequestDto dto) {
-        User user = userRepository.findByEmailOrElseThrow(dto.getEmail());
+        User user = userRepository.findByEmailOrElseThrow(dto.email());
 
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
             throw new BaseException(ExceptionCode.INVALID_PASSWORD);
         }
 
