@@ -118,12 +118,10 @@ public class User extends BaseEntity {
         this.pointBalance = 0;
     }
 
-    public void updateInfo(UserRequestDto dto) {
-        this.name = dto.name();
-        this.age = dto.age();
-        this.address = dto.address();
-        this.gender = dto.gender();
-        this.userRole = dto.userRole();
+    public void updateInfo(String name, int age, String address) {
+        this.name = name;
+        this.age = age;
+        this.address = address;
     }
 
     public void updatePhone(String newPhone) {

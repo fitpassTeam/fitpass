@@ -6,6 +6,7 @@ import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.user.dto.request.UpdatePasswordRequestDto;
 import org.example.fitpass.domain.user.dto.request.UpdatePhoneRequestDto;
+import org.example.fitpass.domain.user.dto.request.UserInfoUpdateRequestDto;
 import org.example.fitpass.domain.user.dto.request.UserRequestDto;
 import org.example.fitpass.domain.user.dto.response.UserResponseDto;
 import org.example.fitpass.domain.user.service.UserService;
@@ -35,8 +36,12 @@ public class UserController {
     @PutMapping("/me")
     public ResponseEntity<ResponseMessage<UserResponseDto>> update(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @RequestBody UserRequestDto request) {
-        UserResponseDto response = userService.updateUserInfo(userDetails.getUsername(), request);
+            @Valid @RequestBody UserInfoUpdateRequestDto request) {
+        UserResponseDto response = userService.updateUserInfo(
+            userDetails.getId(),
+            request.name(),
+            request.age(),
+            request.address());
         return ResponseEntity.status(SuccessCode.USER_UPDATE_SUCCESS.getHttpStatus())
                 .body(ResponseMessage.success(SuccessCode.USER_UPDATE_SUCCESS, response));
     }
