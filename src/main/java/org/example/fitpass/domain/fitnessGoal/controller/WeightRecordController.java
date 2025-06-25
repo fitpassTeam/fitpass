@@ -41,9 +41,8 @@ public class WeightRecordController {
             requestDto.recordDate(),
             requestDto.memo(),
             userDetails.getId());
-        ResponseMessage<WeightRecordResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_CREATE_SUCCESS, recordResponseDto);
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_CREATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_CREATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_CREATE_SUCCESS, recordResponseDto));
     }
 
     // 특정 목표의 체중 기록 목록 조회
@@ -53,9 +52,8 @@ public class WeightRecordController {
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         List<WeightRecordResponseDto> responseDtos = weightRecordService.getWeightRecords(fitnessGoalId, userDetails.getId());
-        ResponseMessage<List<WeightRecordResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_LIST_SUCCESS, responseDtos);
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_LIST_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_LIST_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_LIST_SUCCESS, responseDtos));
     }
 
     // 체중 기록 상세 조회
@@ -66,9 +64,8 @@ public class WeightRecordController {
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         WeightRecordResponseDto responseDto = weightRecordService.getWeightRecord(userDetails.getId(), fitnessGoalId, weightRecordId);
-        ResponseMessage<WeightRecordResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_GET_SUCCESS, responseDto);
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_GET_SUCCESS, responseDto));
     }
 
     // 체중 기록 수정
@@ -86,9 +83,8 @@ public class WeightRecordController {
             requestDto.weight(),
             requestDto.recordDate(),
             requestDto.memo());
-        ResponseMessage<WeightRecordResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_UPDATE_SUCCESS, responseDto);
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_UPDATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_UPDATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_UPDATE_SUCCESS, responseDto));
     }
 
     // 체중 기록 삭제
@@ -99,9 +95,8 @@ public class WeightRecordController {
         @AuthenticationPrincipal CustomUserDetails userDetails
         ) {
         weightRecordService.deleteWeightRecord(userDetails.getId(), weightRecordId, fitnessGoalId);
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_DELETE_SUCCESS);
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_DELETE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_WEIGHTRECORD_DELETE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_WEIGHTRECORD_DELETE_SUCCESS));
     }
 
 }

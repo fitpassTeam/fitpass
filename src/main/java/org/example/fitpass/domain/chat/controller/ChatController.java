@@ -29,10 +29,8 @@ public class ChatController {
         @RequestParam("userId") Long userId,
         @RequestParam("trainerId") Long trainerId) {
         ChatRoomResponseDto chatRoom = chatService.createOrGetChatRoom(userId, trainerId);
-        ResponseMessage<ChatRoomResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.CREATE_CHATROOM, chatRoom);
         return ResponseEntity.status((SuccessCode.CREATE_CHATROOM.getHttpStatus()))
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.CREATE_CHATROOM, chatRoom));
     }
 
     // 채팅방 목록 조회
@@ -41,10 +39,8 @@ public class ChatController {
         @RequestParam Long userId,
         @RequestParam String userType) {
         List<ChatRoomResponseDto> dto = chatService.getChatRoomsByUser(userId, userType);
-        ResponseMessage<List<ChatRoomResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_ALL_CHATROOM, dto);
         return ResponseEntity.status(SuccessCode.GET_ALL_CHATROOM.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_ALL_CHATROOM, dto));
     }
 
     // 채팅 내역 조회
@@ -52,10 +48,8 @@ public class ChatController {
     public ResponseEntity<ResponseMessage<List<ChatMessageResponseDto>>> getMessages(
         @PathVariable("chatRoomId") Long chatRoomId) {
         List<ChatMessageResponseDto> messages = chatService.getMessageByChatRoomId(chatRoomId);
-        ResponseMessage<List<ChatMessageResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_ALL_CHATTING, messages);
         return ResponseEntity.status(SuccessCode.GET_ALL_CHATTING.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_ALL_CHATTING, messages));
     }
 
 }

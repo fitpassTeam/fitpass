@@ -27,9 +27,8 @@ public class ReviewGetController {
         @PathVariable Long reviewId
     ) {
         ReviewDetailResponseDto responseDto = reviewService.getReview(reviewId);
-        ResponseMessage<ReviewDetailResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.REVIEW_GET_SUCCESS,responseDto);
-        return ResponseEntity.status(SuccessCode.REVIEW_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.REVIEW_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.REVIEW_GET_SUCCESS,responseDto));
     }
 
     // 사용자가 쓴 리뷰 조회
@@ -38,9 +37,8 @@ public class ReviewGetController {
         @AuthenticationPrincipal CustomUserDetails user
     ) {
         List<ReviewDetailResponseDto> responseDtos = reviewService.getMyReviews(user.getId());
-        ResponseMessage<List<ReviewDetailResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.REVIEW_GET_SUCCESS, responseDtos);
-        return ResponseEntity.status(SuccessCode.REVIEW_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.REVIEW_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.REVIEW_GET_SUCCESS, responseDtos));
     }
 
     // 체육관 리뷰들 조회
@@ -49,9 +47,8 @@ public class ReviewGetController {
         @PathVariable Long gymId
     ) {
         List<ReviewDetailResponseDto> responseDtos = reviewService.getGymReviews(gymId);
-        ResponseMessage<List<ReviewDetailResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.REVIEW_GET_SUCCESS, responseDtos);
-        return ResponseEntity.status(SuccessCode.REVIEW_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.REVIEW_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.REVIEW_GET_SUCCESS, responseDtos));
     }
 
     // 트레이너 별 리뷰 조회
@@ -60,9 +57,8 @@ public class ReviewGetController {
         @PathVariable Long trainerId
     ){
       List<ReviewDetailResponseDto> responseDtos = reviewService.getTrainerReviews(trainerId);
-      ResponseMessage<List<ReviewDetailResponseDto>> responseMessage =
-          ResponseMessage.success(SuccessCode.REVIEW_GET_SUCCESS, responseDtos);
-      return ResponseEntity.status(SuccessCode.REVIEW_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+      return ResponseEntity.status(SuccessCode.REVIEW_GET_SUCCESS.getHttpStatus())
+          .body(ResponseMessage.success(SuccessCode.REVIEW_GET_SUCCESS, responseDtos));
     }
 
 }

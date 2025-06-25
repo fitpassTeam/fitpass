@@ -39,9 +39,8 @@ public class DailyRecordController {
             requestDto.memo(),
             requestDto.recordDate(),
             userDetails.getId());
-        ResponseMessage<DailyRecordResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_CREATE_SUCCESS, responseDto);
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_CREATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_CREATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_CREATE_SUCCESS, responseDto));
     }
 
     // 특정 목표의 일일 기록 목록 조회
@@ -51,9 +50,8 @@ public class DailyRecordController {
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         List<DailyRecordResponseDto> responseDtos = dailyRecordService.getDailyRecords(fitnessGoalId, userDetails.getId());
-        ResponseMessage<List<DailyRecordResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_LIST_SUCCESS, responseDtos);
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_LIST_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_LIST_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_LIST_SUCCESS, responseDtos));
     }
 
     // 일일 기록 상세 조회
@@ -64,9 +62,8 @@ public class DailyRecordController {
         @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         DailyRecordResponseDto responseDto = dailyRecordService.getDailyRecord(dailyRecordId, fitnessGoalId, userDetails.getId());
-        ResponseMessage<DailyRecordResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_GET_SUCCESS, responseDto);
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_GET_SUCCESS, responseDto));
     }
 
     // 일일 기록 삭제
@@ -77,9 +74,8 @@ public class DailyRecordController {
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         dailyRecordService.deleteDailyRecord(dailyRecordId, fitnessGoalId, userDetails.getId());
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS);
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS));
     }
 
 }

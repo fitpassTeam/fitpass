@@ -47,12 +47,8 @@ public class PostController {
                 user.getId(),
                 gymId
         );
-
-        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(
-            SuccessCode.POST_CREATE_SUCCESS, postResponseDto);
-
         return ResponseEntity.status(SuccessCode.POST_CREATE_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.POST_CREATE_SUCCESS, postResponseDto));
     }
 
     //General 게시물 전체조회
@@ -65,9 +61,8 @@ public class PostController {
         Page<PostResponseDto> findAllGeneralPost = postService.findAllPostByGeneral(pageable, user.getUser(), gymId, PostType.GENERAL);
         PageResponse<PostResponseDto> pageResponse = new PageResponse<>(findAllGeneralPost);
 
-        ResponseMessage<PageResponse<PostResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.GET_ALL_GENERAL_POST_SUCCESS, pageResponse);
-
-        return ResponseEntity.status(SuccessCode.GET_ALL_GENERAL_POST_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.GET_ALL_GENERAL_POST_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.GET_ALL_GENERAL_POST_SUCCESS, pageResponse));
     }
 
     //Notice 게시물 전체조회
@@ -78,9 +73,8 @@ public class PostController {
     ) {
         List<PostResponseDto> findAllNoticePost = postService.findAllPostByNotice(user.getUser(), gymId, PostType.NOTICE);
 
-        ResponseMessage<List<PostResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.GET_ALL_NOTICE_POST_SUCCESS, findAllNoticePost);
-
-        return ResponseEntity.status(SuccessCode.GET_ALL_NOTICE_POST_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.GET_ALL_NOTICE_POST_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.GET_ALL_NOTICE_POST_SUCCESS, findAllNoticePost));
     }
 
 
@@ -93,23 +87,18 @@ public class PostController {
     ) {
         PostImageResponseDto findPostById = postService.findPostById(user.getUser(), gymId, postId);
 
-        ResponseMessage<PostImageResponseDto> responseMessage = ResponseMessage.success(
-            SuccessCode.GET_ONLY_POST_SUCCESS, findPostById);
-
         return ResponseEntity.status(SuccessCode.GET_ONLY_POST_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_ONLY_POST_SUCCESS, findPostById));
     }
 
-    @PutMapping("/posts/{postId}/photo")
+    @PatchMapping("/posts/{postId}/photo")
     public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
             @RequestParam("images")List<MultipartFile> files,
             @PathVariable Long postId,
             @AuthenticationPrincipal CustomUserDetails user) {
         List<String> updatedImageUrls = postService.updatePhoto(files, postId, user.getId());
-        ResponseMessage<List<String>> responseMessage =
-                ResponseMessage.success(SuccessCode.POST_EDIT_PHOTO_SUCCESS, updatedImageUrls);
         return ResponseEntity.status(SuccessCode.POST_EDIT_PHOTO_SUCCESS.getHttpStatus())
-                .body(responseMessage);
+                .body(ResponseMessage.success(SuccessCode.POST_EDIT_PHOTO_SUCCESS, updatedImageUrls));
     }
 
     @PatchMapping("/posts/{postId}")
@@ -129,11 +118,8 @@ public class PostController {
                 gymId
         );
 
-        ResponseMessage<PostResponseDto> responseMessage = ResponseMessage.success(
-            SuccessCode.POST_UPDATE_SUCCESS, updateDto);
-
         return ResponseEntity.status(SuccessCode.POST_UPDATE_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.POST_UPDATE_SUCCESS, updateDto));
     }
 
 }

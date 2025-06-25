@@ -47,7 +47,8 @@ public class AuthController {
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<ResponseMessage<SigninResponseDto>> login(
-        @RequestBody LoginRequestDto request) {
+        @RequestBody LoginRequestDto request
+    ) {
         SigninResponseDto responseDto = userService.login(request.email(), request.password());
         return ResponseEntity.status(SuccessCode.LOGIN_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.LOGIN_SUCCESS, responseDto));
@@ -55,13 +56,15 @@ public class AuthController {
 
     // 로그아웃
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(
+    public ResponseEntity<ResponseMessage<Void>> logout(
         @RequestHeader("Authorization") String bearerToken,
         @RequestBody LogoutRequestDto request
     ) {
         userService.logout(request.email(), bearerToken);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(SuccessCode.LOGOUT_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.LOGOUT_SUCCESS));
     }
+
     // 토큰 재발급
     @PostMapping("/reissue")
     public ResponseEntity<ResponseMessage<SigninResponseDto>> reissueToken(

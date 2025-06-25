@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   mysql:
@@ -108,3 +107,4 @@ networks:
 #    depends_on:
 #      - mysql
 #      - redis
+
