@@ -19,7 +19,7 @@ public class CacheConfig {
         // ConcurrentMapCacheManager 메모리 내에서 캐시를 관리하는 기본 구현체, 애플리케이션이 꺼지면 캐시도 사라지는 메모리 기반 캐시
         ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
         // 사용할 캐시 이름들을 등록, @Cacheable(value = "storeSearch") 처럼 사용
-        cacheManager.setCacheNames(java.util.Arrays.asList("gymSearch", "postSearch" ,"popularKeywords"));
+        cacheManager.setCacheNames(java.util.Arrays.asList("gymSearch", "postSearch", "trainerSearch","popularKeywords"));
         return cacheManager;
     }
 

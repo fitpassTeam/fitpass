@@ -27,7 +27,7 @@ public class SearchPostService {
     )
     public Page<PostResponseDto> searchPost (String keyword, Pageable pageable){
 
-        Page<Post> postPage = postRepository.findBycontentAndPostType(keyword, pageable);
+        Page<Post> postPage = postRepository.searchByTitleOrContent(keyword, pageable);
 
         return postPage.map(PostResponseDto::from);
     }

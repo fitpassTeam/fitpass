@@ -20,7 +20,7 @@ public class SearchTrainerController {
 
     private final SearchTrainerService searchTrainerService;
 
-    @GetMapping("/search/trainer")
+    @GetMapping("/search/trainers")
     public ResponseEntity<ResponseMessage<PageResponse<TrainerResponseDto>>> searchTrainer (
             @RequestParam(name = "keyword") String keyword,
             @PageableDefault(page = 0, size = 20) Pageable pageable
