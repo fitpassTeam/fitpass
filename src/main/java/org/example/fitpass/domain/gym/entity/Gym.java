@@ -59,7 +59,7 @@ public class Gym extends BaseEntity {
     private LocalTime closeTime;
 
     @Enumerated(EnumType.STRING)
-    private GymStatus gymStatus = GymStatus.CLOSE;
+    private GymStatus gymStatus = GymStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -93,12 +93,6 @@ public class Gym extends BaseEntity {
         return new Gym(images, name, number, content, address, openTime, closeTime, user);
     }
 
-    public void isOwner(Long userId) {
-        if (!this.user.getId().equals(userId)) {
-            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
-        }
-    }
-
     public void updatePhoto(List<String> imageUrls, Gym gym) {
         this.images.clear();
         List<Image> convertedImages = imageUrls.stream()
@@ -130,5 +124,13 @@ public class Gym extends BaseEntity {
 
     public User getOwner(){
         return user;
+    }
+
+    public void approveGym() {
+        this.gymStatus = GymStatus.APPROVED;
+    }
+
+    public void rejectGym() {
+        this.gymStatus = GymStatus.REJECTED;
     }
 }

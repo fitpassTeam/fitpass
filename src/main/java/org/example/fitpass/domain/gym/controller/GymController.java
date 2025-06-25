@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,8 +51,8 @@ public class GymController {
             user.getId()
         );
         ResponseMessage<GymResDto> responseMessage =
-            ResponseMessage.success(SuccessCode.GYM_POST_SUCCESS, response);
-        return ResponseEntity.status(SuccessCode.GYM_POST_SUCCESS.getHttpStatus())
+            ResponseMessage.success(SuccessCode.GYM_REQUEST_POST_SUCCESS, response);
+        return ResponseEntity.status(SuccessCode.GYM_REQUEST_POST_SUCCESS.getHttpStatus())
             .body(responseMessage);
     }
 

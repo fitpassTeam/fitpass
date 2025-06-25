@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.Image.entity.Image;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.gym.entity.Gym;
+import org.example.fitpass.domain.gym.enums.GymStatus;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.likes.LikeType;
 import org.example.fitpass.domain.likes.repository.LikeRepository;
@@ -18,6 +21,7 @@ import org.example.fitpass.domain.likes.service.LikeService;
 import org.example.fitpass.domain.review.dto.response.GymRatingResponseDto;
 import org.example.fitpass.domain.review.repository.ReviewRepository;
 import org.example.fitpass.domain.user.entity.User;
+import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +41,13 @@ public class GymService {
 
     @Transactional
     public GymResDto post(String address, String name, String content, String number, List<String> gymImage, LocalTime openTime, LocalTime closeTime, Long userId) {
+        // 유저 조회
         User user = userRepository.findByIdOrElseThrow(userId);
+        // 오너인지 확인 여부
+        if (user.getUserRole() != UserRole.OWNER) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
+
         Gym gym = Gym.of(gymImage,name,number,content,address,openTime,closeTime,user);
         gymRepository.save(gym);
         return GymResDto.of(
@@ -84,8 +94,15 @@ public class GymService {
 
     @Transactional
     public List<String> updatePhoto(List<MultipartFile> files, Long gymId, Long userId) {
+        // 유저 조회
+        User user = userRepository.findByIdOrElseThrow(userId);
+        // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        gym.isOwner(userId);
+        // 오너인지 확인 여부
+        if (user.getUserRole() != UserRole.OWNER) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
+
         for (Image image : gym.getImages()) {
             s3Service.deleteFileFromS3(image.getUrl());
         }
@@ -97,8 +114,14 @@ public class GymService {
 
     @Transactional
     public GymResDto updateGym(String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, Long gymId, Long userId){
+        // 유저 조회
+        User user = userRepository.findByIdOrElseThrow(userId);
+        // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        gym.isOwner(userId);
+        // 오너인지 확인 여부
+        if (user.getUserRole() != UserRole.OWNER) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
         gym.update(name,number,content,address,openTime,closeTime);
         gymRepository.save(gym);
         return GymResDto.of(
@@ -114,8 +137,14 @@ public class GymService {
 
     @Transactional
     public void delete(Long gymId, Long userId) {
+        // 유저 조회
+        User user = userRepository.findByIdOrElseThrow(userId);
+        // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        gym.isOwner(userId);
+        // 오너인지 확인 여부
+        if (user.getUserRole() != UserRole.OWNER) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
         gymRepository.delete(gym);
     }
 
@@ -124,5 +153,42 @@ public class GymService {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         User user = userRepository.findByIdOrElseThrow(userId);
         return reviewRepository.findGymRatingByGymIdOrElseThrow(gymId);
+    }
+
+    // Admin용 승인 대기 목록 조회
+    @Transactional(readOnly = true)
+    public List<GymResponseDto> getPendingGyms() {
+        List<Gym> pendingGyms = gymRepository.findByGymStatus(GymStatus.PENDING);
+        return pendingGyms.stream()
+            .map(gym -> GymResponseDto.from(gym, false)) // 좋아요는 false로 설정
+            .toList();
+    }
+
+    // Admin용 체육관 승인
+    @Transactional
+    public GymResponseDto approveGym(Long gymId) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+
+        if (gym.getGymStatus() != GymStatus.PENDING) {
+            throw new BaseException(ExceptionCode.INVALID_GYM_APPROVAL_REQUEST);
+        }
+
+        gym.approveGym();
+        gymRepository.save(gym);
+        return GymResponseDto.from(gym, false);
+    }
+
+    // Admin용 체육관 거절
+    @Transactional
+    public GymResponseDto rejectGym(Long gymId) {
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+
+        if (gym.getGymStatus() != GymStatus.PENDING) {
+            throw new BaseException(ExceptionCode.INVALID_GYM_REJECTION_REQUEST);
+        }
+
+        gym.rejectGym();
+        gymRepository.save(gym);
+        return GymResponseDto.from(gym, false);
     }
 }
