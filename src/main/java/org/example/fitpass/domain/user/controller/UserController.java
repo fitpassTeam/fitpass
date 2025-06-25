@@ -32,7 +32,10 @@ public class UserController {
 
     // 비밀번호 조회
     @PostMapping("/me/password-check")
-    public ResponseEntity<ResponseMessage<Void>> checkPassword(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody PasswordCheckRequestDto dto) {
+    public ResponseEntity<ResponseMessage<Void>> checkPassword(
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        @RequestBody PasswordCheckRequestDto dto
+    ) {
         userService.checkPassword(userDetails.getPassword(), dto.getPassword());
         return ResponseEntity.status(SuccessCode.PASSWORD_MACTH_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.PASSWORD_MACTH_SUCCESS));

@@ -119,7 +119,7 @@ public enum SuccessCode implements BaseCode {
     GET_NOT_STARTED_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12009", "아직 시작하지 않은 이용권 목록 조회가 완료되었습니다."),
 
     // 13000: 좋아요
-    LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "12001","좋아요 상태가 변경되었습니다.");
+    LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "13001","좋아요 상태가 변경되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -60,24 +60,24 @@ public class TrainerController {
     }
 
     //단일 조회
-    @GetMapping("/{id}")
+    @GetMapping("/{trainerId}")
     public ResponseEntity<ResponseMessage<TrainerDetailResponseDto>> getTrainerById(
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id) {
-        TrainerDetailResponseDto response = trainerService.getTrainerByIdAndGym(gymId, id);
+        @PathVariable("trainerId") Long trainerId) {
+        TrainerDetailResponseDto response = trainerService.getTrainerByIdAndGym(gymId, trainerId);
         return ResponseEntity.status(SuccessCode.GET_TRAINER_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response));
     }
 
     //수정
-    @PatchMapping("/{id}")
+    @PatchMapping("/{trainerId}")
     public ResponseEntity<ResponseMessage<TrainerResponseDto>> updateTrainer(
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id,
+        @PathVariable("trainerId") Long trainerId,
         @Valid @RequestBody TrainerUpdateRequestDto dto) {
         TrainerResponseDto response = trainerService.updateTrainer(
             gymId,
-            id,
+            trainerId,
             dto.name(),
             dto.price(),
             dto.content(),
@@ -88,22 +88,22 @@ public class TrainerController {
     }
 
     //사진 수정
-    @PatchMapping("/{id}/photo")
+    @PatchMapping("/{trainerId}/photo")
     public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
         @RequestParam("images")List<MultipartFile> files,
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id) {
-        trainerService.updatePhoto(files, gymId, id);
+        @PathVariable("trainerId") Long trainerId) {
+        trainerService.updatePhoto(files, gymId, trainerId);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS));
     }
 
     //삭제
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{trainerId}")
     public ResponseEntity<ResponseMessage<Void>> deleteTrainer(
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id) {
-        trainerService.deleteTrainer(gymId, id);
+        @PathVariable("trainerId") Long trainerId) {
+        trainerService.deleteTrainer(gymId, trainerId);
         return ResponseEntity.status(SuccessCode.DELETE_TRAINER_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.DELETE_TRAINER_SUCCESS));
     }
