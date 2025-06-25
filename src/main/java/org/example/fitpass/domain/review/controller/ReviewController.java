@@ -38,9 +38,8 @@ public class ReviewController {
             requestDto.content(),
             requestDto.gymRating(),
             requestDto.trainerRating());
-        ResponseMessage<ReviewResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.REVIEW_CREATE_SUCCESS,responseDto);
-        return ResponseEntity.status(SuccessCode.REVIEW_CREATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.REVIEW_CREATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.REVIEW_CREATE_SUCCESS,responseDto));
     }
 
     // 리뷰 수정
@@ -58,9 +57,8 @@ public class ReviewController {
             requestDto.gymRating(),
             requestDto.trainerRating(),
             user.getId());
-        ResponseMessage<ReviewResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.REVIEW_UPDATE_SUCCESS, responseDto);
-        return ResponseEntity.status(SuccessCode.REVIEW_UPDATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.REVIEW_UPDATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.REVIEW_UPDATE_SUCCESS, responseDto));
     }
 
     // 리뷰 삭제
@@ -71,9 +69,8 @@ public class ReviewController {
         @AuthenticationPrincipal CustomUserDetails user
     ) {
         reviewService.deleteReview(reservationId, reviewId, user.getId());
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.REVIEW_DELETE_SUCCESS, null);
-        return ResponseEntity.status(SuccessCode.REVIEW_DELETE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.REVIEW_DELETE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.REVIEW_DELETE_SUCCESS, null));
     }
 
 }

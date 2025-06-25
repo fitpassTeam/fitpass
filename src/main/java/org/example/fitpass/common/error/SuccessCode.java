@@ -14,6 +14,7 @@ public enum SuccessCode implements BaseCode {
     LOGIN_SUCCESS(HttpStatus.OK, "1002", "로그인에 성공하였습니다."),
     REISSUE_SUCCESS(HttpStatus.OK, "1003", "토큰이 재발급되었습니다."),
     LOGOUT_SUCCESS(HttpStatus.OK, "1004", "로그아웃이 완료되었습니다."),
+    PASSWORD_MACTH_SUCCESS(HttpStatus.OK, "1005", "비밀번호가 일치합니다."),
 
     //2000: User 성공 코드
     USER_GET_SUCCESS(HttpStatus.OK, "2001", "유저 조회 성공"),
@@ -24,6 +25,7 @@ public enum SuccessCode implements BaseCode {
     OWNER_UPGRADE_APPROVE_SUCCESS(HttpStatus.OK, "2006", "사업자 승급이 승인되었습니다."),
     OWNER_UPGRADE_REJECT_SUCCESS(HttpStatus.OK, "2007", "사업자 승급이 거절되었습니다."),
     PENDING_REQUESTS_GET_SUCCESS(HttpStatus.OK, "2008", "승인 대기 목록 조회가 완료되었습니다."),
+    USER_PROFILE_IMAGE_UPDATE_SUCCESS(HttpStatus.OK, "2009", "프로필 이미지 업데이트가 완료되었습니다."),
 
     // 3000: Point 성공 코드
     POINT_CHARGE_SUCCESS(HttpStatus.OK, "3001", "포인트 충전이 완료되었습니다."),
@@ -51,6 +53,10 @@ public enum SuccessCode implements BaseCode {
     GYM_DELETE_SUCCESS(HttpStatus.OK, "5006", "체육관이 삭제 처리되었습니다."),
     GYM_SEARCH_SUCCESS(HttpStatus.OK, "5007", "체육관 검색이 완료되었습니다."),
     GYM_RATING_GET_SUCCESS(HttpStatus.OK, "5008", "체육관 평점 검색이 완료되었습니다."),
+    PENDING_GYM_REQUESTS_GET_SUCCESS(HttpStatus.OK, "5009", "승인 대기 체육관 목록 조회가 완료되었습니다."),
+    GYM_APPROVE_SUCCESS(HttpStatus.OK, "5010", "체육관 승인이 완료되었습니다."),
+    GYM_REJECT_SUCCESS(HttpStatus.OK, "5011", "체육관 승인이 거절되었습니다."),
+    GYM_REQUEST_POST_SUCCESS(HttpStatus.OK, "5012", "체육관 등록 신청이 완료되었습니다."),
 
     // 6000 trainer 성공 코드
     POST_TRAINER_SUCCESS(HttpStatus.CREATED, "6001", "트레이너 생성이 완료되었습니다."),
@@ -113,7 +119,7 @@ public enum SuccessCode implements BaseCode {
     GET_NOT_STARTED_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12009", "아직 시작하지 않은 이용권 목록 조회가 완료되었습니다."),
 
     // 13000: 좋아요
-    LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "12001","좋아요 상태가 변경되었습니다.");
+    LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "13001","좋아요 상태가 변경되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

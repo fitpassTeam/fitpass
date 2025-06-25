@@ -45,10 +45,8 @@ public class TrainerController {
             dto.content(),
             dto.trainerImage()
         );
-        ResponseMessage<TrainerResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.POST_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.POST_TRAINER_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.POST_TRAINER_SUCCESS, response));
     }
 
     //전체 조회
@@ -57,66 +55,56 @@ public class TrainerController {
         @PathVariable("gymId") Long gymId,
         @PageableDefault(page = 0, size = 10) Pageable pageable) {
         Page<TrainerResponseDto> response = trainerService.getAllTrainersByGym(gymId, pageable);
-        ResponseMessage<Page<TrainerResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GET_TRAINER_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response));
     }
 
     //단일 조회
-    @GetMapping("/{id}")
+    @GetMapping("/{trainerId}")
     public ResponseEntity<ResponseMessage<TrainerDetailResponseDto>> getTrainerById(
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id) {
-        TrainerDetailResponseDto response = trainerService.getTrainerByIdAndGym(gymId, id);
-        ResponseMessage<TrainerDetailResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response);
+        @PathVariable("trainerId") Long trainerId) {
+        TrainerDetailResponseDto response = trainerService.getTrainerByIdAndGym(gymId, trainerId);
         return ResponseEntity.status(SuccessCode.GET_TRAINER_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response));
     }
 
     //수정
-    @PatchMapping("/{id}")
+    @PatchMapping("/{trainerId}")
     public ResponseEntity<ResponseMessage<TrainerResponseDto>> updateTrainer(
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id,
+        @PathVariable("trainerId") Long trainerId,
         @Valid @RequestBody TrainerUpdateRequestDto dto) {
         TrainerResponseDto response = trainerService.updateTrainer(
             gymId,
-            id,
+            trainerId,
             dto.name(),
             dto.price(),
             dto.content(),
             dto.trainerStatus()
             );
-        ResponseMessage<TrainerResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response));
     }
 
     //사진 수정
-    @PutMapping("/{id}/photos")
+    @PatchMapping("/{trainerId}/photo")
     public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
         @RequestParam("images")List<MultipartFile> files,
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id) {
-        trainerService.updatePhoto(files, gymId, id);
-        ResponseMessage<List<String>> responseMessage =
-            ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS);
+        @PathVariable("trainerId") Long trainerId) {
+        trainerService.updatePhoto(files, gymId, trainerId);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS));
     }
 
     //삭제
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{trainerId}")
     public ResponseEntity<ResponseMessage<Void>> deleteTrainer(
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id) {
-        trainerService.deleteTrainer(gymId, id);
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.DELETE_TRAINER_SUCCESS);
+        @PathVariable("trainerId") Long trainerId) {
+        trainerService.deleteTrainer(gymId, trainerId);
         return ResponseEntity.status(SuccessCode.DELETE_TRAINER_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.DELETE_TRAINER_SUCCESS));
     }
 }
