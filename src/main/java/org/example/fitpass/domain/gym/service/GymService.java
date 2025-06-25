@@ -47,7 +47,8 @@ public class GymService {
             gym.getAddress(),
             gym.getOpenTime(),
             gym.getCloseTime(),
-            gym.getId()
+            gym.getId(),
+            gym.getGymPostStatus()
         );
     }
 

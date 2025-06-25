@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.domain.gym.enums.GymPostStatus;
 import org.example.fitpass.domain.gym.enums.GymStatus;
 import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.trainer.entity.Trainer;
@@ -49,6 +50,9 @@ public class Gym extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Column
+    private String summary;
+
     @Column(nullable = false)
     private String address;
 
@@ -60,6 +64,9 @@ public class Gym extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private GymStatus gymStatus = GymStatus.CLOSE;
+
+    @Enumerated(EnumType.STRING)
+    private GymPostStatus gymPostStatus = GymPostStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
