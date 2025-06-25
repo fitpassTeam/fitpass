@@ -5,10 +5,12 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
+import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.membership.dto.request.MembershipRequestDto;
 import org.example.fitpass.domain.membership.dto.response.MembershipResponseDto;
 import org.example.fitpass.domain.membership.service.MembershipService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,12 +27,15 @@ public class MembershipController {
 
     private final MembershipService membershipService;
 
+    // 이용권 생성
     @PostMapping
     public ResponseEntity<ResponseMessage<MembershipResponseDto>> createMembership(
+        @AuthenticationPrincipal CustomUserDetails userDetails,
         @PathVariable("gymId") Long gymId,
         @Valid @RequestBody MembershipRequestDto dto) {
         MembershipResponseDto response = membershipService.createMembership(
             gymId,
+            userDetails.getId(),
             dto.name(),
             dto.price(),
             dto.content(),
@@ -39,32 +44,39 @@ public class MembershipController {
         return ResponseEntity.status(SuccessCode.POST_MEMBERSHIP_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.POST_MEMBERSHIP_SUCCESS, response));
     }
-
+    // 모든 이용권 조회
     @GetMapping
     public ResponseEntity<ResponseMessage<List<MembershipResponseDto>>> getAllMemberships(
-        @PathVariable("gymId") Long gymId) {
-        List<MembershipResponseDto> response = membershipService.getAllByGym(gymId);
+        @PathVariable("gymId") Long gymId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        List<MembershipResponseDto> response = membershipService.getAllByGym(gymId, userDetails.getId());
         return ResponseEntity.status(SuccessCode.GET_MEMBERSHIP_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_MEMBERSHIP_SUCCESS, response));
     }
-
-    @GetMapping("/{id}")
+    // 이용권 상세 조회
+    @GetMapping("/{membershipId}")
     public ResponseEntity<ResponseMessage<MembershipResponseDto>> getMembershipById(
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id) {
-        MembershipResponseDto response = membershipService.getById(gymId, id);
+        @PathVariable("membershipId") Long membershipId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        MembershipResponseDto response = membershipService.getMembershipById(gymId, membershipId, userDetails.getId());
         return ResponseEntity.status(SuccessCode.GET_MEMBERSHIP_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_MEMBERSHIP_SUCCESS, response));
     }
-
-    @PatchMapping("/{id}")
+    // 이용권 수정
+    @PatchMapping("/{membershipId}")
     public ResponseEntity<ResponseMessage<MembershipResponseDto>> updateMembership(
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id,
-        @Valid @RequestBody MembershipRequestDto dto) {
+        @PathVariable("membershipId") Long membershipId,
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        @Valid @RequestBody MembershipRequestDto dto
+    ) {
         MembershipResponseDto response = membershipService.updateMembership(
             gymId,
-            id,
+            membershipId,
+            userDetails.getId(),
             dto.name(),
             dto.price(),
             dto.content(),
@@ -73,12 +85,14 @@ public class MembershipController {
         return ResponseEntity.status(SuccessCode.PATCH_MEMBERSHIP_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.PATCH_MEMBERSHIP_SUCCESS, response));
     }
-
-    @DeleteMapping("/{id}")
+    // 이용권 삭제
+    @DeleteMapping("/{membershipId}")
     public ResponseEntity<ResponseMessage<Void>> deleteMembership(
         @PathVariable("gymId") Long gymId,
-        @PathVariable("id") Long id) {
-        membershipService.deleteMembership(gymId, id);
+        @PathVariable("membershipId") Long membershipId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+        ) {
+        membershipService.deleteMembership(gymId, membershipId, userDetails.getId());
         return ResponseEntity.status(SuccessCode.DELETE_MEMBERSHIP_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.DELETE_MEMBERSHIP_SUCCESS));
     }

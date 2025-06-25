@@ -25,7 +25,8 @@ public class MembershipPurchaseController {
     public ResponseEntity<ResponseMessage<MembershipPurchaseResponseDto>> purchase(
         @PathVariable("membershipId") Long membershipId,
         @PathVariable("gymId") Long gymId,
-        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         MembershipPurchaseResponseDto response = membershipPurchaseService.purchase(membershipId,
             userDetails.getId(), gymId);
         return ResponseEntity.status(SuccessCode.PURCHASE_MEMBERSHIP_SUCCESS.getHttpStatus())
@@ -36,7 +37,8 @@ public class MembershipPurchaseController {
     @PostMapping("/memberships/purchases/{purchaseId}/start")
     public ResponseEntity<ResponseMessage<MembershipPurchaseResponseDto>> startMembership(
         @PathVariable("purchaseId") Long purchaseId,
-        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         MembershipPurchaseResponseDto response = membershipPurchaseService.startMembership(purchaseId,
             userDetails.getId());
         return ResponseEntity.status(SuccessCode.START_MEMBERSHIP_SUCCESS.getHttpStatus())
@@ -46,7 +48,8 @@ public class MembershipPurchaseController {
     // 사용 가능한 이용권 조회
     @GetMapping("/memberships/purchases/not-started")
     public ResponseEntity<ResponseMessage<List<MembershipPurchaseResponseDto>>> getNotStartedMemberships(
-        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         List<MembershipPurchaseResponseDto> response =
             membershipPurchaseService.getNotStartedMemberships(userDetails.getId());
         return ResponseEntity.status(SuccessCode.GET_NOT_STARTED_MEMBERSHIP_SUCCESS.getHttpStatus())
@@ -56,7 +59,8 @@ public class MembershipPurchaseController {
     // 구매 이력 조회
     @GetMapping("/memberships/purchases/me")
     public ResponseEntity<ResponseMessage<List<MembershipPurchaseResponseDto>>> getMyPurchases(
-        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         List<MembershipPurchaseResponseDto> response =
             membershipPurchaseService.getMyPurchases(userDetails.getId());
         return ResponseEntity.status(SuccessCode.GET_MY_MEMBERSHIP_SUCCESS.getHttpStatus())

@@ -65,10 +65,4 @@ public class Membership extends BaseEntity {
         this.gym = gym;
     }
 
-    public void validateBelongsToGym(Gym gym) {
-        if (!this.gym.equals(gym)) {
-            throw new BaseException(NOT_BELONG_TO_GYM);
-        }
-    }
-
 }
