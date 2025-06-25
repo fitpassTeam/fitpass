@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.user.dto;
+package org.example.fitpass.domain.user.dto.request;
 
 import lombok.Getter;
 
