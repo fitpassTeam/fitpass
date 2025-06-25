@@ -60,7 +60,6 @@ public class ReservationController {
             reservationService.createReservation(
                 reservationRequestDto.reservationDate(),
                 reservationRequestDto.reservationTime(),
-                reservationRequestDto.reservationStatus(),
                 user.getId(),
                 gymId,
                 trainerId);

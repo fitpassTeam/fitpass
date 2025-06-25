@@ -129,7 +129,7 @@ public class ReservationService {
 
     // 예약 생성
     public ReservationResponseDto createReservation(
-        LocalDate reservationDate, LocalTime reservationTime, ReservationStatus status,
+        LocalDate reservationDate, LocalTime reservationTime,
         Long userId, Long gymId, Long trainerId) {
 
         // Redis 분산 락 키 생성
@@ -144,7 +144,7 @@ public class ReservationService {
             if (!lock.tryLock(10, 30, TimeUnit.SECONDS)) {
                 throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
             }
-            return reservationCreate(reservationDate, reservationTime, status, userId, gymId,
+            return reservationCreate(reservationDate, reservationTime, ReservationStatus.PENDING, userId, gymId,
                 trainerId);
 
         } catch (InterruptedException e) {
@@ -373,13 +373,18 @@ public class ReservationService {
         Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         // 예약 조회
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
-
-        // 트레이너 본인인지 확인 (또는 체육관 사장인지 확인)
-        if (!Objects.equals(trainer.getId(), trainerId) &&
-            !Objects.equals(gym.getOwner().getId(), userId)) {
-            throw new BaseException(ExceptionCode.NO_TRAINER_AUTHORITY);
+        // 오너 확인
+        if (!user.getUserRole().equals(UserRole.OWNER)) {
+            throw new BaseException(ExceptionCode.NO_OWNER_AUTHORITY);
         }
-
+        // 체육관 소유권 확인
+        if (!Objects.equals(gym.getOwner().getId(), userId)) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
+        // 트레이너 소속 확인
+        if (!Objects.equals(trainer.getGym().getId(), gymId)) {
+            throw new BaseException(ExceptionCode.INVALID_GYM_TRAINER_RELATION);
+        }
         // PENDING 상태인지 확인
         if (!reservation.getReservationStatus().equals(ReservationStatus.PENDING)) {
             throw new BaseException(ExceptionCode.RESERVATION_NOT_PENDING);
@@ -415,11 +420,17 @@ public class ReservationService {
         Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         // 예약 조회
         Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
-
-        // 트레이너 본인인지 확인 (또는 체육관 사장인지 확인)
-        if (!Objects.equals(trainer.getId(), trainerId) &&
-            !Objects.equals(gym.getOwner().getId(), userId)) {
-            throw new BaseException(ExceptionCode.NO_TRAINER_AUTHORITY);
+        // 오너 확인
+        if (!user.getUserRole().equals(UserRole.OWNER)) {
+            throw new BaseException(ExceptionCode.NO_OWNER_AUTHORITY);
+        }
+        // 체육관 소유권 확인
+        if (!Objects.equals(gym.getOwner().getId(), userId)) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
+        // 트레이너 소속 확인
+        if (!Objects.equals(trainer.getGym().getId(), gymId)) {
+            throw new BaseException(ExceptionCode.INVALID_GYM_TRAINER_RELATION);
         }
 
         // PENDING 상태인지 확인
