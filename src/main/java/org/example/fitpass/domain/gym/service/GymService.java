@@ -40,7 +40,7 @@ public class GymService {
     private final LikeRepository likeRepository;
 
     @Transactional
-    public GymResDto post(String address, String name, String content, String number, List<String> gymImage, LocalTime openTime, LocalTime closeTime, Long userId) {
+    public GymResDto postGym(String address, String name, String content, String number, List<String> gymImage, LocalTime openTime, LocalTime closeTime, Long userId) {
         // 유저 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         // 오너인지 확인 여부
@@ -136,7 +136,7 @@ public class GymService {
     }
 
     @Transactional
-    public void delete(Long gymId, Long userId) {
+    public void deleteGym(Long gymId, Long userId) {
         // 유저 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         // 체육관 조회
@@ -157,7 +157,7 @@ public class GymService {
 
     // Admin용 승인 대기 목록 조회
     @Transactional(readOnly = true)
-    public List<GymResponseDto> getPendingGyms() {
+    public List<GymResponseDto> getPendingGymRequests() {
         List<Gym> pendingGyms = gymRepository.findByGymStatus(GymStatus.PENDING);
         return pendingGyms.stream()
             .map(gym -> GymResponseDto.from(gym, false)) // 좋아요는 false로 설정

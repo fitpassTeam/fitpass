@@ -45,10 +45,8 @@ public class TrainerController {
             dto.content(),
             dto.trainerImage()
         );
-        ResponseMessage<TrainerResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.POST_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.POST_TRAINER_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.POST_TRAINER_SUCCESS, response));
     }
 
     //전체 조회
@@ -57,10 +55,8 @@ public class TrainerController {
         @PathVariable("gymId") Long gymId,
         @PageableDefault(page = 0, size = 10) Pageable pageable) {
         Page<TrainerResponseDto> response = trainerService.getAllTrainersByGym(gymId, pageable);
-        ResponseMessage<Page<TrainerResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GET_TRAINER_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response));
     }
 
     //단일 조회
@@ -69,10 +65,8 @@ public class TrainerController {
         @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id) {
         TrainerDetailResponseDto response = trainerService.getTrainerByIdAndGym(gymId, id);
-        ResponseMessage<TrainerDetailResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GET_TRAINER_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response));
     }
 
     //수정
@@ -89,10 +83,8 @@ public class TrainerController {
             dto.content(),
             dto.trainerStatus()
             );
-        ResponseMessage<TrainerResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response));
     }
 
     //사진 수정
@@ -102,10 +94,8 @@ public class TrainerController {
         @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id) {
         trainerService.updatePhoto(files, gymId, id);
-        ResponseMessage<List<String>> responseMessage =
-            ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS));
     }
 
     //삭제
@@ -114,9 +104,7 @@ public class TrainerController {
         @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id) {
         trainerService.deleteTrainer(gymId, id);
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.DELETE_TRAINER_SUCCESS);
         return ResponseEntity.status(SuccessCode.DELETE_TRAINER_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.DELETE_TRAINER_SUCCESS));
     }
 }

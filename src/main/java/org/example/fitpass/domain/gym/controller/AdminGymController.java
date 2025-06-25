@@ -21,7 +21,7 @@ public class AdminGymController {
     // Admin용: 체육관 승인 대기 목록 조회
     @GetMapping("/admin/pending-gym-requests")
     public ResponseEntity<ResponseMessage<List<GymResponseDto>>> getPendingGymRequests() {
-        List<GymResponseDto> response = gymService.getPendingGyms();
+        List<GymResponseDto> response = gymService.getPendingGymRequests();
         return ResponseEntity.ok()
             .body(ResponseMessage.success(SuccessCode.PENDING_GYM_REQUESTS_GET_SUCCESS, response));
     }

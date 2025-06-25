@@ -30,10 +30,8 @@ public class AdminPointController {
         PointBalanceResponseDto responseDto = pointService.chargePoint(targetUserId,
             pointChargeRequestDto.amount(),
             "포인트 충전");
-
-        ResponseMessage<PointBalanceResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.POINT_CHARGE_SUCCESS, responseDto);
-        return ResponseEntity.status(SuccessCode.POINT_CHARGE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POINT_CHARGE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.POINT_CHARGE_SUCCESS, responseDto));
     }
 
 }
