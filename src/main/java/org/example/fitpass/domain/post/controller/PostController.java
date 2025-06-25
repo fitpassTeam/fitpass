@@ -91,7 +91,7 @@ public class PostController {
             .body(ResponseMessage.success(SuccessCode.GET_ONLY_POST_SUCCESS, findPostById));
     }
 
-    @PutMapping("/posts/{postId}/photo")
+    @PatchMapping("/posts/{postId}/photo")
     public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
             @RequestParam("images")List<MultipartFile> files,
             @PathVariable Long postId,

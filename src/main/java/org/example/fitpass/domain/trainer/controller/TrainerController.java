@@ -88,7 +88,7 @@ public class TrainerController {
     }
 
     //사진 수정
-    @PutMapping("/{id}/photos")
+    @PatchMapping("/{id}/photo")
     public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
         @RequestParam("images")List<MultipartFile> files,
         @PathVariable("gymId") Long gymId,

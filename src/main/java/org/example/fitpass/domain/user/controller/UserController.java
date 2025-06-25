@@ -34,10 +34,8 @@ public class UserController {
     @PostMapping("/me/password-check")
     public ResponseEntity<ResponseMessage<Void>> checkPassword(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody PasswordCheckRequestDto dto) {
         userService.checkPassword(userDetails.getPassword(), dto.getPassword());
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.PASSWORD_MACTH_SUCCESS);
-        return ResponseEntity.status(SuccessCode.LIKE_TOGGLE_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+        return ResponseEntity.status(SuccessCode.PASSWORD_MACTH_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.PASSWORD_MACTH_SUCCESS));
     }
 
     // 내 정보 조회
