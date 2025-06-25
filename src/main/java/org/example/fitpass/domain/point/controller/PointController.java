@@ -1,26 +1,19 @@
 package org.example.fitpass.domain.point.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.error.BaseException;
-import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.point.dto.request.PointCashOutRequestDto;
-import org.example.fitpass.domain.point.dto.request.PointChargeRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
 import org.example.fitpass.domain.point.dto.response.PointBalanceResponseDto;
 import org.example.fitpass.domain.point.dto.response.PointCashOutResponseDto;
 import org.example.fitpass.domain.point.dto.response.PointResponseDto;
-import org.example.fitpass.domain.point.entity.Point;
 import org.example.fitpass.domain.point.service.PointService;
-import org.example.fitpass.domain.user.UserRole;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,10 +35,8 @@ public class PointController {
         PointBalanceResponseDto responseDto = pointService.usePoint(user.getId(),
             pointUseRefundRequestDto.amount(),
             pointUseRefundRequestDto.description());
-
-        ResponseMessage<PointBalanceResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.POINT_USE_SUCCESS, responseDto);
-        return ResponseEntity.status(SuccessCode.POINT_USE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POINT_USE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.POINT_USE_SUCCESS, responseDto));
     }
 
     // 포인트 100% 환불 (PT 취소)
@@ -59,9 +50,8 @@ public class PointController {
             pointUseRefundRequestDto.amount(),
             pointUseRefundRequestDto.description());
 
-        ResponseMessage<PointBalanceResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.POINT_REFUND_SUCCESS, responseDto);
-        return ResponseEntity.status(SuccessCode.POINT_REFUND_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POINT_REFUND_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.POINT_REFUND_SUCCESS, responseDto));
     }
 
     // 포인트 현금화 (90% 현금 환불)
@@ -74,10 +64,8 @@ public class PointController {
             user.getId(),
             pointCashOutRequestDto.amount(),
             pointCashOutRequestDto.description());
-
-        ResponseMessage<PointCashOutResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.POINT_CASH_OUT_SUCCESS, pointCashOutResponseDto);
-        return ResponseEntity.status(SuccessCode.POINT_CASH_OUT_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POINT_CASH_OUT_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.POINT_CASH_OUT_SUCCESS, pointCashOutResponseDto));
     }
 
     // 포인트 잔액 조회
@@ -85,10 +73,9 @@ public class PointController {
     public ResponseEntity<ResponseMessage<PointBalanceResponseDto>> getPointBalance (
         @AuthenticationPrincipal CustomUserDetails user) {
         PointBalanceResponseDto responseDto = pointService.getPointBalance(user.getId());
-        ResponseMessage<PointBalanceResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.POINT_BALANCE_GET_SUCCESS,responseDto);
 
-        return ResponseEntity.status(SuccessCode.POINT_BALANCE_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POINT_BALANCE_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.POINT_BALANCE_GET_SUCCESS,responseDto));
     }
 
     // 포인트 이력 조회
@@ -96,10 +83,8 @@ public class PointController {
     public ResponseEntity<ResponseMessage<List<PointResponseDto>>> getPointHistory (@AuthenticationPrincipal CustomUserDetails user) {
         List<PointResponseDto> pointResponseDtos = pointService.getPointHistory(user.getId());
 
-        ResponseMessage<List<PointResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.POINT_HISTORY_GET_SUCCESS, pointResponseDtos);
-
-        return ResponseEntity.status(SuccessCode.POINT_HISTORY_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.POINT_HISTORY_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.POINT_HISTORY_GET_SUCCESS, pointResponseDtos));
     }
 
 

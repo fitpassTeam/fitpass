@@ -36,20 +36,16 @@ public class MembershipController {
             dto.content(),
             dto.durationInDays()
         );
-        ResponseMessage<MembershipResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.POST_MEMBERSHIP_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.POST_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.POST_MEMBERSHIP_SUCCESS, response));
     }
 
     @GetMapping
     public ResponseEntity<ResponseMessage<List<MembershipResponseDto>>> getAllMemberships(
         @PathVariable("gymId") Long gymId) {
         List<MembershipResponseDto> response = membershipService.getAllByGym(gymId);
-        ResponseMessage<List<MembershipResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_MEMBERSHIP_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GET_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_MEMBERSHIP_SUCCESS, response));
     }
 
     @GetMapping("/{id}")
@@ -57,10 +53,8 @@ public class MembershipController {
         @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id) {
         MembershipResponseDto response = membershipService.getById(gymId, id);
-        ResponseMessage<MembershipResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_MEMBERSHIP_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GET_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_MEMBERSHIP_SUCCESS, response));
     }
 
     @PatchMapping("/{id}")
@@ -76,10 +70,8 @@ public class MembershipController {
             dto.content(),
             dto.durationInDays()
         );
-        ResponseMessage<MembershipResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.PATCH_MEMBERSHIP_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.PATCH_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.PATCH_MEMBERSHIP_SUCCESS, response));
     }
 
     @DeleteMapping("/{id}")
@@ -87,10 +79,8 @@ public class MembershipController {
         @PathVariable("gymId") Long gymId,
         @PathVariable("id") Long id) {
         membershipService.deleteMembership(gymId, id);
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.DELETE_MEMBERSHIP_SUCCESS);
         return ResponseEntity.status(SuccessCode.DELETE_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.DELETE_MEMBERSHIP_SUCCESS));
     }
 
 }

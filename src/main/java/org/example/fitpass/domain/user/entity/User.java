@@ -18,9 +18,8 @@ import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.likes.entity.Like;
 import org.example.fitpass.domain.trainer.entity.Trainer;
-import org.example.fitpass.domain.user.Gender;
-import org.example.fitpass.domain.user.UserRole;
-import org.example.fitpass.domain.user.dto.UserRequestDto;
+import org.example.fitpass.domain.user.enums.Gender;
+import org.example.fitpass.domain.user.enums.UserRole;
 
 @Getter
 @Entity
@@ -71,20 +70,24 @@ public class User extends BaseEntity {
     @OneToMany
     private List<Like> likes = new ArrayList<>();
 
+    // OAuth2 소셜 로그인용 생성자 (간단한 정보만)
     public User(String email, String name, String authProvider) {
         this.email = email;
         this.name = name;
         this.authProvider = authProvider;
 
-        // 기본값 세팅
-        this.password = "SOCIAL_LOGIN";
-        this.phone = "000-0000-0000";
-        this.age = 0;
-        this.address = "주소 미입력";
+
+        // OAuth2 기본값 세팅 (새로운 OAuth2 시스템과 일치)
+        this.password = "OAUTH2_TEMP";
+        this.phone = "NEED_INPUT";
+        this.age = -1;
+        this.address = "NEED_INPUT";
         this.pointBalance = 0;
-        this.gender = Gender.NONE;
+        this.gender = Gender.MAN;  // 임시값, 추후 입력
         this.userRole = UserRole.USER;
     }
+
+    // 일반 회원가입용 생성자 (전체 정보)
     public User(String email, String userImage, String password, String name, String phone, int age, String address, Gender gender, UserRole userRole) {
         this.email = email;
         this.userImage = userImage;
@@ -95,15 +98,29 @@ public class User extends BaseEntity {
         this.address = address;
         this.gender = gender;
         this.userRole = userRole;
+        this.authProvider = "LOCAL"; // 일반 회원가입은 LOCAL로 설정
         this.pointBalance = 0;
     }
 
-    public void updateInfo(UserRequestDto dto) {
-        this.name = dto.getName();
-        this.age = dto.getAge();
-        this.address = dto.getAddress();
-        this.gender = dto.getGender();
-        this.userRole = dto.getUserRole();
+    // OAuth2용 상세 생성자 (authProvider 포함)
+    public User(String email, String userImage, String password, String name, String phone, int age, String address, Gender gender, UserRole userRole, String authProvider) {
+        this.email = email;
+        this.userImage = userImage;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.age = age;
+        this.address = address;
+        this.gender = gender;
+        this.userRole = userRole;
+        this.authProvider = authProvider;
+        this.pointBalance = 0;
+    }
+
+    public void updateInfo(String name, int age, String address) {
+        this.name = name;
+        this.age = age;
+        this.address = address;
     }
 
     public void updatePhone(String newPhone) {
@@ -118,15 +135,32 @@ public class User extends BaseEntity {
     public void updatePointBalance(int newBalance) {
         this.pointBalance = newBalance;
     }
-    public User(long userId, String userImage, Gender gender, UserRole userRole) {
-        this.id = userId;
+
+    // OAuth2 프로필 이미지 업데이트
+    public void updateUserImage(String userImage) {
         this.userImage = userImage;
-        this.gender = gender;
-        this.userRole = userRole;
     }
 
-    public static User of(long userId, String userImage, Gender gender, UserRole userRole) {
-        return new User(userId, userImage, gender, userRole);
+    // OAuth2 사용자 정보 업데이트 (이름, 프로필 이미지)
+    public void updateOAuthInfo(String name, String userImage) {
+        if (name != null && !name.trim().isEmpty()) {
+            this.name = name;
+        }
+        if (userImage != null && !userImage.trim().isEmpty()) {
+            this.userImage = userImage;
+        }
+    }
+
+    public void requestOwnerUpgrade() {
+        this.userRole = UserRole.PENDING_OWNER;
+    }
+
+    public void approveOwnerUpgrade() {
+        this.userRole = UserRole.OWNER;
+    }
+
+    public void rejectOwnerUpgrade() {
+        this.userRole = UserRole.USER;
     }
 
 }

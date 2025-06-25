@@ -28,10 +28,8 @@ public class LikeController {
         @AuthenticationPrincipal CustomUserDetails user
         ){
         likeService.postGymLike(user.getId(), gymId);
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.LIKE_TOGGLE_SUCCESS);
         return ResponseEntity.status(SuccessCode.LIKE_TOGGLE_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.LIKE_TOGGLE_SUCCESS));
     }
 
     @PostMapping("/posts/{postId}/like")
@@ -40,9 +38,7 @@ public class LikeController {
         @AuthenticationPrincipal CustomUserDetails user
     ){
         likeService.postLike(user.getId(), postId);
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.LIKE_TOGGLE_SUCCESS);
         return ResponseEntity.status(SuccessCode.LIKE_TOGGLE_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.LIKE_TOGGLE_SUCCESS));
     }
 }

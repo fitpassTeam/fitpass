@@ -1,6 +1,8 @@
 package org.example.fitpass.domain.reservation.enums;
 
 import java.util.Arrays;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 
 public enum ReservationStatus {
     PENDING, CONFIRMED, CANCELLED, COMPLETED;
@@ -9,6 +11,6 @@ public enum ReservationStatus {
         return Arrays.stream(ReservationStatus.values())
             .filter(r -> r.name().equalsIgnoreCase(type))
             .findFirst()
-            .orElseThrow(() -> new RuntimeException());
+            .orElseThrow(() -> new BaseException(ExceptionCode.INVALID_RESERVATION_STATUS));
     }
 }

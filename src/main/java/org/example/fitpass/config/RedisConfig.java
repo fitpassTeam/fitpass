@@ -55,6 +55,8 @@ public class RedisConfig {
                         cacheConfiguration.entryTtl(Duration.ofMinutes(5)))
                 .withCacheConfiguration("postSearch",
                         cacheConfiguration.entryTtl(Duration.ofMinutes(5)))
+                .withCacheConfiguration("trainerSearch",
+                        cacheConfiguration.entryTtl(Duration.ofMinutes(5)))
                 .withCacheConfiguration("popularKeywords",
                         cacheConfiguration.entryTtl(Duration.ofMinutes(30)))
                 .build();

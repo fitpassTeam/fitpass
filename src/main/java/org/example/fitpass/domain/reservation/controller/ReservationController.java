@@ -44,10 +44,8 @@ public class ReservationController {
 
         List<LocalTime> availableTimes = reservationService.getAvailableTimes(user.getId(), gymId, trainerId, date);
 
-        ResponseMessage<List<LocalTime>> responseMessage =
-            ResponseMessage.success(SuccessCode.AVAILABLE_TIMES_GET_SUCCESS, availableTimes);
-
-        return ResponseEntity.status(SuccessCode.AVAILABLE_TIMES_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.AVAILABLE_TIMES_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.AVAILABLE_TIMES_GET_SUCCESS, availableTimes));
     }
 
 
@@ -67,10 +65,8 @@ public class ReservationController {
                 gymId,
                 trainerId);
 
-        ResponseMessage<ReservationResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.RESERVATION_CREATE_SUCCESS, reservationResponseDto);
-
-        return ResponseEntity.status(SuccessCode.RESERVATION_CREATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.RESERVATION_CREATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.RESERVATION_CREATE_SUCCESS, reservationResponseDto));
     }
 
     // 예약 수정
@@ -92,10 +88,8 @@ public class ReservationController {
                 trainerId,
                 reservationId);
 
-        ResponseMessage<UpdateReservationResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.RESERVATION_UPDATE_SUCCESS, updateReservationResponseDto);
-
-        return ResponseEntity.status(SuccessCode.RESERVATION_UPDATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.RESERVATION_UPDATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.RESERVATION_UPDATE_SUCCESS, updateReservationResponseDto));
     }
 
     // 예약 취소
@@ -108,10 +102,8 @@ public class ReservationController {
     ) {
         reservationService.cancelReservation(user.getId(), gymId, trainerId, reservationId);
 
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.RESERVATION_CANCEL_WITH_REFUND_SUCCESS);
-
-        return ResponseEntity.status(SuccessCode.RESERVATION_CANCEL_WITH_REFUND_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.RESERVATION_CANCEL_WITH_REFUND_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.RESERVATION_CANCEL_WITH_REFUND_SUCCESS));
     }
 
     // 트레이너별 예약 목록 조회
@@ -124,9 +116,8 @@ public class ReservationController {
         List<TrainerReservationResponseDto> trainerReservationResponseDto =
             reservationService.getTrainerReservation(user.getId(), gymId, trainerId);
 
-        ResponseMessage<List<TrainerReservationResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.TRAINER_RESERVATION_LIST_SUCCESS, trainerReservationResponseDto);
-        return ResponseEntity.status(SuccessCode.TRAINER_RESERVATION_LIST_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.TRAINER_RESERVATION_LIST_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.TRAINER_RESERVATION_LIST_SUCCESS, trainerReservationResponseDto));
     }
 
     // 유저별 예약 목록
@@ -137,10 +128,8 @@ public class ReservationController {
         List<UserReservationResponseDto> userReservations =
             reservationService.getUserReservations(user.getId());
         
-        ResponseMessage<List<UserReservationResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.USER_RESERVATION_LIST_SUCCESS, userReservations);
-        
-        return ResponseEntity.status(SuccessCode.USER_RESERVATION_LIST_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.USER_RESERVATION_LIST_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.USER_RESERVATION_LIST_SUCCESS, userReservations));
     }
 
     // 예약 단건 조회
@@ -151,9 +140,7 @@ public class ReservationController {
         GetReservationResponseDto reservation =
             reservationService.getReservation(user.getId(), reservationId);
         
-        ResponseMessage<GetReservationResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.RESERVATION_GET_SUCCESS, reservation);
-        
-        return ResponseEntity.status(SuccessCode.RESERVATION_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.RESERVATION_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.RESERVATION_GET_SUCCESS, reservation));
     }
 }

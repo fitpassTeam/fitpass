@@ -13,7 +13,7 @@ import org.example.fitpass.domain.post.entity.Post;
 import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
 import org.example.fitpass.domain.post.repository.PostRepository;
-import org.example.fitpass.domain.user.UserRole;
+import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;

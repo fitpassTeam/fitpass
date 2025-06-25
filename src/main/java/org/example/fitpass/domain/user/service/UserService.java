@@ -1,19 +1,22 @@
 package org.example.fitpass.domain.user.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.config.RedisService;
-import org.example.fitpass.domain.auth.dto.response.SigninResponseDto;
-import org.example.fitpass.domain.user.dto.LoginRequestDto;
-import org.example.fitpass.domain.user.dto.UserRequestDto;
-import org.example.fitpass.domain.user.dto.UserResponseDto;
+import org.example.fitpass.domain.user.enums.Gender;
+import org.example.fitpass.domain.user.enums.UserRole;
+import org.example.fitpass.domain.user.dto.response.SigninResponseDto;
+import org.example.fitpass.domain.user.dto.response.UserResponseDto;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.repository.UserRepository;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -23,34 +26,41 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
+    private final S3Service s3Service;
 
+    // 회원가입
     @Transactional
-    public UserResponseDto signup(UserRequestDto requestDto) {
-
-        String imageUrl = requestDto.getUserImage();
-
+    public UserResponseDto signup(
+        String email,
+        String userImage,
+        String password,
+        String name,
+        String phone,
+        int age,
+        String address,
+        Gender gender
+    ) {
         User user = new User(
-                requestDto.getEmail(),
-                imageUrl,
-                passwordEncoder.encode(requestDto.getPassword()),
-                requestDto.getName(),
-                requestDto.getPhone(),
-                requestDto.getAge(),
-                requestDto.getAddress(),
-                requestDto.getGender(),
-                requestDto.getUserRole()
+                email,
+                userImage,
+                passwordEncoder.encode(password),
+                name,
+                phone,
+                age,
+                address,
+                gender,
+                UserRole.USER
         );
-
         userRepository.save(user);
         return UserResponseDto.from(user);
     }
 
-
+    // 로그인
     @Transactional(readOnly = true)
-    public SigninResponseDto login(LoginRequestDto dto) {
-        User user = userRepository.findByEmailOrElseThrow(dto.getEmail());
+    public SigninResponseDto login(String email, String password) {
+        User user = userRepository.findByEmailOrElseThrow(email);
 
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BaseException(ExceptionCode.INVALID_PASSWORD);
         }
 
@@ -60,6 +70,7 @@ public class UserService {
         return new SigninResponseDto(user.getId(), accessToken, refreshToken, user.getEmail());
     }
 
+    // 회원정보 조회
     @Transactional(readOnly = true)
     public UserResponseDto getUserInfo(String email) {
         User user = userRepository.findByEmailOrElseThrow(email);
@@ -67,14 +78,40 @@ public class UserService {
         return UserResponseDto.from(user);
     }
 
+    // 회원정보 업데이트
     @Transactional
-    public UserResponseDto updateUserInfo(String email, UserRequestDto dto) {
-        User user = userRepository.findByEmailOrElseThrow(email);
+    public UserResponseDto updateUserInfo(
+        Long userId,
+        String name,
+        int age,
+        String address
+    ) {
+        User user = userRepository.findByIdOrElseThrow(userId);
 
-        user.updateInfo(dto);
+        user.updateInfo(name, age, address);
         return UserResponseDto.from(user);
     }
+    // 프로필 사진 업데이트
+    @Transactional
+    public String updateProfileImage(MultipartFile file, Long userId) {
+        User user = userRepository.findByIdOrElseThrow(userId);
 
+        // 기존 이미지 S3에서 삭제 (있다면)
+        if (user.getUserImage() != null && !user.getUserImage().isEmpty()) {
+            s3Service.deleteFileFromS3(user.getUserImage());
+        }
+
+        // 새 이미지 S3 업로드
+        String newImageUrl = s3Service.uploadSingleFile(file);
+
+        // 유저 이미지 업데이트
+        user.updateUserImage(newImageUrl);
+        userRepository.save(user);
+
+        return newImageUrl;
+    }
+
+    // 핸드폰 번호 업데이트
     @Transactional
     public UserResponseDto updatePhone(String email, String newPhone) {
         User user = userRepository.findByEmailOrElseThrow(email);
@@ -83,6 +120,7 @@ public class UserService {
         return UserResponseDto.from(user);
     }
 
+    // 비밀번호 업데이트
     @Transactional
     public void updatePassword(String email, String oldPassword, String newPassword) {
         User user = userRepository.findByEmailOrElseThrow(email);
@@ -94,6 +132,7 @@ public class UserService {
         user.updatePassword(passwordEncoder.encode(newPassword));
     }
 
+    // 토큰 재발급
     @Transactional
     public SigninResponseDto reissueToken(String refreshToken) {
         if (!jwtTokenProvider.validateToken(refreshToken)) {
@@ -115,11 +154,65 @@ public class UserService {
         return new SigninResponseDto(user.getId(), newAccessToken, refreshToken, email);
     }
 
+    // 로그아웃
     @Transactional
     public void logout(String email, String bearerToken) {
         String token = jwtTokenProvider.substringToken(bearerToken);
         long remaining = jwtTokenProvider.getRemainingTime(token);
         jwtTokenProvider.blacklistAccessToken(token, remaining);
         redisService.deleteRefreshToken(email);
+    }
+
+    // Owner로 전환 승인 요청
+    @Transactional
+    public UserResponseDto requestOwnerUpgrade(String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        if (user.getUserRole() != UserRole.USER) {
+            throw new BaseException(ExceptionCode.INVALID_UPGRADE_REQUEST);
+        }
+
+        user.requestOwnerUpgrade();
+        return UserResponseDto.from(user);
+    }
+
+    // Admin용 승인 메서드
+    @Transactional
+    public UserResponseDto approveOwnerUpgrade(Long userId) {
+        User user = userRepository.findByIdOrElseThrow(userId);
+
+        if (user.getUserRole() != UserRole.PENDING_OWNER) {
+            throw new BaseException(ExceptionCode.INVALID_APPROVAL_REQUEST);
+        }
+
+        user.approveOwnerUpgrade();
+        return UserResponseDto.from(user);
+    }
+    // Admin용 거절 메서드
+    @Transactional
+    public UserResponseDto rejectOwnerUpgrade(Long userId) {
+        User user = userRepository.findByIdOrElseThrow(userId);
+
+        if (user.getUserRole() != UserRole.PENDING_OWNER) {
+            throw new BaseException(ExceptionCode.INVALID_REJECTION_REQUEST);
+        }
+
+        user.rejectOwnerUpgrade();
+        return UserResponseDto.from(user);
+    }
+
+    // 승인 대기 목록 조회
+    @Transactional(readOnly = true)
+    public List<UserResponseDto> getPendingOwnerRequests() {
+        List<User> pendingUsers = userRepository.findByUserRole(UserRole.PENDING_OWNER);
+        return pendingUsers.stream()
+            .map(UserResponseDto::from)
+            .toList();
+    }
+    @Transactional
+    public void checkPassword(String rawPassword, String encodedPassword) {
+        if (!passwordEncoder.matches(encodedPassword, rawPassword)) {
+            throw new BaseException(ExceptionCode.INVALID_PASSWORD);
+        }
     }
 }
