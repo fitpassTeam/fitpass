@@ -25,6 +25,7 @@ public enum SuccessCode implements BaseCode {
     OWNER_UPGRADE_APPROVE_SUCCESS(HttpStatus.OK, "2006", "사업자 승급이 승인되었습니다."),
     OWNER_UPGRADE_REJECT_SUCCESS(HttpStatus.OK, "2007", "사업자 승급이 거절되었습니다."),
     PENDING_REQUESTS_GET_SUCCESS(HttpStatus.OK, "2008", "승인 대기 목록 조회가 완료되었습니다."),
+    USER_PROFILE_IMAGE_UPDATE_SUCCESS(HttpStatus.OK, "2009", "프로필 이미지 업데이트가 완료되었습니다."),
 
     // 3000: Point 성공 코드
     POINT_CHARGE_SUCCESS(HttpStatus.OK, "3001", "포인트 충전이 완료되었습니다."),

@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -60,6 +62,16 @@ public class UserController {
             request.address());
         return ResponseEntity.status(SuccessCode.USER_UPDATE_SUCCESS.getHttpStatus())
                 .body(ResponseMessage.success(SuccessCode.USER_UPDATE_SUCCESS, response));
+    }
+
+    // 유저 프로필 이미지 업데이트
+    @PatchMapping("/me/profile-image")
+    public ResponseEntity<ResponseMessage<String>> updateProfileImage(
+        @RequestParam("profileImage") MultipartFile file,
+        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        String updatedImageUrl = userService.updateProfileImage(file, userDetails.getId());
+        return ResponseEntity.status(SuccessCode.USER_PROFILE_IMAGE_UPDATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.USER_PROFILE_IMAGE_UPDATE_SUCCESS, updatedImageUrl));
     }
 
     // 전화번호 수정

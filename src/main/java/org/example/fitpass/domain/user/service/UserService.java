@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.user.enums.Gender;
 import org.example.fitpass.domain.user.enums.UserRole;
@@ -15,6 +16,7 @@ import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
+    private final S3Service s3Service;
 
     // 회원가입
     @Transactional
@@ -87,6 +90,25 @@ public class UserService {
 
         user.updateInfo(name, age, address);
         return UserResponseDto.from(user);
+    }
+    // 프로필 사진 업데이트
+    @Transactional
+    public String updateProfileImage(MultipartFile file, Long userId) {
+        User user = userRepository.findByIdOrElseThrow(userId);
+
+        // 기존 이미지 S3에서 삭제 (있다면)
+        if (user.getUserImage() != null && !user.getUserImage().isEmpty()) {
+            s3Service.deleteFileFromS3(user.getUserImage());
+        }
+
+        // 새 이미지 S3 업로드
+        String newImageUrl = s3Service.uploadSingleFile(file);
+
+        // 유저 이미지 업데이트
+        user.updateUserImage(newImageUrl);
+        userRepository.save(user);
+
+        return newImageUrl;
     }
 
     // 핸드폰 번호 업데이트
