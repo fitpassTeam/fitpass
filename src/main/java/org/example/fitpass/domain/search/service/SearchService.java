@@ -10,6 +10,9 @@ import org.example.fitpass.domain.post.entity.Post;
 import org.example.fitpass.domain.post.repository.PostRepository;
 import org.example.fitpass.domain.search.entity.SearchKeyword;
 import org.example.fitpass.domain.search.repository.SearchRepository;
+import org.example.fitpass.domain.trainer.dto.response.TrainerResponseDto;
+import org.example.fitpass.domain.trainer.entity.Trainer;
+import org.example.fitpass.domain.trainer.repository.TrainerRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +27,7 @@ public class SearchService {
     private final SearchRepository searchRepository;
     private final GymRepository gymRepository;
     private final PostRepository postRepository;
+    private final TrainerRepository trainerRepository;
 
     @Transactional(readOnly = true)
     @Cacheable(
@@ -37,6 +41,7 @@ public class SearchService {
         return gymPage.map(GymResDto::from);
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(
             value = "postSearch",
             key = "#keyword + '_' + (#pageable != null ? #pageable.pageNumber : 0) + '_' + (#pageable != null ? #pageable.pageSize : 20)"
@@ -46,6 +51,18 @@ public class SearchService {
         Page<Post> postPage = postRepository.findBycontentAndPostType(keyword, pageable);
 
         return postPage.map(PostResponseDto::from);
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(
+            value = "postSearch",
+            key = "#keyword + '_' + (#pageable != null ? #pageable.pageNumber : 0) + '_' + (#pageable != null ? #pageable.pageSize : 20)"
+    )
+    public Page<TrainerResponseDto> searchTrainer (String keyword, Pageable pageable){
+
+        Page<Trainer> trainerPage = trainerRepository.findByNameContaining(keyword, pageable);
+
+        return trainerPage.map(TrainerResponseDto::fromEntity);
     }
 
     @Transactional

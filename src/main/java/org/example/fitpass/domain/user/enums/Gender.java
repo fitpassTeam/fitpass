@@ -1,6 +1,8 @@
-package org.example.fitpass.domain.user;
+package org.example.fitpass.domain.user.enums;
 
 import java.util.Arrays;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 
 public enum Gender {
     MAN, WOMAN, NONE;
@@ -9,6 +11,6 @@ public enum Gender {
         return Arrays.stream(Gender.values())
             .filter(r -> r.name().equalsIgnoreCase(gender))
             .findFirst()
-            .orElseThrow(() -> new RuntimeException());
+            .orElseThrow(() -> new BaseException(ExceptionCode.INVALID_GENDER));
     }
 }

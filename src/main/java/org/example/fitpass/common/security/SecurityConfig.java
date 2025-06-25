@@ -1,11 +1,13 @@
 package org.example.fitpass.common.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.jwt.JwtAuthenticationFilter;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.config.RedisService;
-import org.example.fitpass.domain.user.service.CustomOAuth2UserService;
+import org.example.fitpass.common.oAuth2.CustomOAuth2UserService;
+import org.example.fitpass.common.oAuth2.OAuth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,7 +33,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
     private final CustomUserDetailsService customUserDetailsService;
-    private final OAuthSuccessHandler oAuthSuccessHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final RedirectUrlCookieFilter redirectUrlCookieFilter;
 
@@ -47,6 +49,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 .requestMatchers(
                     "/auth/**",
+                    "/login",
                     "/ws/**",
                     "/error",
                     "/swagger-ui.html",
@@ -66,12 +69,21 @@ public class SecurityConfig {
                 new JwtAuthenticationFilter(jwtTokenProvider, redisService, customUserDetailsService),
                 UsernamePasswordAuthenticationFilter.class
             )
+
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"인증이 필요합니다.\"}");
+                })
+            )
+
             // OAuth2 로그인 설정
             .oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )
-                .successHandler(oAuthSuccessHandler)
+                .successHandler(oAuth2SuccessHandler)
             )
             // OAuth2 redirect 필터 추가
             .addFilterBefore(redirectUrlCookieFilter, OAuth2AuthorizationRequestRedirectFilter.class)

@@ -8,6 +8,7 @@ import org.example.fitpass.domain.gym.dto.response.GymResDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.search.service.SearchService;
+import org.example.fitpass.domain.trainer.dto.response.TrainerResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -61,9 +62,21 @@ public class SearchController {
         Page<PostResponseDto> page = searchService.searchPost(keyword, pageable);
         PageResponse<PostResponseDto> pageResponse = new PageResponse<>(page);
 
-
         ResponseMessage<PageResponse<PostResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.POST_SEARCH_SUCCESS, pageResponse);
         return ResponseEntity.status(SuccessCode.POST_SEARCH_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
+    @GetMapping("/search/trainer")
+    public ResponseEntity<ResponseMessage<PageResponse<TrainerResponseDto>>> searchTrainer (
+            @RequestParam(name = "keyword") String keword,
+            @PageableDefault(page = 0, size = 20) Pageable pageable
+    ){
+        searchService.saveSearchKeyword(keword);
+
+        Page<TrainerResponseDto> page = searchService.searchTrainer(keword,pageable);
+        PageResponse<TrainerResponseDto> pageResponse = new PageResponse<>(page);
+
+        ResponseMessage<PageResponse<TrainerResponseDto>> responseMesage = ResponseMessage.success(SuccessCode.TRAINER_SEARCH_SUCCESS, pageResponse);
+        return ResponseEntity.status(SuccessCode.TRAINER_SEARCH_SUCCESS.getHttpStatus()).body(responseMesage);
+    }
 }

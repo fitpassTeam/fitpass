@@ -21,6 +21,10 @@ public enum SuccessCode implements BaseCode {
     USER_UPDATE_SUCCESS(HttpStatus.OK, "2002", "유저 수정 성공"),
     USER_PHONE_EDIT_SUCCESS(HttpStatus.OK, "2003", "전화번호 수정 성공"),
     USER_PASSWORD_EDIT_SUCCESS(HttpStatus.OK, "2004", "비밀번호 수정 성공"),
+    OWNER_UPGRADE_REQUEST_SUCCESS(HttpStatus.OK, "2005", "사업자 승급 신청이 완료되었습니다."),
+    OWNER_UPGRADE_APPROVE_SUCCESS(HttpStatus.OK, "2006", "사업자 승급이 승인되었습니다."),
+    OWNER_UPGRADE_REJECT_SUCCESS(HttpStatus.OK, "2007", "사업자 승급이 거절되었습니다."),
+    PENDING_REQUESTS_GET_SUCCESS(HttpStatus.OK, "2008", "승인 대기 목록 조회가 완료되었습니다."),
 
     // 3000: Point 성공 코드
     POINT_CHARGE_SUCCESS(HttpStatus.OK, "3001", "포인트 충전이 완료되었습니다."),
@@ -55,6 +59,7 @@ public enum SuccessCode implements BaseCode {
     PATCH_TRAINER_SUCCESS(HttpStatus.OK, "6003", "트레이너 정보 수정이 완료되었습니다."),
     DELETE_TRAINER_SUCCESS(HttpStatus.OK, "6004", "트레이너가 삭제되었습니다"),
     PATCH_TRAINER_IMAGE_SUCCESS(HttpStatus.OK, "6005", "트레이너 정보 수정이 완료되었습니다."),
+    TRAINER_SEARCH_SUCCESS(HttpStatus.OK, "6006", "트레이너 검색이 완료되었습니다."),
 
     // 7000: 게시물 성공 코드
     POST_CREATE_SUCCESS(HttpStatus.CREATED, "7001", "게시물 등록이 완료되었습니다."),
