@@ -1,0 +1,16 @@
+databases:
+  my-db:
+    dsn:
+
+metrics:
+  user_total:
+    type: gauge
+    description: Total number of users
+
+queries:
+  user_count_query:
+    interval: 30
+    databases: [my-db]
+    metrics: [user_total]
+    sql: |
+      SELECT COUNT(*) as user_total FROM users

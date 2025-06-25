@@ -13,12 +13,82 @@ services:
       - "${SQL_PORT}:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}" ]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+      start_period: 40s
 
   redis:
     image: redis:alpine
     container_name: redis-dev
     ports:
       - "6379:6379"
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana-data:/var/lib/grafana
+    networks:
+      - my-network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus-dev
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./GRAFANA-PROMETHEUS-RDBMS/prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=100d
+      - --storage.tsdb.retention.size=10GB
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+      - --web.enable-admin-api
+    networks:
+      - my-network
+
+  query-exporter:
+    image: adonato/query-exporter
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    container_name: query-exporter-dev
+    restart: unless-stopped
+    ports:
+      - "9560:9560"
+    volumes:
+      - ./GRAFANA-PROMETHEUS-RDBMS/query-exporter/config.yml:/etc/query-exporter/config.yml
+    command:
+      - --config=/etc/query-exporter/config.yml
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - my-network
+
+volumes:
+  mysql-data:
+  grafana-data:
+  prometheus-data:
+
+networks:
+  my-network:
 
 # 만약 이걸 포함하면 인텔리제이 실행안시키고 도커만으로 돌릴 수 있음. 하지만 업데이트 될때마다 빌드 새로해야되서 귀찮으므로 자동배포할때만 넣으면 될 것 같아요.
 #  spring-app:
@@ -38,6 +108,3 @@ services:
 #    depends_on:
 #      - mysql
 #      - redis
-
-volumes:
-  mysql-data:
