@@ -46,6 +46,9 @@ public enum ExceptionCode implements BaseCode {
     INVALID_POINT_STATUS(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 포인트 상태입니다."),
     INVALID_POINT_TYPE(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 포인트 유형입니다."),
     INVALID_SENDER_TYPE(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 발신자 유형입니다."),
+    INVALID_GYM_STATUS(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 체육관 상태입니다."),
+    INVALID_GYM_APPROVAL_REQUEST(HttpStatus.BAD_REQUEST, "404", "승인할 수 없는 체육관입니다."),
+    INVALID_GYM_REJECTION_REQUEST(HttpStatus.BAD_REQUEST, "404", "거절할 수 없는 체육관입니다."),
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰입니다."),

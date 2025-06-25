@@ -28,10 +28,8 @@ public class MembershipPurchaseController {
         @AuthenticationPrincipal CustomUserDetails userDetails) {
         MembershipPurchaseResponseDto response = membershipPurchaseService.purchase(membershipId,
             userDetails.getId(), gymId);
-        ResponseMessage<MembershipPurchaseResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.PURCHASE_MEMBERSHIP_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.PURCHASE_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.PURCHASE_MEMBERSHIP_SUCCESS, response));
     }
 
     // 이용권 사용
@@ -41,10 +39,8 @@ public class MembershipPurchaseController {
         @AuthenticationPrincipal CustomUserDetails userDetails) {
         MembershipPurchaseResponseDto response = membershipPurchaseService.startMembership(purchaseId,
             userDetails.getId());
-        ResponseMessage<MembershipPurchaseResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.START_MEMBERSHIP_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.START_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.START_MEMBERSHIP_SUCCESS, response));
     }
 
     // 사용 가능한 이용권 조회
@@ -53,10 +49,8 @@ public class MembershipPurchaseController {
         @AuthenticationPrincipal CustomUserDetails userDetails) {
         List<MembershipPurchaseResponseDto> response =
             membershipPurchaseService.getNotStartedMemberships(userDetails.getId());
-        ResponseMessage<List<MembershipPurchaseResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_NOT_STARTED_MEMBERSHIP_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GET_NOT_STARTED_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_NOT_STARTED_MEMBERSHIP_SUCCESS, response));
     }
 
     // 구매 이력 조회
@@ -65,10 +59,8 @@ public class MembershipPurchaseController {
         @AuthenticationPrincipal CustomUserDetails userDetails) {
         List<MembershipPurchaseResponseDto> response =
             membershipPurchaseService.getMyPurchases(userDetails.getId());
-        ResponseMessage<List<MembershipPurchaseResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_MY_MEMBERSHIP_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GET_MY_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_MY_MEMBERSHIP_SUCCESS, response));
     }
 
     // 현재 활성 이용권
@@ -78,9 +70,7 @@ public class MembershipPurchaseController {
     ) {
         MembershipPurchaseResponseDto response = membershipPurchaseService.getMyActive(
             userDetails.getId());
-        ResponseMessage<MembershipPurchaseResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.GET_ACTIVE_MEMBERSHIP_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GET_ACTIVE_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(responseMessage);
+            .body(ResponseMessage.success(SuccessCode.GET_ACTIVE_MEMBERSHIP_SUCCESS, response));
     }
 }

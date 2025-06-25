@@ -44,10 +44,9 @@ public class FitnessGoalController {
             fitnessGoalCreateRequestDto.targetWeight(),
             fitnessGoalCreateRequestDto.startDate(),
             fitnessGoalCreateRequestDto.endDate());
-        ResponseMessage<FitnessGoalResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_CREATE_SUCCESS, responseDto);
 
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_CREATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_CREATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_CREATE_SUCCESS, responseDto));
     }
 
     // 내 목표 목록 조회
@@ -56,9 +55,8 @@ public class FitnessGoalController {
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         List<FitnessGoalListResponseDto> responseDtos = fitnessGoalService.getMyGoals(userDetails.getId());
-        ResponseMessage<List<FitnessGoalListResponseDto>> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_LIST_SUCCESS, responseDtos);
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_LIST_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_LIST_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_LIST_SUCCESS, responseDtos));
     }
 
     // 목표 상세 조회
@@ -68,10 +66,9 @@ public class FitnessGoalController {
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         FitnessGoalResponseDto responseDto = fitnessGoalService.getGoal(userDetails.getId(), fitnessGoalId);
-        ResponseMessage<FitnessGoalResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_GET_SUCCESS, responseDto);
 
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_GET_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_GET_SUCCESS, responseDto));
     }
 
     // 목표 수정
@@ -88,10 +85,9 @@ public class FitnessGoalController {
             requestDto.targetWeight(),
             requestDto.endDate(),
             userDetails.getId());
-        ResponseMessage<FitnessGoalResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_UPDATE_SUCCESS, responseDto);
 
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_UPDATE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_UPDATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_UPDATE_SUCCESS, responseDto));
     }
 
     // 목표 취소
@@ -101,10 +97,8 @@ public class FitnessGoalController {
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         FitnessGoalResponseDto responseDto = fitnessGoalService.cancelGoal(fitnessGoalId, userDetails.getId());
-        ResponseMessage<FitnessGoalResponseDto> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_CANCEL_SUCCESS, responseDto);
-
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_CANCEL_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_CANCEL_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_CANCEL_SUCCESS, responseDto));
     }
 
     // 목표 삭제
@@ -114,9 +108,7 @@ public class FitnessGoalController {
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         fitnessGoalService.deleteGoal(fitnessGoalId, userDetails.getId());
-        ResponseMessage<Void> responseMessage =
-            ResponseMessage.success(SuccessCode.FITNESSGOAL_DELETE_SUCCESS);
-
-        return ResponseEntity.status(SuccessCode.FITNESSGOAL_DELETE_SUCCESS.getHttpStatus()).body(responseMessage);
+        return ResponseEntity.status(SuccessCode.FITNESSGOAL_DELETE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.FITNESSGOAL_DELETE_SUCCESS));
     }
 }

@@ -258,7 +258,6 @@ public class ReservationService {
 
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        gym.isOwner(userId);
         // 트레이너 조회
         Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
         // 트레이너가 해당 체육관 소속인지 확인
