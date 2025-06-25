@@ -7,10 +7,10 @@ import org.example.fitpass.common.BaseEntity;
 
 @Entity
 @Getter
-@Table(name = "search_keyword")
+@Table(name = "search_keyword_gym")
 @NoArgsConstructor
 
-public class SearchKeyword extends BaseEntity {
+public class SearchKeywordGym extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,7 @@ public class SearchKeyword extends BaseEntity {
     @Column(nullable = false)
     private int count;
 
-    public SearchKeyword(String keyword) {
+    public SearchKeywordGym(String keyword) {
 
         this.keyword = keyword;
         this.count = 1;

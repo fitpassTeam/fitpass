@@ -17,4 +17,5 @@ public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 
     Page<Trainer> findAllByGym(Gym gym, Pageable pageable);
 
+    Page<Trainer> findByNameContaining(String keyword, Pageable pageable);
 }
