@@ -14,6 +14,7 @@ public enum SuccessCode implements BaseCode {
     LOGIN_SUCCESS(HttpStatus.OK, "1002", "로그인에 성공하였습니다."),
     REISSUE_SUCCESS(HttpStatus.OK, "1003", "토큰이 재발급되었습니다."),
     LOGOUT_SUCCESS(HttpStatus.OK, "1004", "로그아웃이 완료되었습니다."),
+    PASSWORD_MACTH_SUCCESS(HttpStatus.OK, "1005", "비밀번호가 일치합니다."),
 
     //2000: User 성공 코드
     USER_GET_SUCCESS(HttpStatus.OK, "2001", "유저 조회 성공"),

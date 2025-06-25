@@ -27,7 +27,7 @@ import java.util.Optional;
 @Component
 public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private static final String LOCAL_REDIRECT_URL = "http://localhost:3000";
+    private static final String LOCAL_REDIRECT_URL = "http://localhost:5173";
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -51,7 +51,6 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             CustomUser customUser = (CustomUser) principal;
             email = customUser.getEmail();
 
-            // CustomUser는 GrantedAuthority를 super클래스인 DefaultOAuth2User에서 가지고 있으므로 가져오기
             role = customUser.getAuthorities().stream()
                 .findFirst()
                 .orElseThrow(() -> new BaseException(ExceptionCode.NOT_HAS_AUTHORITY))
@@ -69,8 +68,20 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 .filter(cookie -> REDIRECT_URI_PARAM.equals(cookie.getName()))
                 .findFirst());
 
-        String targetUrl = oCookie.map(Cookie::getValue)
-            .orElse("http://localhost:3000") + "/sociallogin?token=" + accessToken;
+        String baseRedirectUrl = oCookie.map(Cookie::getValue)
+            .orElse(LOCAL_REDIRECT_URL);
+
+        // sociallogin 경로가 이미 포함되어 있으면 중복 붙이지 않음
+        String targetUrl;
+        if (baseRedirectUrl.endsWith("/sociallogin")) {
+            targetUrl = baseRedirectUrl + "?token=" + accessToken;
+        } else if (baseRedirectUrl.contains("/sociallogin?")) {
+            // 이미 token 파라미터 포함 가능성도 고려
+            targetUrl = baseRedirectUrl + "&token=" + accessToken;
+        } else {
+            // sociallogin 경로 없으면 붙임
+            targetUrl = baseRedirectUrl + "/sociallogin?token=" + accessToken;
+        }
 
         log.info("targetUrl: {}", targetUrl);
 

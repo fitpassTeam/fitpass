@@ -122,4 +122,10 @@ public class UserService {
         jwtTokenProvider.blacklistAccessToken(token, remaining);
         redisService.deleteRefreshToken(email);
     }
+    @Transactional
+    public void checkPassword(String rawPassword, String encodedPassword) {
+        if (!passwordEncoder.matches(encodedPassword, rawPassword)) {
+            throw new BaseException(ExceptionCode.INVALID_PASSWORD);
+        }
+    }
 }

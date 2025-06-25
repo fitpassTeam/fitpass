@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
+import org.example.fitpass.domain.user.dto.PasswordCheckRequestDto;
 import org.example.fitpass.domain.user.dto.UpdatePasswordRequestDto;
 import org.example.fitpass.domain.user.dto.UpdatePhoneRequestDto;
 import org.example.fitpass.domain.user.dto.UserRequestDto;
@@ -20,6 +21,16 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
+    // 비밀번호 조회
+    @PostMapping("/me/password-check")
+    public ResponseEntity<ResponseMessage<Void>> checkPassword(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody PasswordCheckRequestDto dto) {
+        userService.checkPassword(userDetails.getPassword(), dto.getPassword());
+        ResponseMessage<Void> responseMessage =
+            ResponseMessage.success(SuccessCode.PASSWORD_MACTH_SUCCESS);
+        return ResponseEntity.status(SuccessCode.LIKE_TOGGLE_SUCCESS.getHttpStatus())
+            .body(responseMessage);
+    }
 
     // 내 정보 조회
     @GetMapping("/me")

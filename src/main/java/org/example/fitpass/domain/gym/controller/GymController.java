@@ -71,7 +71,8 @@ public class GymController {
         @PageableDefault(page = 0, size = 10) Pageable pageable,
         @AuthenticationPrincipal CustomUserDetails user
     ) {
-        Page<GymResponseDto> response = gymService.getAllGyms(pageable, user.getId());
+        Long userId = (user != null) ? user.getId() : null;
+        Page<GymResponseDto> response = gymService.getAllGyms(pageable, userId);
         PageResponse<GymResponseDto> pageResponse = new PageResponse<>(response);
         ResponseMessage<PageResponse<GymResponseDto>> responseMessage =
             ResponseMessage.success(SuccessCode.GYM_FIND_ALL_SUCCESS, pageResponse);
