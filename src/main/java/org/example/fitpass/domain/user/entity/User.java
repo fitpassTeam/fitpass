@@ -18,9 +18,8 @@ import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.likes.entity.Like;
 import org.example.fitpass.domain.trainer.entity.Trainer;
-import org.example.fitpass.domain.user.Gender;
-import org.example.fitpass.domain.user.UserRole;
-import org.example.fitpass.domain.user.dto.request.UserRequestDto;
+import org.example.fitpass.domain.user.enums.Gender;
+import org.example.fitpass.domain.user.enums.UserRole;
 
 @Getter
 @Entity
@@ -150,6 +149,18 @@ public class User extends BaseEntity {
         if (userImage != null && !userImage.trim().isEmpty()) {
             this.userImage = userImage;
         }
+    }
+
+    public void requestOwnerUpgrade() {
+        this.userRole = UserRole.PENDING_OWNER;
+    }
+
+    public void approveOwnerUpgrade() {
+        this.userRole = UserRole.OWNER;
+    }
+
+    public void rejectOwnerUpgrade() {
+        this.userRole = UserRole.USER;
     }
 
 }

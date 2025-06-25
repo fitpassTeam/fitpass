@@ -6,8 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import org.example.fitpass.domain.user.Gender;
-import org.example.fitpass.domain.user.UserRole;
+import org.example.fitpass.domain.user.enums.Gender;
 
 public record UserRequestDto(
     @Email(message = "유효한 이메일을 입력해주세요")
@@ -35,15 +34,13 @@ public record UserRequestDto(
     String address,
 
     @NotNull(message = "성별을 선택해주세요")
-    Gender gender,
+    Gender gender
 
-    @NotNull(message = "유저 역할을 선택해주세요")
-    UserRole userRole
 ) {
 
     public UserRequestDto(String email, String userImage, String password, String name,
         String phone, int age,
-        String address, Gender gender, UserRole userRole) {
+        String address, Gender gender) {
         this.email = email;
         this.userImage = userImage;
         this.password = password;
@@ -52,6 +49,5 @@ public record UserRequestDto(
         this.age = age;
         this.address = address;
         this.gender = gender;
-        this.userRole = userRole;
     }
 }

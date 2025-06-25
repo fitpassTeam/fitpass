@@ -4,16 +4,21 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
+import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.user.dto.request.UpdatePasswordRequestDto;
 import org.example.fitpass.domain.user.dto.request.UpdatePhoneRequestDto;
 import org.example.fitpass.domain.user.dto.request.UserInfoUpdateRequestDto;
-import org.example.fitpass.domain.user.dto.request.UserRequestDto;
 import org.example.fitpass.domain.user.dto.response.UserResponseDto;
 import org.example.fitpass.domain.user.service.UserService;
-import org.example.fitpass.common.security.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
@@ -64,6 +69,16 @@ public class UserController {
         userService.updatePassword(userDetails.getUsername(), request.oldPassword(), request.newPassword());
         return ResponseEntity.status(SuccessCode.USER_PASSWORD_EDIT_SUCCESS.getHttpStatus())
                 .body(ResponseMessage.success(SuccessCode.USER_PASSWORD_EDIT_SUCCESS));
+    }
+
+    // Owner로 전환 신청
+    @PostMapping("/me/upgrade-to-owner")
+    public ResponseEntity<ResponseMessage<UserResponseDto>> requestOwnerUpgrade (
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        UserResponseDto response = userService.requestOwnerUpgrade(userDetails.getUsername());
+        return ResponseEntity.status(SuccessCode.OWNER_UPGRADE_REQUEST_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.OWNER_UPGRADE_REQUEST_SUCCESS, response));
     }
 
 }

@@ -1,7 +1,7 @@
 package org.example.fitpass.domain.user.dto.response;
 
-import org.example.fitpass.domain.user.Gender;
-import org.example.fitpass.domain.user.UserRole;
+import org.example.fitpass.domain.user.enums.Gender;
+import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.entity.User;
 
 public record UserResponseDto(
