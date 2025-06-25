@@ -179,16 +179,24 @@ public class ReservationService {
             throw new BaseException(ExceptionCode.NOT_RESERVATION_OWNER);
         }
 
-        // PENDING 상태만 수정 가능
-        if (!reservation.getReservationStatus().equals(ReservationStatus.PENDING)) {
-            throw new BaseException(ExceptionCode.RESERVATION_STATUS_NOT_CHANGEABLE);
-        }
-
-        // 2일 전까지만 변경 가능
+        // 상태별 수정 기간 확인
         LocalDate today = LocalDate.now();
         LocalDate reservationDates = reservation.getReservationDate();
-        if (ChronoUnit.DAYS.between(today, reservationDates) < 2) {
-            throw new BaseException(ExceptionCode.RESERVATION_CHANGE_DEADLINE_PASSED);
+        long daysUntilReservation = ChronoUnit.DAYS.between(today, reservationDates);
+
+        if (reservation.getReservationStatus().equals(ReservationStatus.PENDING)) {
+            // PENDING: 2일 전까지 수정 가능
+            if (daysUntilReservation < 2) {
+                throw new BaseException(ExceptionCode.RESERVATION_CHANGE_DEADLINE_PASSED);
+            }
+        } else if (reservation.getReservationStatus().equals(ReservationStatus.CONFIRMED)) {
+            // CONFIRMED: 1주일(7일) 전까지 수정 가능
+            if (daysUntilReservation < 7) {
+                throw new BaseException(ExceptionCode.RESERVATION_CHANGE_DEADLINE_PASSED);
+            }
+        } else {
+            // COMPLETED, CANCELLED 상태는 수정 불가
+            throw new BaseException(ExceptionCode.RESERVATION_STATUS_NOT_CHANGEABLE);
         }
 
         // 새로운 예약 날짜도 2일 후부터 가능한지 검증
@@ -207,6 +215,7 @@ public class ReservationService {
         if (isDuplicate) {
             throw new BaseException(ExceptionCode.RESERVATION_TIME_CONFLICT);
         }
+
         // 예약 정보 업데이트
         reservation.updateReservation(
             reservationDate,
@@ -235,18 +244,23 @@ public class ReservationService {
             throw new BaseException(ExceptionCode.NOT_RESERVATION_OWNER);
         }
 
-        // PENDING 또는 CONFIRMED 상태만 취소 가능
-        if (!reservation.getReservationStatus().equals(ReservationStatus.PENDING) &&
-            !reservation.getReservationStatus().equals(ReservationStatus.CONFIRMED)) {
-            throw new BaseException(ExceptionCode.RESERVATION_STATUS_NOT_CANCELLABLE);
-        }
-
-        // 취소 기한 확인 (예: 2일 전까지만 취소 가능)
         LocalDate today = LocalDate.now();
         LocalDate reservationDate = reservation.getReservationDate();
+        long daysUntilReservation = ChronoUnit.DAYS.between(today, reservationDate);
 
-        if (ChronoUnit.DAYS.between(today, reservationDate) < 2) {
-            throw new BaseException(ExceptionCode.RESERVATION_CANCEL_DEADLINE_PASSED);
+        if (reservation.getReservationStatus().equals(ReservationStatus.PENDING)) {
+            // PENDING: 당일 취소만 불가 (최소한의 예의)
+            if (daysUntilReservation < 1) {
+                throw new BaseException(ExceptionCode.RESERVATION_CANCEL_DEADLINE_PASSED);
+            }
+        } else if (reservation.getReservationStatus().equals(ReservationStatus.CONFIRMED)) {
+            // CONFIRMED: 1주일(7일) 전까지 취소 가능
+            if (daysUntilReservation < 7) {
+                throw new BaseException(ExceptionCode.RESERVATION_CANCEL_DEADLINE_PASSED);
+            }
+        } else {
+            // COMPLETED, CANCELLED 상태는 취소 불가
+            throw new BaseException(ExceptionCode.RESERVATION_STATUS_NOT_CANCELLABLE);
         }
 
         // 포인트 환불
