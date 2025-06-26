@@ -8,17 +8,19 @@ public record TrainerDetailResponseDto(
     String name,
     int price,
     String content,
+    String experience,
     TrainerStatus trainerStatus,
     List<String> trainerImage,
     LocalDateTime createdAt
 ) {
 
     public static TrainerDetailResponseDto from(String name, int price, String content,
-        TrainerStatus trainerStatus, List<String> trainerImage, LocalDateTime createdAt) {
+        String experience, TrainerStatus trainerStatus, List<String> trainerImage, LocalDateTime createdAt) {
         return new TrainerDetailResponseDto(
             name,
             price,
             content,
+            experience,
             trainerStatus,
             trainerImage,
             createdAt);
