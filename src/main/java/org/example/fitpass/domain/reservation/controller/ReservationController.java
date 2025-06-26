@@ -60,7 +60,6 @@ public class ReservationController {
             reservationService.createReservation(
                 reservationRequestDto.reservationDate(),
                 reservationRequestDto.reservationTime(),
-                reservationRequestDto.reservationStatus(),
                 user.getId(),
                 gymId,
                 trainerId);
@@ -142,5 +141,33 @@ public class ReservationController {
         
         return ResponseEntity.status(SuccessCode.RESERVATION_GET_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.RESERVATION_GET_SUCCESS, reservation));
+    }
+
+    // 트레이너 예약 승인
+    @PatchMapping("/gyms/{gymId}/trainers/{trainerId}/reservations/{reservationId}/confirm")
+    public ResponseEntity<ResponseMessage<Void>> confirmReservation(
+        @AuthenticationPrincipal CustomUserDetails user,
+        @PathVariable Long gymId,
+        @PathVariable Long trainerId,
+        @PathVariable Long reservationId
+    ) {
+        reservationService.confirmReservation(user.getId(), gymId, trainerId, reservationId);
+
+        return ResponseEntity.status(SuccessCode.RESERVATION_CONFIRM_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.RESERVATION_CONFIRM_SUCCESS));
+    }
+
+    // 트레이너 예약 거부
+    @PatchMapping("/gyms/{gymId}/trainers/{trainerId}/reservations/{reservationId}/reject")
+    public ResponseEntity<ResponseMessage<Void>> rejectReservation(
+        @AuthenticationPrincipal CustomUserDetails user,
+        @PathVariable Long gymId,
+        @PathVariable Long trainerId,
+        @PathVariable Long reservationId
+    ) {
+        reservationService.rejectReservation(user.getId(), gymId, trainerId, reservationId);
+
+        return ResponseEntity.status(SuccessCode.RESERVATION_REJECT_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.RESERVATION_REJECT_SUCCESS));
     }
 }

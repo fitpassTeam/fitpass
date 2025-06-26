@@ -19,26 +19,16 @@ public record ReservationRequestDto(
 
     @JsonFormat(pattern = "HH:mm")
     @NotNull(message = "시간을 입력해주세요.")
-    LocalTime reservationTime,
-
-    ReservationStatus reservationStatus) {
-
-    public ReservationRequestDto(LocalDate reservationDate, LocalTime reservationTime,
-        ReservationStatus reservationStatus) {
-        this.reservationDate = reservationDate;
-        this.reservationTime = reservationTime;
-        this.reservationStatus = reservationStatus;
-    }
-
+    LocalTime reservationTime
+) {
     public static Reservation from(LocalDate reservationDate, LocalTime reservationTime, ReservationStatus status, User user, Gym gym, Trainer trainer) {
         return new Reservation(
             reservationDate,
             reservationTime,
-            status != null ? status : ReservationStatus.PENDING,
+            ReservationStatus.PENDING,
             user,
             gym,
             trainer
         );
     }
-
 }
