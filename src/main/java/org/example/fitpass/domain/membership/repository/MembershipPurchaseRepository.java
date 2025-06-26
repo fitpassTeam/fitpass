@@ -37,4 +37,21 @@ public interface MembershipPurchaseRepository extends JpaRepository<MembershipPu
     """)
     List<MembershipPurchase> findAllNotStartedByUser(@Param("user") User user);
 
+    @Query("""
+    SELECT mp FROM MembershipPurchase mp
+    WHERE mp.startDate IS NOT NULL 
+      AND mp.endDate BETWEEN :startDate AND :endDate
+    """)
+    List<MembershipPurchase> findActiveMembershipsExpiringBetween(
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate);
+
+    @Query("""
+    SELECT mp FROM MembershipPurchase mp
+    WHERE mp.scheduledStartDate BETWEEN :startOfDay AND :endOfDay
+      AND mp.startDate IS NULL
+    """)
+    List<MembershipPurchase> findScheduledForActivation(
+        @Param("startOfDay") LocalDateTime startOfDay,
+        @Param("endOfDay") LocalDateTime endOfDay);
 }

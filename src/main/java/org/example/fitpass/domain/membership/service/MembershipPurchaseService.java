@@ -6,6 +6,7 @@ import static org.example.fitpass.common.error.ExceptionCode.INVALID_TOKEN;
 import static org.example.fitpass.common.error.ExceptionCode.MEMBERSHIP_NOT_ACTIVE;
 import static org.example.fitpass.common.error.ExceptionCode.NOT_FOUND_PURCHASE;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -41,54 +42,39 @@ public class MembershipPurchaseService {
 
     // 이용권 구매
     @Transactional
-    public MembershipPurchaseResponseDto purchase(Long membershipId, Long userId, Long gymId) {
+    public MembershipPurchaseResponseDto purchase(Long membershipId, Long userId, Long gymId, LocalDate activationDate) {
         // 유저 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        // 이 체육관의 소유자인지 확인
-        if (!Objects.equals(gym.getOwner().getId(), userId)) {
-            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
-        }
         // 이용권 조회
         Membership membership = membershipRepository.findByIdOrElseThrow(membershipId);
         // 체육관의 이용권인지 확인하는 로직
         if (!membership.getGym().getId().equals(gymId)) {
             throw new BaseException(INVALID_GYM_MEMBERSHIP);
         }
+
+        // 활성화 날짜 검증 (구매일 기준 7일 이내)
+        LocalDate today = LocalDate.now();
+        if (activationDate.isBefore(today)) {
+            throw new BaseException(ExceptionCode.INVALID_ACTIVATION_DATE_PAST);
+        }
+        if (activationDate.isAfter(today.plusDays(7))) {
+            throw new BaseException(ExceptionCode.INVALID_ACTIVATION_DATE_TOO_FAR);
+        }
+
         // 포인트 차감
         pointService.usePoint(userId, membership.getPrice(), "이용권 구매 - " + membership.getName());
-        // 현재 시간
-        LocalDateTime now = LocalDateTime.now();
-        // 이용권 생성
-        MembershipPurchase purchase = new MembershipPurchase(membership, gym, user, now);
 
-//        // 구매 시점 기록용 시간(활성화는 별도로 지정하는 경우)
-//        LocalDateTime purchaseTime = LocalDateTime.now();
-//        // 이용권 생성
-//        MembershipPurchase purchase = new MembershipPurchase(membership, gym, user, purchaseTime);
-//        purchaseRepository.save(purchase);
+        // 구매 시점 기록
+        LocalDateTime purchaseTime = LocalDateTime.now();
+        // 예약 활성화 날짜 설정
+        LocalDateTime scheduledStartTime = activationDate.atStartOfDay();
 
+        // 이용권 생성 (예약 활성화)
+        MembershipPurchase purchase = new MembershipPurchase(membership, gym, user, purchaseTime, scheduledStartTime);
         purchaseRepository.save(purchase);
-        return MembershipPurchaseResponseDto.from(purchase);
-    }
-    // 이용권 사용
-    @Transactional
-    public MembershipPurchaseResponseDto startMembership(Long purchaseId, Long userId){
-        // 유저 조회
-        userRepository.findByIdOrElseThrow(userId);
 
-        MembershipPurchase purchase = purchaseRepository.findByIdOrElseThrow(purchaseId);
-
-        if (!purchase.getUser().getId().equals(userId)) {
-            throw new BaseException(INVALID_TOKEN);
-        }
-
-        if (!purchase.isNotStarted()) {
-            throw new BaseException(ALREADY_STARTED);
-        }
-        // 활성화
-        purchase.activate(LocalDateTime.now());
         return MembershipPurchaseResponseDto.from(purchase);
     }
     // 미활성화 이용권 조회

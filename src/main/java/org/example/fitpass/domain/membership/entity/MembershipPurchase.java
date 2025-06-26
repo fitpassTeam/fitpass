@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,11 +48,23 @@ public class MembershipPurchase extends BaseEntity {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
+    // 예약 활성화 날짜 추가
+    @Column(name = "scheduled_start_date")
+    private LocalDateTime scheduledStartDate;
+
     public MembershipPurchase(Membership membership, Gym gym, User user, LocalDateTime now) {
         this.membership = membership;
         this.gym = gym;
         this.user = user;
         this.purchaseDate = now;
+    }
+
+    public MembershipPurchase(Membership membership, Gym gym, User user, LocalDateTime purchaseTime, LocalDateTime scheduledStartTime) {
+        this.membership = membership;
+        this.gym = gym;
+        this.user = user;
+        this.purchaseDate = purchaseTime;
+        this.scheduledStartDate = scheduledStartTime;
     }
 
     public void activate(LocalDateTime now){
