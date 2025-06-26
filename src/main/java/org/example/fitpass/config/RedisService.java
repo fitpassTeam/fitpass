@@ -1,6 +1,7 @@
 package org.example.fitpass.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -8,10 +9,13 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 public class RedisService {
 
     private final RedisTemplate<String, String> redisTemplate;
+
+    public RedisService(@Qualifier("customStringRedisTemplate") RedisTemplate<String, String> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     public void setRefreshToken(String email, String token, long durationMs) {
         redisTemplate.opsForValue().set(email, token, Duration.ofMillis(durationMs));

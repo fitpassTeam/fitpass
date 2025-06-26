@@ -3,6 +3,7 @@ package org.example.fitpass.config;
 
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.notify.service.NotificationSubscriber;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
 public class NotificationConfig implements ApplicationListener<ApplicationReadyEvent> {
 
     private final RedisMessageListenerContainer redisMessageListenerContainer;

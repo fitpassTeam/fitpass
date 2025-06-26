@@ -3,6 +3,7 @@ package org.example.fitpass.config;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.fitpass.domain.notify.entity.Notify;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
@@ -14,11 +15,11 @@ import java.util.List;
 @Component
 public class RedisDao {
 
-
     private final RedisTemplate<String, String> redisTemplate;
     private final RedisTemplate<String, List<Notify>> redisTemplateForNotify;
 
-    public RedisDao(RedisTemplate<String, String> redisTemplate, RedisTemplate<String, List<Notify>> redisTemplateForNotify) {
+    public RedisDao(@Qualifier("customStringRedisTemplate") RedisTemplate<String, String> redisTemplate, 
+                    @Qualifier("notifyRedisTemplate") RedisTemplate<String, List<Notify>> redisTemplateForNotify) {
         this.redisTemplate = redisTemplate;
         this.redisTemplateForNotify = redisTemplateForNotify;
     }
