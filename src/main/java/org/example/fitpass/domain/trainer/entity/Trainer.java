@@ -48,6 +48,9 @@ public class Trainer extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private String experience;
+
     @Enumerated(EnumType.STRING)
     private TrainerStatus trainerStatus = TrainerStatus.ACTIVE;
 
@@ -61,10 +64,11 @@ public class Trainer extends BaseEntity {
     @OneToMany(mappedBy = "trainer")
     private List<User> members = new ArrayList<>();
 
-    public Trainer(List<Image> trainerImage, String name, int price, String content) {
+    public Trainer(List<Image> trainerImage, String name, int price, String content, String experience) {
         this.name = name;
         this.price = price;
         this.content = content;
+        this.experience = experience;
 
         for (Image image : trainerImage) {
             image.assignToTrainer(this);
@@ -72,11 +76,11 @@ public class Trainer extends BaseEntity {
         }
     }
 
-    public static Trainer of(List<String> trainerImage, String name, int price, String content) {
+    public static Trainer of(List<String> trainerImage, String name, int price, String content, String experience) {
         List<Image> images = trainerImage.stream()
             .map(Image::new)
             .toList();
-        return new Trainer(images, name, price, content);
+        return new Trainer(images, name, price, content, experience);
     }
 
     public void updatePhoto(List<String> imageUrls, Trainer trainer) {
@@ -88,11 +92,22 @@ public class Trainer extends BaseEntity {
     }
 
     public void update(String name, int price, String content,
-        TrainerStatus trainerStatus) {
+        TrainerStatus trainerStatus, String experience, List<String> updatedImages) {
         this.name = name;
         this.price = price;
         this.content = content;
         this.trainerStatus = trainerStatus;
+        this.experience = experience;
+        if (updatedImages != null) {
+            List<Image> newImages = updatedImages.stream()
+                .map(url -> {
+                    Image img = new Image(url);
+                    img.assignToTrainer(this);
+                    return img;
+                })
+                .toList();
+            this.images.addAll(newImages);
+        }
     }
 
     public void validateTrainerBelongsToGym(Trainer trainer, Gym gym) {

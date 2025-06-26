@@ -26,8 +26,14 @@ public record GymRequestDto(
     @Size(max = 500, message = "체육관 소개는 500글자 내로 입력해주세요.")
     String content,
 
+    @NotBlank(message = "시/도를 기입해주세요.")
+    String city,
+
+    @NotBlank(message = "구/시를 기입해주세요.")
+    String district,
+
     @NotBlank(message = "체육관의 주소를 기입해주세요.")
-    String address,
+    String detailAddress,
 
     @NotNull(message = "오픈시간을 입력해주세요.")
     LocalTime openTime,
@@ -35,5 +41,7 @@ public record GymRequestDto(
     @NotNull(message = "영업종료시간을 입력해주세요.")
     LocalTime closeTime,
 
-    List<String> gymImage
+    List<String> gymImage,
+
+    String summary
 ) { }

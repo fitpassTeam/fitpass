@@ -8,7 +8,7 @@ public record GymDetailResponDto(
     String name,
     String number,
     String content,
-    String address,
+    String fullAddress,
     LocalTime openTime,
     LocalTime closeTime,
     List<String> gymImage,
@@ -19,13 +19,13 @@ public record GymDetailResponDto(
 ) {
 
     public static GymDetailResponDto from(String name, String number, String content,
-        String address, LocalTime openTime, LocalTime closeTime, List<String> gymImage,
+        String fullAddress, LocalTime openTime, LocalTime closeTime, List<String> gymImage,
         List<String> trainerNames, GymStatus gymStatus, Double averageGymRating, Integer totalReviewCount) {
         return new GymDetailResponDto(
             name,
             number,
             content,
-            address,
+            fullAddress,
             openTime,
             closeTime,
             gymImage,

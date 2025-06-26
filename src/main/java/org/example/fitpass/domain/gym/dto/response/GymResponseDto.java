@@ -14,27 +14,25 @@ public record GymResponseDto(
     LocalTime closeTime,
     Long gymId,
     List<String> gymImage,
-    boolean isLiked
+    boolean isLiked,
+    String summary
 ) {
 
-    public static GymResponseDto of(String name, String number, String content, String address,
-            LocalTime openTime, LocalTime closeTime, Long gymId, boolean isLiked) {
-            return new GymResponseDto(name, number, content, address, openTime, closeTime, gymId, List.of(), false);
-        }
 
     public static GymResponseDto from(Gym gym, boolean isLiked) {
         return new GymResponseDto(
             gym.getName(),
             gym.getNumber(),
             gym.getContent(),
-            gym.getAddress(),
+            gym.getFullAddress(),
             gym.getOpenTime(),
             gym.getCloseTime(),
             gym.getId(),
             gym.getImages().stream()
                 .map(Image::getUrl)
                 .toList(),
-            isLiked
+            isLiked,
+            gym.getSummary()
         );
     }
 }

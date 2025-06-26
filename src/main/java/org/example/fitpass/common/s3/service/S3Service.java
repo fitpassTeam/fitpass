@@ -66,7 +66,9 @@ public class S3Service {
             metadata.setContentType(file.getContentType()); // 파일 타입 설정 (선택 사항)
 
             // S3에 파일 업로드
-            amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file.getInputStream(), metadata) .withCannedAcl(CannedAccessControlList.PublicRead));
+            amazonS3.putObject(
+                new PutObjectRequest(bucketName, fileName, file.getInputStream(), metadata)
+            );
 
             // 업로드한 파일의 URL 반환
             return amazonS3.getUrl(bucketName, fileName).toString();

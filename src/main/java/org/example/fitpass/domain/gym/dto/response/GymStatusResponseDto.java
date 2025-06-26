@@ -1,9 +1,7 @@
 package org.example.fitpass.domain.gym.dto.response;
-
 import java.time.LocalTime;
-import java.util.List;
-import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.gym.entity.Gym;
+import org.example.fitpass.domain.gym.enums.GymPostStatus;
 
 public record GymStatusResponseDto(
     String name,
@@ -13,28 +11,13 @@ public record GymStatusResponseDto(
     LocalTime openTime,
     LocalTime closeTime,
     Long gymId,
-    List<String> gymImage,
-    boolean isLiked
+    String summary,
+    GymPostStatus gymPostStatus
 ) {
 
-    public static GymResponseDto of(String name, String number, String content, String address,
-        LocalTime openTime, LocalTime closeTime, Long gymId, boolean isLiked) {
-        return new GymResponseDto(name, number, content, address, openTime, closeTime, gymId, List.of(), false);
+    public static GymStatusResponseDto of(String name, String number, String content, String fullAddress,
+        LocalTime openTime, LocalTime closeTime, Long gymId, String summary, GymPostStatus gymPostStatus) {
+        return new GymStatusResponseDto(name, number, content, fullAddress, openTime, closeTime, gymId, summary, gymPostStatus);
     }
 
-    public static GymResponseDto from(Gym gym, boolean isLiked) {
-        return new GymResponseDto(
-            gym.getName(),
-            gym.getNumber(),
-            gym.getContent(),
-            gym.getAddress(),
-            gym.getOpenTime(),
-            gym.getCloseTime(),
-            gym.getId(),
-            gym.getImages().stream()
-                .map(Image::getUrl)
-                .toList(),
-            isLiked
-        );
-    }
 }

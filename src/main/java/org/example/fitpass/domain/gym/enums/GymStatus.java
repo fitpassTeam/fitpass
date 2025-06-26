@@ -5,7 +5,7 @@ import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 
 public enum GymStatus {
-    PENDING, APPROVED, REJECTED, OPEN, CLOSE;
+    OPEN, CLOSE;
 
     public static GymStatus of(String type){
         return Arrays.stream(GymStatus.values())

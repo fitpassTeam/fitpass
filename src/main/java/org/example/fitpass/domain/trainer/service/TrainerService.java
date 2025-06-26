@@ -27,18 +27,23 @@ public class TrainerService {
 
     @Transactional
     public TrainerResponseDto createTrainer(Long gymId, String name, int price, String content,
-        List<String> trainerImage) {
+        List<String> trainerImage, String experience) {
 
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        Trainer trainer = Trainer.of(trainerImage, name, price, content);
+        Trainer trainer = Trainer.of(trainerImage, name, price, content, experience);
         trainer.assignToGym(gym);
 
         trainerRepository.save(trainer);
         return TrainerResponseDto.of(
+            trainer.getId(),
             trainer.getName(),
             trainer.getPrice(),
             trainer.getContent(),
-            trainer.getTrainerStatus()
+            trainer.getTrainerStatus(),
+            trainer.getExperience(),
+            trainer.getImages().stream()
+                .map(Image::getUrl)
+                .toList()
         );
     }
 
@@ -87,17 +92,23 @@ public class TrainerService {
 
     @Transactional
     public TrainerResponseDto updateTrainer(Long gymId, Long id, String name, int price,
-        String content, TrainerStatus trainerStatus) {
+        String content, TrainerStatus trainerStatus, String experience, List<String> imgs) {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         Trainer trainer = trainerRepository.findByIdOrElseThrow(id);
         trainer.validateTrainerBelongsToGym(trainer, gym);
-        trainer.update(name, price, content, trainerStatus);
+        trainer.getImages().clear();
+        trainer.update(name, price, content, trainerStatus, experience, imgs);
         trainerRepository.save(trainer);
         return TrainerResponseDto.of(
+            trainer.getId(),
             trainer.getName(),
             trainer.getPrice(),
             trainer.getContent(),
-            trainer.getTrainerStatus()
+            trainer.getTrainerStatus(),
+            trainer.getExperience(),
+            trainer.getImages().stream()
+                .map(Image::getUrl)
+                .toList()
         );
     }
 

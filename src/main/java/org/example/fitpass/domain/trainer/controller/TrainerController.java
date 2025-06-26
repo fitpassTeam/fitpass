@@ -43,7 +43,8 @@ public class TrainerController {
             dto.name(),
             dto.price(),
             dto.content(),
-            dto.trainerImage()
+            dto.trainerImage(),
+            dto.experience()
         );
         return ResponseEntity.status(SuccessCode.POST_TRAINER_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.POST_TRAINER_SUCCESS, response));
@@ -81,7 +82,9 @@ public class TrainerController {
             dto.name(),
             dto.price(),
             dto.content(),
-            dto.trainerStatus()
+            dto.trainerStatus(),
+            dto.experience(),
+            dto.trainerImage()
             );
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response));

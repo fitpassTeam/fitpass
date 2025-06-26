@@ -12,12 +12,12 @@ import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
+import org.example.fitpass.domain.gym.dto.response.GymStatusResponseDto;
 import org.example.fitpass.domain.gym.entity.Gym;
-import org.example.fitpass.domain.gym.enums.GymStatus;
+import org.example.fitpass.domain.gym.enums.GymPostStatus;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.likes.LikeType;
 import org.example.fitpass.domain.likes.repository.LikeRepository;
-import org.example.fitpass.domain.likes.service.LikeService;
 import org.example.fitpass.domain.review.dto.response.GymRatingResponseDto;
 import org.example.fitpass.domain.review.repository.ReviewRepository;
 import org.example.fitpass.domain.user.entity.User;
@@ -40,37 +40,37 @@ public class GymService {
     private final LikeRepository likeRepository;
 
     @Transactional
-    public GymResDto postGym(String address, String name, String content, String number, List<String> gymImage, LocalTime openTime, LocalTime closeTime, Long userId) {
+    public GymStatusResponseDto postGym(String city, String district, String detailAddress, String name, String content, String number, List<String> gymImage, LocalTime openTime, LocalTime closeTime, String summary, Long userId) {
         // 유저 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         // 오너인지 확인 여부
         if (user.getUserRole() != UserRole.OWNER) {
             throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
         }
-
-        Gym gym = Gym.of(gymImage,name,number,content,address,openTime,closeTime,user);
+        Gym gym = Gym.of(gymImage,name,number,content,city,district,detailAddress,openTime,closeTime,summary,user);
         gymRepository.save(gym);
-        return GymResDto.of(
+        return GymStatusResponseDto.of(
             gym.getName(),
             gym.getNumber(),
             gym.getContent(),
-            gym.getAddress(),
+            gym.getFullAddress(),
             gym.getOpenTime(),
             gym.getCloseTime(),
             gym.getId(),
+            gym.getSummary(),
             gym.getGymPostStatus()
         );
     }
 
     @Transactional(readOnly = true)
     public GymDetailResponDto getGym(Long gymId) {
-        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        Gym gym = gymRepository.findByIdAndGymPostStatusOrElseThrow(gymId, GymPostStatus.APPROVED);
         GymRatingResponseDto rating = reviewRepository.findGymRatingByGymIdOrElseThrow(gymId);
         return GymDetailResponDto.from(
             gym.getName(),
             gym.getNumber(),
             gym.getContent(),
-            gym.getAddress(),
+            gym.getFullAddress(),
             gym.getOpenTime(),
             gym.getCloseTime(),
             gym.getImages().stream().map(Image::getUrl).toList(),
@@ -83,7 +83,7 @@ public class GymService {
 
     @Transactional(readOnly = true)
     public Page<GymResponseDto> getAllGyms(Pageable pageable, Long userId) {
-        Page<Gym> gyms = gymRepository.findAll(pageable);
+        Page<Gym> gyms = gymRepository.findAllByGymPostStatus(GymPostStatus.APPROVED, pageable);
         Set<Long> likedGymIds = (userId != null) // null 값이 들어와도 에러가 발생하지 않고 사용하기 위하여 Set 사용
             ? likeRepository.findTargetIdsByUserIdAndLikeType(userId, LikeType.GYM)
             : Collections.emptySet();
@@ -103,7 +103,6 @@ public class GymService {
         if (user.getUserRole() != UserRole.OWNER) {
             throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
         }
-
         for (Image image : gym.getImages()) {
             s3Service.deleteFileFromS3(image.getUrl());
         }
@@ -114,7 +113,7 @@ public class GymService {
     }
 
     @Transactional
-    public GymResDto updateGym(String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, Long gymId, Long userId){
+    public GymResDto updateGym(String name, String number, String content, String city, String district, String detailAddress, LocalTime openTime, LocalTime closeTime, String summary,List<String> imgs,Long gymId,Long userId){
         // 유저 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         // 체육관 조회
@@ -123,17 +122,10 @@ public class GymService {
         if (user.getUserRole() != UserRole.OWNER) {
             throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
         }
-        gym.update(name,number,content,address,openTime,closeTime);
+        gym.getImages().clear();
+        gym.update(name,number,content,city,district,detailAddress,openTime,closeTime,summary, imgs);
         gymRepository.save(gym);
-        return GymResDto.of(
-            gym.getName(),
-            gym.getNumber(),
-            gym.getContent(),
-            gym.getAddress(),
-            gym.getOpenTime(),
-            gym.getCloseTime(),
-            gym.getId()
-        );
+        return GymResDto.from(gym);
     }
 
     @Transactional
@@ -159,7 +151,7 @@ public class GymService {
     // Admin용 승인 대기 목록 조회
     @Transactional(readOnly = true)
     public List<GymResponseDto> getPendingGymRequests() {
-        List<Gym> pendingGyms = gymRepository.findByGymStatus(GymStatus.PENDING);
+        List<Gym> pendingGyms = gymRepository.findByGymPostStatus(GymPostStatus.PENDING);
         return pendingGyms.stream()
             .map(gym -> GymResponseDto.from(gym, false)) // 좋아요는 false로 설정
             .toList();
@@ -170,7 +162,7 @@ public class GymService {
     public GymResponseDto approveGym(Long gymId) {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
 
-        if (gym.getGymStatus() != GymStatus.PENDING) {
+        if (gym.getGymPostStatus() != GymPostStatus.PENDING) {
             throw new BaseException(ExceptionCode.INVALID_GYM_APPROVAL_REQUEST);
         }
 
@@ -184,12 +176,24 @@ public class GymService {
     public GymResponseDto rejectGym(Long gymId) {
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
 
-        if (gym.getGymStatus() != GymStatus.PENDING) {
+        if (gym.getGymPostStatus() != GymPostStatus.PENDING) {
             throw new BaseException(ExceptionCode.INVALID_GYM_REJECTION_REQUEST);
         }
 
         gym.rejectGym();
         gymRepository.save(gym);
         return GymResponseDto.from(gym, false);
+    }
+
+    public List<GymResponseDto> getAllMyGyms(Long id) {
+        User user = userRepository.findByIdOrElseThrow(id);
+        // 오너인지 확인 여부
+        if (user.getUserRole() != UserRole.OWNER) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
+        List<Gym> myGyms = gymRepository.findByUserId(id);
+        return myGyms.stream()
+            .map(gym->GymResponseDto.from(gym,false))
+            .toList();
     }
 }

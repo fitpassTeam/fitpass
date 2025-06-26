@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.entity.Gym;
+import org.example.fitpass.domain.gym.enums.GymPostStatus;
 import org.example.fitpass.domain.gym.enums.GymStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,14 +15,23 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GymRepository extends JpaRepository<Gym, Long> {
+public interface GymRepository extends JpaRepository<Gym, Long>, GymRepositoryQuery {
 
     Optional<Gym> findById(Long gymId);
 
+    List<Gym> findByUserId(Long userId);
+
     default Gym findByIdOrElseThrow(Long gymId) {
-        Gym gym = findById(gymId).orElseThrow(
+        return findById(gymId).orElseThrow(
                 () -> new BaseException(ExceptionCode.GYM_NOT_FOUND));
-        return gym;
+    }
+
+    Optional<Gym> findByIdAndGymPostStatus(Long id, GymPostStatus gymPostStatus);
+
+    default Gym findByIdAndGymPostStatusOrElseThrow(Long gymId, GymPostStatus gymPostStatus) {
+         return findByIdAndGymPostStatus(gymId, gymPostStatus)
+                .orElseThrow(() -> new BaseException(ExceptionCode.GYM_NOT_FOUND));
+
     }
 
 //    Optional<Gym> findByIdAndIsDeletedFalse(Long gymId);
@@ -31,12 +41,13 @@ public interface GymRepository extends JpaRepository<Gym, Long> {
 //            .orElseThrow(() -> new BaseException(ExceptionCode.GYM_NOT_FOUND));
 //    }
 
-    Page<Gym> findAll(Pageable pageable);
+    Page<Gym> findAllByGymPostStatus(GymPostStatus gymPostStatus, Pageable pageable);
+
 
 //    @Query("SELECT g FROM Gym g WHERE g.name LIKE %:keyword% AND g.deletedAt IS NULL")
 //    Page<Gym> findByGymNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
     Page<Gym> findByNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
-    List<Gym> findByGymStatus(GymStatus gymStatus);
+    List<Gym> findByGymPostStatus(GymPostStatus gymPostStatus);
 }
