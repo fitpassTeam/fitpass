@@ -7,6 +7,7 @@ public record TrainerResponseDto (
     String name,
     int price,
     String content,
+    String experience,
     TrainerStatus trainerStatus
 ){
 
@@ -15,13 +16,14 @@ public record TrainerResponseDto (
             trainer.getName(),
             trainer.getPrice(),
             trainer.getContent(),
+            trainer.getExperience(),
             trainer.getTrainerStatus()
         );
     }
 
-    public static TrainerResponseDto of(String name, int price, String content,
+    public static TrainerResponseDto of(String name, int price, String content, String experience,
         TrainerStatus trainerStatus) {
-        return new TrainerResponseDto(name, price, content, trainerStatus);
+        return new TrainerResponseDto(name, price, content, experience, trainerStatus);
     }
 
 }
