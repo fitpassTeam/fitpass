@@ -10,8 +10,8 @@ public record TrainerResponseDto (
     String name,
     int price,
     String content,
-    TrainerStatus trainerStatus,
     String experience,
+    TrainerStatus trainerStatus,
     List<String> images
 ){
 
@@ -21,8 +21,8 @@ public record TrainerResponseDto (
             trainer.getName(),
             trainer.getPrice(),
             trainer.getContent(),
-            trainer.getTrainerStatus(),
             trainer.getExperience(),
+            trainer.getTrainerStatus(),
             trainer.getImages().stream()
                 .map(Image::getUrl)
                 .toList()

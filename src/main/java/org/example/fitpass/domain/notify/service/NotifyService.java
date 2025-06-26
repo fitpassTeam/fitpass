@@ -3,6 +3,7 @@ package org.example.fitpass.domain.notify.service;
 import java.io.IOException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.config.RedisDao;
 import org.example.fitpass.domain.notify.NotificationType;
 import org.example.fitpass.domain.notify.dto.NotifyDto;
 import org.example.fitpass.domain.notify.entity.Notify;
@@ -21,7 +22,7 @@ public class NotifyService {
 
     private final EmitterRepository emitterRepository;
     private final NotifyRepository notifyRepository;
-
+    private final RedisDao redisDao;
 
     public SseEmitter subscribe(Long id, String lastEventId) {
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
@@ -53,14 +54,16 @@ public class NotifyService {
         Notify notification = notifyRepository.save(createNotification(receiver, notificationType, content, url));
 
         Long receiverId = receiver.getId();
-
         // 한 유저의 연결들 가져온 후 하나 하나 메시지 전달
         Map<String, SseEmitter> emitters = emitterRepository.findAllEmittersById(receiverId);
+
+        if (emitters.isEmpty()) {
+            redisDao.saveNotifyToRedis(receiverId, notification); // 변경된 부분
+            return;
+        }
+
         emitters.forEach((key, emitter) -> {
-            // eventId를 해당 연결 key나 신규 생성값으로 활용 가능
-            String eventId = key;
-            emitterRepository.saveEventCache(receiverId, eventId, notification);
-            sendNotification(emitter, eventId, NotifyDto.Response.createResponse(notification));
+            sendNotification(emitter, key, NotifyDto.Response.createResponse(notification));
         });
     }
 

@@ -34,21 +34,24 @@ public enum ExceptionCode implements BaseCode {
     REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"400", "이미 해당 예약에 대한 리뷰가 존재합니다."),
     INVALID_GYM_MEMBERSHIP(HttpStatus.BAD_REQUEST, "400", "해당 체육관에 속한 이용권이 아닙니다."),
     ALREADY_STARTED(HttpStatus.BAD_REQUEST, "400", "이미 사용된 이용권입니다."),
-    FITNESS_GOAL_MISMATCH(HttpStatus.BAD_REQUEST, "404", "요청한 fitnessGoalId가 기록의 목표와 일치하지 않습니다"),
-    INVALID_JSON(HttpStatus.BAD_REQUEST, "404", "올바른 데이터 타입이 아닙니다."),
-    INVALID_UPGRADE_REQUEST(HttpStatus.BAD_REQUEST, "404", "승급 신청이 불가능한 상태입니다."),
-    INVALID_APPROVAL_REQUEST(HttpStatus.BAD_REQUEST, "404", "승인할 수 없는 요청입니다."),
-    INVALID_REJECTION_REQUEST(HttpStatus.BAD_REQUEST, "404", "거절할 수 없는 요청입니다."),
-    INVALID_USER_ROLE(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 사용자 권한입니다."),
-    INVALID_GENDER(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 성별입니다."),
-    INVALID_RESERVATION_STATUS(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 예약 상태입니다."),
-    INVALID_TRAINER_STATUS(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 트레이너 상태입니다."),
-    INVALID_POINT_STATUS(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 포인트 상태입니다."),
-    INVALID_POINT_TYPE(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 포인트 유형입니다."),
-    INVALID_SENDER_TYPE(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 발신자 유형입니다."),
-    INVALID_GYM_STATUS(HttpStatus.BAD_REQUEST, "404", "유효하지 않은 체육관 상태입니다."),
-    INVALID_GYM_APPROVAL_REQUEST(HttpStatus.BAD_REQUEST, "404", "승인할 수 없는 체육관입니다."),
-    INVALID_GYM_REJECTION_REQUEST(HttpStatus.BAD_REQUEST, "404", "거절할 수 없는 체육관입니다."),
+    FITNESS_GOAL_MISMATCH(HttpStatus.BAD_REQUEST, "400", "요청한 fitnessGoalId가 기록의 목표와 일치하지 않습니다"),
+    INVALID_JSON(HttpStatus.BAD_REQUEST, "400", "올바른 데이터 타입이 아닙니다."),
+    INVALID_UPGRADE_REQUEST(HttpStatus.BAD_REQUEST, "400", "승급 신청이 불가능한 상태입니다."),
+    INVALID_APPROVAL_REQUEST(HttpStatus.BAD_REQUEST, "400", "승인할 수 없는 요청입니다."),
+    INVALID_REJECTION_REQUEST(HttpStatus.BAD_REQUEST, "400", "거절할 수 없는 요청입니다."),
+    INVALID_USER_ROLE(HttpStatus.BAD_REQUEST, "400", "유효하지 않은 사용자 권한입니다."),
+    INVALID_GENDER(HttpStatus.BAD_REQUEST, "400", "유효하지 않은 성별입니다."),
+    INVALID_RESERVATION_STATUS(HttpStatus.BAD_REQUEST, "400", "유효하지 않은 예약 상태입니다."),
+    INVALID_TRAINER_STATUS(HttpStatus.BAD_REQUEST, "400", "유효하지 않은 트레이너 상태입니다."),
+    INVALID_POINT_STATUS(HttpStatus.BAD_REQUEST, "400", "유효하지 않은 포인트 상태입니다."),
+    INVALID_POINT_TYPE(HttpStatus.BAD_REQUEST, "400", "유효하지 않은 포인트 유형입니다."),
+    INVALID_SENDER_TYPE(HttpStatus.BAD_REQUEST, "400", "유효하지 않은 발신자 유형입니다."),
+    INVALID_GYM_STATUS(HttpStatus.BAD_REQUEST, "400", "유효하지 않은 체육관 상태입니다."),
+    INVALID_GYM_APPROVAL_REQUEST(HttpStatus.BAD_REQUEST, "400", "승인할 수 없는 체육관입니다."),
+    INVALID_GYM_REJECTION_REQUEST(HttpStatus.BAD_REQUEST, "400", "거절할 수 없는 체육관입니다."),
+    RESERVATION_NOT_PENDING(HttpStatus.BAD_REQUEST, "400", "대기 중인 예약이 아닙니다."),
+    INVALID_ACTIVATION_DATE_PAST(HttpStatus.BAD_REQUEST, "400", "활성화 날짜는 오늘 이후로 설정해주세요."),
+    INVALID_ACTIVATION_DATE_TOO_FAR(HttpStatus.BAD_REQUEST, "400", "활성화 날짜는 구매일로부터 7일 이내로 설정해주세요."),
 
     // 401 Unauthorized = 인증이 안될 때
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰입니다."),
@@ -72,6 +75,7 @@ public enum ExceptionCode implements BaseCode {
     NOT_BELONG_TO_GYM(HttpStatus.FORBIDDEN, "403", "해당 체육관의 이용권 아닙니다."),
     NOT_REVIEW_OWNER(HttpStatus.FORBIDDEN, "403", "리뷰 작성자가 아닙니다."),
     NOT_HAS_AUTHORITY(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
+    NO_TRAINER_AUTHORITY(HttpStatus.FORBIDDEN, "403", "트레이너 권한이 없습니다."),
 
     // 404 Not Found
     CANT_FIND_DATA(HttpStatus.NOT_FOUND,"404", "해당 데이터를 찾을 수 없습니다."),
@@ -100,6 +104,7 @@ public enum ExceptionCode implements BaseCode {
     RESERVATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "해당 시간에 이미 예약이 존재합니다."),
     RESERVATION_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "예약 처리 중 인터럽트가 발생했습니다."),
     FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "500", "이미지 업로드에 실패했습니다.");
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

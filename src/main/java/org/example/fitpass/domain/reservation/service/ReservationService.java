@@ -129,7 +129,7 @@ public class ReservationService {
 
     // 예약 생성
     public ReservationResponseDto createReservation(
-        LocalDate reservationDate, LocalTime reservationTime, ReservationStatus status,
+        LocalDate reservationDate, LocalTime reservationTime,
         Long userId, Long gymId, Long trainerId) {
 
         // Redis 분산 락 키 생성
@@ -144,7 +144,7 @@ public class ReservationService {
             if (!lock.tryLock(10, 30, TimeUnit.SECONDS)) {
                 throw new BaseException(ExceptionCode.RESERVATION_ALREADY_EXISTS);
             }
-            return reservationCreate(reservationDate, reservationTime, status, userId, gymId,
+            return reservationCreate(reservationDate, reservationTime, ReservationStatus.PENDING, userId, gymId,
                 trainerId);
 
         } catch (InterruptedException e) {
@@ -179,16 +179,24 @@ public class ReservationService {
             throw new BaseException(ExceptionCode.NOT_RESERVATION_OWNER);
         }
 
-        // PENDING 상태만 수정 가능
-        if (!reservation.getReservationStatus().equals(ReservationStatus.PENDING)) {
-            throw new BaseException(ExceptionCode.RESERVATION_STATUS_NOT_CHANGEABLE);
-        }
-
-        // 2일 전까지만 변경 가능
+        // 상태별 수정 기간 확인
         LocalDate today = LocalDate.now();
         LocalDate reservationDates = reservation.getReservationDate();
-        if (ChronoUnit.DAYS.between(today, reservationDates) < 2) {
-            throw new BaseException(ExceptionCode.RESERVATION_CHANGE_DEADLINE_PASSED);
+        long daysUntilReservation = ChronoUnit.DAYS.between(today, reservationDates);
+
+        if (reservation.getReservationStatus().equals(ReservationStatus.PENDING)) {
+            // PENDING: 2일 전까지 수정 가능
+            if (daysUntilReservation < 2) {
+                throw new BaseException(ExceptionCode.RESERVATION_CHANGE_DEADLINE_PASSED);
+            }
+        } else if (reservation.getReservationStatus().equals(ReservationStatus.CONFIRMED)) {
+            // CONFIRMED: 1주일(7일) 전까지 수정 가능
+            if (daysUntilReservation < 7) {
+                throw new BaseException(ExceptionCode.RESERVATION_CHANGE_DEADLINE_PASSED);
+            }
+        } else {
+            // COMPLETED, CANCELLED 상태는 수정 불가
+            throw new BaseException(ExceptionCode.RESERVATION_STATUS_NOT_CHANGEABLE);
         }
 
         // 새로운 예약 날짜도 2일 후부터 가능한지 검증
@@ -207,13 +215,21 @@ public class ReservationService {
         if (isDuplicate) {
             throw new BaseException(ExceptionCode.RESERVATION_TIME_CONFLICT);
         }
+
         // 예약 정보 업데이트
-        reservation.updateReservation(
+        Reservation updateReservation = reservation.updateReservation(
             reservationDate,
             reservationTime,
             status);
 
-        Reservation updateReservation = reservationRepository.save(reservation);
+        // 수정 알림
+        String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + reservation.getId();
+        String content =
+            user.getName() + "님의 예약이 변경되었습니다." + "변경된 예약 날짜는 " + reservation.getReservationDate()
+                + " "
+                + reservation.getReservationTime() + " 입니다. ";
+        notifyService.send(user, NotificationType.RESERVATION, content, url);
+        notifyService.send(trainer.getGym().getOwner(), NotificationType.RESERVATION, content, url);
 
         return UpdateReservationResponseDto.from(updateReservation);
     }
@@ -235,18 +251,23 @@ public class ReservationService {
             throw new BaseException(ExceptionCode.NOT_RESERVATION_OWNER);
         }
 
-        // PENDING 또는 CONFIRMED 상태만 취소 가능
-        if (!reservation.getReservationStatus().equals(ReservationStatus.PENDING) &&
-            !reservation.getReservationStatus().equals(ReservationStatus.CONFIRMED)) {
-            throw new BaseException(ExceptionCode.RESERVATION_STATUS_NOT_CANCELLABLE);
-        }
-
-        // 취소 기한 확인 (예: 2일 전까지만 취소 가능)
         LocalDate today = LocalDate.now();
         LocalDate reservationDate = reservation.getReservationDate();
+        long daysUntilReservation = ChronoUnit.DAYS.between(today, reservationDate);
 
-        if (ChronoUnit.DAYS.between(today, reservationDate) < 2) {
-            throw new BaseException(ExceptionCode.RESERVATION_CANCEL_DEADLINE_PASSED);
+        if (reservation.getReservationStatus().equals(ReservationStatus.PENDING)) {
+            // PENDING: 당일 취소만 불가
+            if (daysUntilReservation < 1) {
+                throw new BaseException(ExceptionCode.RESERVATION_CANCEL_DEADLINE_PASSED);
+            }
+        } else if (reservation.getReservationStatus().equals(ReservationStatus.CONFIRMED)) {
+            // CONFIRMED: 1주일(7일) 전까지 취소 가능
+            if (daysUntilReservation < 7) {
+                throw new BaseException(ExceptionCode.RESERVATION_CANCEL_DEADLINE_PASSED);
+            }
+        } else {
+            // COMPLETED, CANCELLED 상태는 취소 불가
+            throw new BaseException(ExceptionCode.RESERVATION_STATUS_NOT_CANCELLABLE);
         }
 
         // 포인트 환불
@@ -256,6 +277,15 @@ public class ReservationService {
 
         pointService.refundPoint(userId, pointRefundRequestDto.amount(),
             pointRefundRequestDto.description());
+
+        // 취소 알림
+        String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + reservation.getId();
+        String content =
+            user.getName() + "님의 예약이 취소되었습니다." + "취소된 예약 날짜는 " + reservation.getReservationDate()
+                + " "
+                + reservation.getReservationTime() + " 입니다. ";
+        notifyService.send(user, NotificationType.RESERVATION, content, url);
+        notifyService.send(trainer.getGym().getOwner(), NotificationType.RESERVATION, content, url);
 
         // 예약 상태를 취소로 변경
         reservation.cancelReservation();
@@ -330,5 +360,103 @@ public class ReservationService {
         }
 
         return timeSlots;
+    }
+
+    // 예약 승인
+    @Transactional
+    public void confirmReservation(Long userId, Long gymId, Long trainerId, Long reservationId) {
+        // 사용자 조회
+        User user = userRepository.findByIdOrElseThrow(userId);
+        // 체육관 조회
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        // 트레이너 조회
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
+        // 예약 조회
+        Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
+        // 오너 확인
+        if (!user.getUserRole().equals(UserRole.OWNER)) {
+            throw new BaseException(ExceptionCode.NO_OWNER_AUTHORITY);
+        }
+        // 체육관 소유권 확인
+        if (!Objects.equals(gym.getOwner().getId(), userId)) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
+        // 트레이너 소속 확인
+        if (!Objects.equals(trainer.getGym().getId(), gymId)) {
+            throw new BaseException(ExceptionCode.INVALID_GYM_TRAINER_RELATION);
+        }
+        // PENDING 상태인지 확인
+        if (!reservation.getReservationStatus().equals(ReservationStatus.PENDING)) {
+            throw new BaseException(ExceptionCode.RESERVATION_NOT_PENDING);
+        }
+
+        // 상태를 CONFIRMED로 변경
+        reservation.updateReservation(
+            reservation.getReservationDate(),
+            reservation.getReservationTime(),
+            ReservationStatus.CONFIRMED
+        );
+
+        // 알림 전송
+        String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + reservation.getId();
+        String content =
+            trainer.getName() + "트레이너님" + "예약이 승인되었습니다. 예약 날짜: " + reservation.getReservationDate()
+                + " " + reservation.getReservationTime();
+        // 유저에게 전송
+        notifyService.send(reservation.getUser(), NotificationType.RESERVATION, content, url);
+        // 사장에게 전송
+        notifyService.send(reservation.getGym().getOwner(), NotificationType.RESERVATION, content,
+            url);
+    }
+
+    // 예약 거부
+    @Transactional
+    public void rejectReservation(Long userId, Long gymId, Long trainerId, Long reservationId) {
+        // 사용자 조회
+        User user = userRepository.findByIdOrElseThrow(userId);
+        // 체육관 조회
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        // 트레이너 조회
+        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
+        // 예약 조회
+        Reservation reservation = reservationRepository.findByIdOrElseThrow(reservationId);
+        // 오너 확인
+        if (!user.getUserRole().equals(UserRole.OWNER)) {
+            throw new BaseException(ExceptionCode.NO_OWNER_AUTHORITY);
+        }
+        // 체육관 소유권 확인
+        if (!Objects.equals(gym.getOwner().getId(), userId)) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
+        // 트레이너 소속 확인
+        if (!Objects.equals(trainer.getGym().getId(), gymId)) {
+            throw new BaseException(ExceptionCode.INVALID_GYM_TRAINER_RELATION);
+        }
+
+        // PENDING 상태인지 확인
+        if (!reservation.getReservationStatus().equals(ReservationStatus.PENDING)) {
+            throw new BaseException(ExceptionCode.RESERVATION_NOT_PENDING);
+        }
+
+        // 포인트 환불
+        String description = "PT 예약 거부 환불 - " + trainer.getName();
+        PointUseRefundRequestDto pointRefundRequestDto = new PointUseRefundRequestDto(
+            trainer.getPrice(), description);
+
+        pointService.refundPoint(reservation.getUser().getId(),
+            pointRefundRequestDto.amount(),
+            pointRefundRequestDto.description());
+
+        // 상태를 CANCELLED로 변경
+        reservation.cancelReservation();
+
+        // 알림 전송
+        String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + reservation.getId();
+        String content = "예약이 거부되었습니다. 포인트가 환불되었습니다.";
+        // 유저에게 전송
+        notifyService.send(reservation.getUser(), NotificationType.RESERVATION, content, url);
+        // 사장에게 전송
+        notifyService.send(reservation.getGym().getOwner(), NotificationType.RESERVATION, content,
+            url);
     }
 }

@@ -18,17 +18,18 @@ public record TrainerRequestDto (
     @Size(max = 200, message = "트레이너 소개는 200글자 내로 입력해주세요.")
     String content,
 
-    List<String> trainerImage,
+    @NotBlank(message = "경력을 입력해주세요.")
+    String experience,
 
-    @NotBlank(message = "경력은 필수입니다.")
-    String experience
+    List<String> trainerImage
 ){
-    public TrainerRequestDto(String name, int price, String content, List<String> trainerImage, String experience){
+    public TrainerRequestDto(String name, int price, String content, String experience, List<String> trainerImage){
         this.name = name;
         this.price = price;
         this.content = content;
-        this.trainerImage = trainerImage;
         this.experience = experience;
+        this.trainerImage = trainerImage;
+
     }
 }
 

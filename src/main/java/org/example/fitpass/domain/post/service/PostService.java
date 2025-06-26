@@ -78,7 +78,7 @@ public class PostService {
 
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
 
-        List<Post> posts = postRepository.findByGymIdAndPostType(gymId, postType);
+        List<Post> posts = postRepository.findByGymIdAndPostTypeOrderByCreatedAtDesc(gymId, postType);
 
         return posts.stream()
                 .map(PostResponseDto::from)

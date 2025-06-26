@@ -20,7 +20,7 @@ public record TrainerUpdateRequestDto(
     @Size(max = 200, message = "트레이너 소개는 200글자 내로 입력해주세요.")
     String content,
 
-    @NotBlank(message = "트레이너 정보를 입력해주세요.")
+    @NotBlank(message = "경력을 입력해주세요.")
     String experience,
 
     TrainerStatus trainerStatus,
