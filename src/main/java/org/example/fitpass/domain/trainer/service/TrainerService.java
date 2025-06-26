@@ -158,8 +158,8 @@ public class TrainerService {
             trainer.getName(),
             trainer.getPrice(),
             trainer.getContent(),
-            trainer.getExperience(),
             trainer.getTrainerStatus(),
+            trainer.getExperience(),
             trainer.getImages().stream()
                 .map(Image::getUrl)
                 .toList()
