@@ -23,7 +23,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.time.Duration;
 import java.util.List;
 
-@Configuration
+@Configuration("redisConfig")
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
 public class RedisConfig {
 
@@ -67,7 +67,7 @@ public class RedisConfig {
                 .build();
     }
 
-    @Bean("stringRedisTemplate")
+    @Bean("customStringRedisTemplate")
     public RedisTemplate<String, String> stringRedisTemplate() {
         RedisTemplate<String, String> redis = new RedisTemplate<>();
         redis.setConnectionFactory(redisConnectionFactory());
