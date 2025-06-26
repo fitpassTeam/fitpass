@@ -70,10 +70,11 @@ public class Reservation extends BaseEntity {
     }
 
     // 수정 기능
-    public void updateReservation(LocalDate reservationDate, LocalTime reservationTime, ReservationStatus reservationStatus) {
+    public Reservation updateReservation(LocalDate reservationDate, LocalTime reservationTime, ReservationStatus reservationStatus) {
        this.reservationDate = reservationDate;
         this.reservationTime = reservationTime;
         this.reservationStatus = reservationStatus;
+        return this;
     }
 
     // 취소 상태 변환

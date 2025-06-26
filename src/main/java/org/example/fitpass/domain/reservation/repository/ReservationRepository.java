@@ -59,4 +59,25 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     // 사용자별 예약 목록 (최신순)
     List<Reservation> findByUserOrderByReservationDateDescReservationTimeDesc(User user);
 
+    // 만료된 확정 예약 조회
+    @Query("SELECT r FROM Reservation r WHERE r.reservationStatus = 'CONFIRMED' " +
+        "AND (r.reservationDate < :today OR " +
+        "(r.reservationDate = :today AND r.reservationTime < :currentTime))")
+    List<Reservation> findExpiredConfirmedReservations(
+        @Param("today") LocalDate today,
+        @Param("currentTime") LocalTime currentTime
+    );
+
+    // 24시간 이상 PENDING 상태인 예약 조회
+    @Query("SELECT r FROM Reservation r WHERE r.reservationStatus = 'PENDING' " +
+        "AND r.createdAt < :cutoffDate")
+    List<Reservation> findLongPendingReservations(@Param("cutoffDate") LocalDate cutoffDate);
+
+    // 특정 날짜의 확정된 예약들 조회
+    List<Reservation> findByReservationDateAndReservationStatus(
+        LocalDate reservationDate, ReservationStatus reservationStatus);
+
+    // 특정 날짜, 시간의 확정된 예약들 조회
+    List<Reservation> findByReservationDateAndReservationTimeAndReservationStatus(
+        LocalDate reservationDate, LocalTime reservationTime, ReservationStatus reservationStatus);
 }

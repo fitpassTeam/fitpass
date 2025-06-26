@@ -43,6 +43,8 @@ public enum SuccessCode implements BaseCode {
     AVAILABLE_TIMES_GET_SUCCESS(HttpStatus.OK, "4005", "예약 가능 시간 조회가 완료되었습니다."),
     TRAINER_RESERVATION_LIST_SUCCESS(HttpStatus.OK, "4006", "트레이너 예약 목록 조회가 완료되었습니다."),
     USER_RESERVATION_LIST_SUCCESS(HttpStatus.OK, "4007", "사용자 예약 목록 조회가 완료되었습니다."),
+    RESERVATION_CONFIRM_SUCCESS(HttpStatus.OK, "4008","예약 승인이 완료되었습니다."),
+    RESERVATION_REJECT_SUCCESS(HttpStatus.OK, "4009","예약 거부가 완료되었습니다."),
 
     // 5000: Gym 성공 코드
     GYM_POST_SUCCESS(HttpStatus.OK, "5001", "체육관 등록 완료되었습니다."),
