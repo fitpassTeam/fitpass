@@ -1,9 +1,14 @@
 package org.example.fitpass.domain.user.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.dto.PageResponse;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
+import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
+import org.example.fitpass.domain.gym.entity.Gym;
+import org.example.fitpass.domain.gym.service.GymService;
 import org.example.fitpass.domain.user.dto.request.PasswordCheckRequestDto;
 import org.example.fitpass.domain.user.dto.request.UpdatePasswordRequestDto;
 import org.example.fitpass.domain.user.dto.request.UpdatePhoneRequestDto;
@@ -11,6 +16,9 @@ import org.example.fitpass.domain.user.dto.response.UserResponseDto;
 import org.example.fitpass.domain.user.service.UserService;
 import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.user.dto.request.UserInfoUpdateRequestDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
+    private final GymService gymService;
 
     // 비밀번호 조회
     @PostMapping("/me/password-check")
@@ -103,6 +112,15 @@ public class UserController {
         UserResponseDto response = userService.requestOwnerUpgrade(userDetails.getUsername());
         return ResponseEntity.status(SuccessCode.OWNER_UPGRADE_REQUEST_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.OWNER_UPGRADE_REQUEST_SUCCESS, response));
+    }
+
+    @GetMapping("/me/gyms")
+    public ResponseEntity<ResponseMessage<List<GymResponseDto>>> getAllGyms(
+        @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        List<GymResponseDto> response = gymService.getAllMyGyms(user.getId());
+        return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.GYM_SEARCH_SUCCESS, response));
     }
 
 }

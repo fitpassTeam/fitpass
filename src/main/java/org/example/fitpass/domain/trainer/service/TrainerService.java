@@ -52,11 +52,15 @@ public class TrainerService {
 
         trainerRepository.save(trainer);
         return TrainerResponseDto.of(
+            trainer.getId(),
             trainer.getName(),
             trainer.getPrice(),
             trainer.getContent(),
+            trainer.getTrainerStatus(),
             trainer.getExperience(),
-            trainer.getTrainerStatus()
+            trainer.getImages().stream()
+                .map(Image::getUrl)
+                .toList()
         );
     }
 
@@ -127,7 +131,7 @@ public class TrainerService {
 
     @Transactional
     public TrainerResponseDto updateTrainer(Long userId, Long gymId, Long trainerId, String name, int price,
-        String content, String experience, TrainerStatus trainerStatus) {
+        String content, String experience, TrainerStatus trainerStatus, List<String> imgs) {
         // 유저 조회
         User user = userRepository.findByIdOrElseThrow(userId);
         // 오너인지 확인 여부
@@ -146,14 +150,19 @@ public class TrainerService {
             throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
         }
         trainer.validateTrainerBelongsToGym(trainer, gym);
-        trainer.update(name, price, content, experience, trainerStatus);
+        trainer.getImages().clear();
+        trainer.update(name, price, content, trainerStatus, experience, imgs);
         trainerRepository.save(trainer);
         return TrainerResponseDto.of(
+            trainer.getId(),
             trainer.getName(),
             trainer.getPrice(),
             trainer.getContent(),
+            trainer.getTrainerStatus(),
             trainer.getExperience(),
-            trainer.getTrainerStatus()
+            trainer.getImages().stream()
+                .map(Image::getUrl)
+                .toList()
         );
     }
 

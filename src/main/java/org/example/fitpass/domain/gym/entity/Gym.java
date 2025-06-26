@@ -19,8 +19,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
-import org.example.fitpass.common.error.BaseException;
-import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.domain.gym.enums.GymPostStatus;
 import org.example.fitpass.domain.gym.enums.GymStatus;
 import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.trainer.entity.Trainer;
@@ -49,8 +48,17 @@ public class Gym extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Column
+    private String summary;
+
     @Column(nullable = false)
-    private String address;
+    private String city;     // 예: "서울", "경기"
+
+    @Column(nullable = false)
+    private String district; // 예: "동구", "강남구"
+
+    @Column(nullable = false)
+    private String detailAddress; // 예: "테헤란로 332"
 
     @Column(nullable = false, columnDefinition = "TIME")
     private LocalTime openTime;
@@ -59,7 +67,10 @@ public class Gym extends BaseEntity {
     private LocalTime closeTime;
 
     @Enumerated(EnumType.STRING)
-    private GymStatus gymStatus = GymStatus.PENDING;
+    private GymStatus gymStatus = GymStatus.CLOSE;
+
+    @Enumerated(EnumType.STRING)
+    private GymPostStatus gymPostStatus = GymPostStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -71,11 +82,13 @@ public class Gym extends BaseEntity {
     @OneToMany(mappedBy = "gym", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
-    public Gym(List<Image> gymImage, String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, User user) {
+    public Gym(List<Image> gymImage, String name, String number, String content, String city, String district,String detailAddress, LocalTime openTime, LocalTime closeTime, User user) {
         this.name = name;
         this.number = number;
         this.content = content;
-        this.address = address;
+        this.city = city;
+        this.district = district;
+        this.detailAddress = detailAddress;
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.user = user;
@@ -86,11 +99,30 @@ public class Gym extends BaseEntity {
         }
     }
 
-    public static Gym of(List<String> gymImage, String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime, User user) {
+    public Gym(List<Image> gymImage, String name, String number, String content, String city, String district, String detailAddress, LocalTime openTime, LocalTime closeTime,String summary, User user) {
+        this.name = name;
+        this.number = number;
+        this.content = content;
+        this.city = city;
+        this.district = district;
+        this.detailAddress = detailAddress;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.summary = summary;
+        this.user = user;
+
+        for (Image image : gymImage) {
+            image.assignToGym(this);
+            this.images.add(image);
+        }
+    }
+
+
+    public static Gym of(List<String> gymImage, String name, String number, String content, String city, String district, String detailAddress, LocalTime openTime, LocalTime closeTime, String summary, User user) {
         List<Image> images = gymImage.stream()
             .map(Image::new)
             .toList();
-        return new Gym(images, name, number, content, address, openTime, closeTime, user);
+        return new Gym(images, name, number, content, city, district, detailAddress, openTime, closeTime, summary, user);
     }
 
     public void updatePhoto(List<String> imageUrls, Gym gym) {
@@ -101,7 +133,7 @@ public class Gym extends BaseEntity {
         this.images.addAll(convertedImages);
     }
 
-    public void update(String name, String number, String content, String address, LocalTime openTime, LocalTime closeTime) {
+    public void update(String name, String number, String content, String city, String district, String detailAddress, LocalTime openTime, LocalTime closeTime, String summary, List<String> updatedImages) {
         if (name != null) {
             this.name = name;
         }
@@ -111,8 +143,14 @@ public class Gym extends BaseEntity {
         if (content != null) {
             this.content = content;
         }
-        if (address != null) {
-            this.address = address;
+        if (city != null) {
+            this.city = city;
+        }
+        if (district != null) {
+            this.district = district;
+        }
+        if (detailAddress != null) {
+            this.detailAddress = detailAddress;
         }
         if (openTime != null) {
             this.openTime = openTime;
@@ -120,6 +158,23 @@ public class Gym extends BaseEntity {
         if (closeTime != null) {
             this.closeTime = closeTime;
         }
+        if (summary != null) {
+            this.summary = summary;
+        }
+        if (updatedImages != null) {
+            List<Image> newImages = updatedImages.stream()
+                .map(url -> {
+                    Image img = new Image(url);
+                    img.assignToGym(this);
+                    return img;
+                })
+                .toList();
+            this.images.addAll(newImages);
+        }
+    }
+
+    public String getFullAddress() {
+        return city + " " + district + " " + detailAddress;
     }
 
     public User getOwner(){
@@ -127,10 +182,10 @@ public class Gym extends BaseEntity {
     }
 
     public void approveGym() {
-        this.gymStatus = GymStatus.APPROVED;
+        this.gymPostStatus = gymPostStatus.APPROVED;
     }
 
     public void rejectGym() {
-        this.gymStatus = GymStatus.REJECTED;
+        this.gymPostStatus = gymPostStatus.REJECTED;
     }
 }

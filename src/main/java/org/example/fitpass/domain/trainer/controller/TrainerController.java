@@ -92,7 +92,8 @@ public class TrainerController {
             dto.price(),
             dto.content(),
             dto.experience(),
-            dto.trainerStatus()
+            dto.trainerStatus(),
+            dto.trainerImage()
             );
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response));

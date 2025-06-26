@@ -39,7 +39,7 @@ public record UserReservationResponseDto(
         GymInfo gymInfo = new GymInfo(
             reservation.getGym().getId(),
             reservation.getGym().getName(),
-            reservation.getGym().getAddress(),
+            reservation.getGym().getFullAddress(),
             reservation.getGym().getNumber()
         );
 

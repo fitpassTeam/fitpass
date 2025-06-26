@@ -11,6 +11,7 @@ import org.example.fitpass.domain.gym.dto.request.GymRequestDto;
 import org.example.fitpass.domain.gym.dto.response.GymDetailResponDto;
 import org.example.fitpass.domain.gym.dto.response.GymResDto;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
+import org.example.fitpass.domain.gym.dto.response.GymStatusResponseDto;
 import org.example.fitpass.domain.gym.service.GymService;
 import org.example.fitpass.domain.review.dto.response.GymRatingResponseDto;
 import org.springframework.data.domain.Page;
@@ -37,17 +38,20 @@ public class GymController {
     private final GymService gymService;
 
     @PostMapping
-    public ResponseEntity<ResponseMessage<GymResDto>> postGym(
+    public ResponseEntity<ResponseMessage<GymStatusResponseDto>> postGym(
         @Valid @RequestBody GymRequestDto request,
         @AuthenticationPrincipal CustomUserDetails user) {
-        GymResDto response = gymService.postGym(
-            request.address(),
+        GymStatusResponseDto response = gymService.postGym(
+            request.city(),
+            request.district(),
+            request.detailAddress(),
             request.name(),
             request.content(),
             request.number(),
             request.gymImage(),
             request.openTime(),
             request.closeTime(),
+            request.summary(),
             user.getId()
         );
         return ResponseEntity.status(SuccessCode.GYM_REQUEST_POST_SUCCESS.getHttpStatus())
@@ -92,9 +96,13 @@ public class GymController {
             request.name(),
             request.number(),
             request.content(),
-            request.address(),
+            request.city(),
+            request.district(),
+            request.detailAddress(),
             request.openTime(),
             request.closeTime(),
+            request.summary(),
+            request.gymImage(),
             gymId,
             user.getId()
         );

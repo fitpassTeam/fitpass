@@ -9,16 +9,17 @@ public record GymResDto(
     String name,
     String number,
     String content,
-    String address,
+    String address, // 조합된 주소
     LocalTime openTime,
     LocalTime closeTime,
     Long gymId,
-    List<String> gymImage
+    List<String> gymImage,
+    String summary
 ) {
 
     public static GymResDto of(String name, String number, String content, String address,
-        LocalTime openTime, LocalTime closeTime, Long gymId) {
-        return new GymResDto(name, number, content, address, openTime, closeTime, gymId, List.of());
+        LocalTime openTime, LocalTime closeTime, Long gymId, String summary) {
+        return new GymResDto(name, number, content, address, openTime, closeTime, gymId, List.of(), summary);
     }
 
     public static GymResDto from(Gym gym) {
@@ -26,13 +27,14 @@ public record GymResDto(
             gym.getName(),
             gym.getNumber(),
             gym.getContent(),
-            gym.getAddress(),
+            gym.getFullAddress(),
             gym.getOpenTime(),
             gym.getCloseTime(),
             gym.getId(),
             gym.getImages().stream()
                 .map(Image::getUrl)
-                .toList()
+                .toList(),
+            gym.getSummary()
         );
     }
 }

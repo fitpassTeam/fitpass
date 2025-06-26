@@ -47,7 +47,7 @@ public class Trainer extends BaseEntity {
 
     @Column(nullable = false)
     private String content;
-    
+
     @Column(nullable = false)
     private String experience;
 
@@ -91,13 +91,23 @@ public class Trainer extends BaseEntity {
         this.images.addAll(convertedImages);
     }
 
-    public void update(String name, int price, String content, String experience,
-        TrainerStatus trainerStatus) {
+    public void update(String name, int price, String content,
+        TrainerStatus trainerStatus, String experience, List<String> updatedImages) {
         this.name = name;
         this.price = price;
         this.content = content;
-        this.experience = experience;
         this.trainerStatus = trainerStatus;
+        this.experience = experience;
+        if (updatedImages != null) {
+            List<Image> newImages = updatedImages.stream()
+                .map(url -> {
+                    Image img = new Image(url);
+                    img.assignToTrainer(this);
+                    return img;
+                })
+                .toList();
+            this.images.addAll(newImages);
+        }
     }
 
     public void validateTrainerBelongsToGym(Trainer trainer, Gym gym) {
