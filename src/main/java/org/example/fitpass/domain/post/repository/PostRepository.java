@@ -27,8 +27,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByGymIdAndPostType(Long gymId, PostType postType, Pageable pageable);
 
     // NOTICE 게시물 리스트 조회 생성시간 내림차순
-    @Query("SELECT p FROM Post p WHERE p.gym.id = :gymId AND p.postType = :postType ORDER BY p.createdAt DESC")
-    List<Post> findByGymIdAndPostType(@Param("gymId")Long gymId, @Param("postType") PostType postType);
+//    @Query("SELECT p FROM Post p WHERE p.gym.id = :gymId AND p.postType = :postType ORDER BY p.createdAt DESC")
+    List<Post> findByGymIdAndPostTypeOrderByCreatedAtDesc(@Param("gymId")Long gymId, @Param("postType") PostType postType);
 
     @Query("SELECT p FROM Post p WHERE p.postStatus <> 'DELETED' AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%)")
     Page<Post> searchByTitleOrContent(@Param("keyword") String keyword, Pageable pageable);

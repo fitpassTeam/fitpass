@@ -22,4 +22,6 @@ public class NotifyController {
         @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "")String lastEventId){
         return notifyService.subscribe(user.getId(), lastEventId);
     }
+
+
 }

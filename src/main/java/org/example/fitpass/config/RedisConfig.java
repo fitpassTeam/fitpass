@@ -1,5 +1,7 @@
 package org.example.fitpass.config;
 
+import jakarta.annotation.PostConstruct;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
@@ -12,11 +14,14 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.List;
 
 @Configuration
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
@@ -62,12 +67,39 @@ public class RedisConfig {
                 .build();
     }
 
-    @Bean
-    public RedisTemplate<String, String> redisTemplate() {
+    @Bean("stringRedisTemplate")
+    public RedisTemplate<String, String> stringRedisTemplate() {
         RedisTemplate<String, String> redis = new RedisTemplate<>();
         redis.setConnectionFactory(redisConnectionFactory());
         redis.setKeySerializer(new StringRedisSerializer());
         redis.setValueSerializer(new StringRedisSerializer());
         return redis;
+    }
+
+    // 객체용 RedisTemplate (알림용)
+    @Bean("objectRedisTemplate")
+    public RedisTemplate<String, Object> objectRedisTemplate() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory());
+        template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+        return template;
+    }
+
+    @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainer() {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(redisConnectionFactory());
+        return container;
+    }
+
+    @Bean("notifyRedisTemplate")
+    public RedisTemplate<String, List<Notify>> redisTemplateForNotify() {
+        RedisTemplate<String, List<Notify>> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        GenericJackson2JsonRedisSerializer listSerializer = new GenericJackson2JsonRedisSerializer();
+        ;
+        redisTemplate.setValueSerializer(listSerializer);
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        return redisTemplate;
     }
 }
