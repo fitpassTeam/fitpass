@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.notify.NotificationType;
 import org.example.fitpass.domain.notify.service.NotifyService;
+import org.example.fitpass.domain.reservation.dto.response.AllGymReservationResponseDto;
 import org.example.fitpass.domain.user.enums.UserRole;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -297,12 +298,6 @@ public class ReservationService {
         Long trainerId) {
         // 사용자 조회
         User user = userRepository.findByIdOrElseThrow(userId);
-
-        // OWNER 권한 확인
-        if (!user.getUserRole().equals(UserRole.OWNER)) {
-            throw new BaseException(ExceptionCode.NO_OWNER_AUTHORITY);
-        }
-
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회
@@ -458,5 +453,22 @@ public class ReservationService {
         // 사장에게 전송
         notifyService.send(reservation.getGym().getOwner(), NotificationType.RESERVATION, content,
             url);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AllGymReservationResponseDto> getGymAllReservations(Long gymOwnerId, Long gymId) {
+        // 체육관 소유자인지 확인
+        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
+        if (!Objects.equals(gym.getOwner().getId(), gymOwnerId)) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
+
+        // 체육관에 소속된 모든 트레이너의 예약 조회
+        List<Reservation> reservations = reservationRepository
+            .findAllByGymIdOrderByDateTime(gymId);
+
+        return reservations.stream()
+            .map(AllGymReservationResponseDto::from)
+            .collect(Collectors.toList());
     }
 }

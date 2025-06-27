@@ -106,9 +106,9 @@ public class TrainerController {
         @RequestParam("images")List<MultipartFile> files,
         @PathVariable("gymId") Long gymId,
         @PathVariable("trainerId") Long trainerId) {
-        trainerService.updatePhoto(user.getId(), files, gymId, trainerId);
+        List<String> response = trainerService.updatePhoto(user.getId(), files, gymId, trainerId);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS.getHttpStatus())
-            .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS));
+            .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS, response));
     }
 
     // 삭제

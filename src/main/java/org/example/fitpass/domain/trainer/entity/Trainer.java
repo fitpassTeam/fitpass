@@ -58,7 +58,7 @@ public class Trainer extends BaseEntity {
     @JoinColumn(name = "gym_id")
     private Gym gym;
 
-    @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "trainer")

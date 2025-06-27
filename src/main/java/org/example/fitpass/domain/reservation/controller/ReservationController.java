@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
+import org.example.fitpass.domain.reservation.dto.response.AllGymReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.response.GetReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.request.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.response.ReservationResponseDto;
@@ -117,6 +118,19 @@ public class ReservationController {
 
         return ResponseEntity.status(SuccessCode.TRAINER_RESERVATION_LIST_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.TRAINER_RESERVATION_LIST_SUCCESS, trainerReservationResponseDto));
+    }
+
+    // 체육관 전체 트레이너의 예약 통합 조회
+    @GetMapping("/gyms/{gymId}/reservations")
+    public ResponseEntity<ResponseMessage<List<AllGymReservationResponseDto>>> getGymAllReservations (
+        @AuthenticationPrincipal CustomUserDetails user,
+        @PathVariable Long gymId
+    ) {
+        List<AllGymReservationResponseDto> reservations =
+            reservationService.getGymAllReservations(user.getId(), gymId);
+
+        return ResponseEntity.status(SuccessCode.TRAINER_RESERVATION_LIST_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.TRAINER_RESERVATION_LIST_SUCCESS, reservations));
     }
 
     // 유저별 예약 목록

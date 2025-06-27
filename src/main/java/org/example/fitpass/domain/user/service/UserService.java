@@ -28,6 +28,19 @@ public class UserService {
     private final RedisService redisService;
     private final S3Service s3Service;
 
+    @Transactional(readOnly = true)
+    public List<UserResponseDto> getAllUser(String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        if (user.getUserRole() != UserRole.PENDING_OWNER) {
+            throw new BaseException(ExceptionCode.INVALID_REJECTION_REQUEST);
+        }
+
+        return userRepository.findAll().stream()
+            .map(UserResponseDto::from)
+            .toList();
+    }
+
     // 회원가입
     @Transactional
     public UserResponseDto signup(
@@ -84,11 +97,13 @@ public class UserService {
         Long userId,
         String name,
         int age,
-        String address
+        String address,
+        String phone,
+        String img
     ) {
         User user = userRepository.findByIdOrElseThrow(userId);
 
-        user.updateInfo(name, age, address);
+        user.updateInfo(name, age, address, phone, img);
         return UserResponseDto.from(user);
     }
     // 프로필 사진 업데이트
@@ -103,10 +118,6 @@ public class UserService {
 
         // 새 이미지 S3 업로드
         String newImageUrl = s3Service.uploadSingleFile(file);
-
-        // 유저 이미지 업데이트
-        user.updateUserImage(newImageUrl);
-        userRepository.save(user);
 
         return newImageUrl;
     }

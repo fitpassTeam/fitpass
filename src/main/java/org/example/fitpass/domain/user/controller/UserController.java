@@ -3,11 +3,9 @@ package org.example.fitpass.domain.user.controller;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.dto.PageResponse;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
-import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.service.GymService;
 import org.example.fitpass.domain.user.dto.request.PasswordCheckRequestDto;
 import org.example.fitpass.domain.user.dto.request.UpdatePasswordRequestDto;
@@ -16,9 +14,6 @@ import org.example.fitpass.domain.user.dto.response.UserResponseDto;
 import org.example.fitpass.domain.user.service.UserService;
 import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.user.dto.request.UserInfoUpdateRequestDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +40,7 @@ public class UserController {
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @RequestBody PasswordCheckRequestDto dto
     ) {
-        userService.checkPassword(userDetails.getPassword(), dto.getPassword());
+        userService.checkPassword(userDetails.getPassword(), dto.password());
         return ResponseEntity.status(SuccessCode.PASSWORD_MACTH_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.PASSWORD_MACTH_SUCCESS));
     }
@@ -60,8 +55,17 @@ public class UserController {
                 .body(ResponseMessage.success(SuccessCode.USER_GET_SUCCESS, response));
     }
 
+    @GetMapping
+    public ResponseEntity<ResponseMessage<List<UserResponseDto>>> getAllUsers(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        List<UserResponseDto> response = userService.getAllUser(userDetails.getUsername());
+        return ResponseEntity.status(SuccessCode.USER_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.USER_GET_SUCCESS, response));
+    }
+
     // 내 정보 수정
-    @PutMapping("/me")
+    @PatchMapping("/me")
     public ResponseEntity<ResponseMessage<UserResponseDto>> update(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody UserInfoUpdateRequestDto request) {
@@ -69,7 +73,10 @@ public class UserController {
             userDetails.getId(),
             request.name(),
             request.age(),
-            request.address());
+            request.address(),
+            request.phone(),
+            request.userImage()
+            );
         return ResponseEntity.status(SuccessCode.USER_UPDATE_SUCCESS.getHttpStatus())
                 .body(ResponseMessage.success(SuccessCode.USER_UPDATE_SUCCESS, response));
     }
