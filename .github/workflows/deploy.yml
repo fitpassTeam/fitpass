@@ -6,7 +6,7 @@ on:
     branches:
       - main
       - dev
-      - feature/text-ec2
+      - feature/separate-env
 
 jobs:
   deploy:
@@ -40,10 +40,13 @@ jobs:
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
           echo "SQL_PORT=${{ secrets.SQL_PORT }}" >> .env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-          echo "ACCESS_KEY=${{secrets.ACCESS_KEY}}" >> .env
-          echo "AWS_SECRET_KEY=${{secrets.AWS_SECRET_KEY}}" >> .env
-          echo "OAUTH_NAVER_CLIENT_ID=${{secrets.OAUTH_NAVER_CLIENT_ID}}" >> .env
-          echo "OAUTH_NAVER_CLIENT_SECRET=${{secrets.OAUTH_NAVER_CLIENT_SECRET}}" >> .env
+          echo "ACCESS_KEY=${{ secrets.ACCESS_KEY }}" >> .env
+          echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
+          echo "OAUTH_NAVER_CLIENT_ID=${{ secrets.OAUTH_NAVER_CLIENT_ID }}" >> .env
+          echo "OAUTH_NAVER_CLIENT_SECRET=${{ secrets.OAUTH_NAVER_CLIENT_SECRET }}" >> .env
+          echo "REDIS_HOST=redis" >> .env
+          echo "REDIS_PORT=6379" >> .env
+          echo "RDS_ENDPOINT=${{ secrets.RDS_ENDPOINT }}" >> .env
         shell: bash
 
       - name: Debug check exact .env location
@@ -57,10 +60,10 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: './build/libs/*.jar,./Dockerfile,./docker-compose.yml,.env,src/main/resources/application.properties,src/main/resources/application-docker.properties'
+          source: './build/libs/*.jar,./Dockerfile,./docker-compose-prod.yml,.env,src/main/resources/application.properties,src/main/resources/application-prod.properties'
           target: "~/fitpass"
 
-      - name: SSH and deploy via docker-compose
+      - name: SSH and deploy via docker-compose (prod)
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -70,18 +73,16 @@ jobs:
           script_stop: true
           script: |
             cd ~/fitpass
+            
+            # 중지 및 제거 (prod용 yml)
+            docker-compose -f docker-compose-prod.yml down || true
 
-            # 중지 및 제거
-            docker-compose down || true
+            # 이전 컨테이너 제거 (prod용 이름으로)
+            docker rm -f redis-prod || true
+            docker rm -f spring-app-prod || true
 
-            # 이전 이미지 삭제 (선택 사항)
-            docker rm -f mysql || true
-            docker rm -f redis || true
-            docker rm -f spring-app || true
-
-            # 재빌드 및 실행
-            docker-compose up --build -d
+            # prod 전용 yml로 빌드 및 실행
+            docker-compose -f docker-compose-prod.yml up --build -d
 
             # 로그 확인
-            docker-compose logs --tail=50
-
+            docker-compose -f docker-compose-prod.yml logs --tail=50
