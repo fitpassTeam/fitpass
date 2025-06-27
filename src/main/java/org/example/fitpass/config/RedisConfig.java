@@ -1,6 +1,9 @@
 package org.example.fitpass.config;
 
-import jakarta.annotation.PostConstruct;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.example.fitpass.domain.notify.entity.Notify;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,7 +44,19 @@ public class RedisConfig {
     }
 
     @Bean
-    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+    public ObjectMapper redisObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new Hibernate6Module()); // Hibernate 프록시 지원
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return objectMapper;
+    }
+
+    @Bean
+    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory, ObjectMapper redisObjectMapper) {
+
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper);
+
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
                 .disableCachingNullValues()
@@ -51,7 +66,7 @@ public class RedisConfig {
                 )
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(
-                                new GenericJackson2JsonRedisSerializer())
+                            serializer)
                 );
 
         return RedisCacheManager.builder(redisConnectionFactory)
@@ -93,12 +108,13 @@ public class RedisConfig {
     }
 
     @Bean("notifyRedisTemplate")
-    public RedisTemplate<String, List<Notify>> redisTemplateForNotify() {
+    public RedisTemplate<String, List<Notify>> redisTemplateForNotify(ObjectMapper redisObjectMapper) {
         RedisTemplate<String, List<Notify>> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        GenericJackson2JsonRedisSerializer listSerializer = new GenericJackson2JsonRedisSerializer();
-        ;
+
+        GenericJackson2JsonRedisSerializer listSerializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper);
         redisTemplate.setValueSerializer(listSerializer);
+
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }

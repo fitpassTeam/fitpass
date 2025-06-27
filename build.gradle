@@ -54,6 +54,10 @@ dependencies {
     // Redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.27.0'
 
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate6:2.18.3'
+
     // jwt
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'

@@ -80,4 +80,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     // 특정 날짜, 시간의 확정된 예약들 조회
     List<Reservation> findByReservationDateAndReservationTimeAndReservationStatus(
         LocalDate reservationDate, LocalTime reservationTime, ReservationStatus reservationStatus);
+
+    @Query("SELECT r FROM Reservation r WHERE r.trainer.gym.id = :gymId ORDER BY r.reservationDate DESC, r.reservationTime DESC")
+    List<Reservation> findAllByGymIdOrderByDateTime(@Param("gymId") Long gymId);
 }
