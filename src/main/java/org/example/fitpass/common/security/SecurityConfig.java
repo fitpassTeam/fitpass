@@ -115,7 +115,9 @@ public class SecurityConfig {
         // 프론트엔드 주소 허용 (필요에 따라 추가)
         configuration.setAllowedOrigins(List.of(
             "http://127.0.0.1:5500",
-            "http://localhost:5173"
+            "http://localhost:5173",
+            "https://www.fitpass-13.com",
+            "https://fitpass-13.com"
         ));
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
