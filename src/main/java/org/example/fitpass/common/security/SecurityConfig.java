@@ -48,6 +48,7 @@ public class SecurityConfig {
                 // 공개 API (GET /gyms 포함)
                 .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 .requestMatchers(HttpMethod.POST, "/images").permitAll()
+                .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers(
                     "/auth/**",
                     "/login",
