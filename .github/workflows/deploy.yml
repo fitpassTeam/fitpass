@@ -73,36 +73,32 @@ jobs:
           script_stop: true
           script: |
             cd ~/fitpass
-            
-            # 중지 및 제거 (prod용 yml)
-            docker-compose -f docker-compose-prod.yml down || true
 
-            # 이전 컨테이너 제거 (prod용 이름으로)
+            echo "🧹 기존 컨테이너 중지 및 삭제"
+            docker-compose -f docker-compose-prod.yml down || true
             docker rm -f redis-prod || true
             docker rm -f spring-app-prod || true
 
-            # prod 전용 yml로 빌드 및 실행
+            echo "🚀 새 컨테이너 빌드 및 시작"
             docker-compose -f docker-compose-prod.yml up --build -d
 
-            # 로그 확인
+            echo "📜 최근 로그 출력"
             docker-compose -f docker-compose-prod.yml logs --tail=50
-            
-            # 헬스 체크
-            echo "Waiting for service to become healthy..."
 
-            for i in {1..5}; do
+            echo "💡 서비스 헬스체크 시작..."
+            for i in {1..10}; do
               STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health || echo "000")
-
               if [ "$STATUS" -eq 200 ]; then
                 echo "✅ Health check passed! (HTTP 200)"
                 break
               else
-                echo "⏳ Service not ready yet (status: $STATUS), retrying in 2s..."
-                sleep 2
+                echo "⏳ ($i/10) Service not ready yet (status: $STATUS), retrying in 5s..."
+                sleep 5
               fi
 
-              if [ "$i" -eq 5 ]; then
-                echo "❌ Health check failed after 5 tries."
+              if [ "$i" -eq 10 ]; then
+                echo "❌ Health check failed after 10 tries."
+                docker-compose -f docker-compose-prod.yml logs
                 exit 1
               fi
             done
