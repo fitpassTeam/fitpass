@@ -70,7 +70,7 @@
             username: ubuntu
             key: ${{ secrets.SSH_KEY }}
             port: 22
-            script_stop: true
+            script_stop: false
             script: |-
               cd ~/fitpass
               
