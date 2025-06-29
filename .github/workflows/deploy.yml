@@ -87,14 +87,13 @@ jobs:
 
             echo "💡 서비스 헬스체크 시작..."
             for i in {1..15}; do
-              # 컨테이너 내부에서 localhost 대신 127.0.0.1 사용
               STATUS=$(docker exec spring-app-prod curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/health || echo "000")
               echo "⏳ ($i/15) Health check status: $STATUS"
-              if [ "$STATUS" -eq 200 ]; then
+              if [ "$STATUS" = "200" ]; then
                 echo "✅ Health check passed! (HTTP 200)"
                 break
               else
-                echo "   서비스가 아직 준비되지 않았습니다. 10초 후 재시도..."
+                echo "   아직 준비되지 않았습니다. (code=$STATUS) 10초 후 재시도..."
                 sleep 10
               fi
               if [ "$i" -eq 15 ]; then
