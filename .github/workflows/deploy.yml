@@ -6,7 +6,7 @@ on:
     branches:
       - main
       - dev
-      - fit/Authorization
+      - fix/Authorization
 
 jobs:
   deploy:
