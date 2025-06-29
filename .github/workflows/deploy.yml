@@ -89,8 +89,7 @@
               for i in {1..15}; do
                 echo "⏳ ($i/15) curl 시도 중..."
               
-                # -i 와 -t 옵션 모두 추가 (터미널 할당)
-                RESPONSE=$(docker exec -it spring-app-prod curl -s -w "HTTP_CODE:%{http_code}" http://127.0.0.1:8080/actuator/health || echo "FAILED")
+                RESPONSE=$(curl -s -w "HTTP_CODE:%{http_code}" http://localhost:8080/actuator/health || echo "FAILED")
               
                 if [[ "$RESPONSE" == *"FAILED"* ]]; then
                   echo "🚫 curl 실행 자체 실패"
