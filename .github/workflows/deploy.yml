@@ -73,59 +73,57 @@
             script_stop: true
             script: |-
               cd ~/fitpass
-              
-              echo "🧹 기존 컨테이너 중지 및 삭제"
+    
+              echo "기존 컨테이너 중지 및 삭제"
               docker-compose -f docker-compose-prod.yml down || true
               
-              # 실제 컨테이너 이름으로 변경하세요
-              docker rm -f redis-prod || true
-              docker rm -f spring-app-prod || true
+              # 컨테이너 개별 삭제는 사실 필요 없지만 혹시 남아있을 경우 대비
+              docker rm -f redis || true
+              docker rm -f spring-app || true
               
-              echo "🚀 새 컨테이너 빌드 및 시작"
+              echo "새 컨테이너 빌드 및 시작"
               docker-compose -f docker-compose-prod.yml up --build -d
               
-              echo "📜 최근 로그 출력"
+              echo "최근 로그 출력"
               docker-compose -f docker-compose-prod.yml logs --tail=50
               
-              echo "⏱ spring 컨테이너 시작 대기 (10초)"
+              echo "spring 컨테이너 시작 대기 (10초)"
               sleep 10
               
-              echo "🔍 spring 로그 확인 (초기 상태)"
-              docker-compose -f docker-compose-prod.yml logs spring-app-prod --tail=50
+              echo "spring 로그 확인 (초기 상태)"
+              docker-compose -f docker-compose-prod.yml logs spring-app --tail=50
               
-              echo "💡 서비스 헬스체크 시작..."
+              echo "서비스 헬스체크 시작..."
               for i in {1..15}; do
-              echo "⏳ ($i/15) curl 시도 중..."
+              echo "($i/15) curl 시도 중..."
               
-              # 만약 호스트 머신에서 localhost:8080으로 접근이 안 된다면,
-              # 도커 컨테이너 네트워크 IP나 도커 컴포즈 서비스 이름으로 접근해야 할 수도 있습니다.
               RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" http://localhost:8080/actuator/health || echo "FAILED")
               
-              echo "💬 Raw RESPONSE:"
+              echo "Raw RESPONSE:"
               echo "$RESPONSE"
               
               if [[ "$RESPONSE" == *"FAILED"* ]]; then
-              echo "🚫 curl 실행 자체 실패"
+              echo "curl 실행 자체 실패"
               STATUS="000"
               BODY=""
               else
               STATUS=$(echo "$RESPONSE" | grep "HTTP_CODE" | cut -d':' -f2)
               BODY=$(echo "$RESPONSE" | sed '/^HTTP_CODE:/d')
               fi
-
-            echo "🩺 상태 코드: $STATUS"
-            echo "📦 응답 본문: $BODY"
+          
+              echo "상태 코드: $STATUS"
+              echo "응답 본문: $BODY"
               
               if [ "$STATUS" = "200" ]; then
-              echo "✅ Health check passed! (HTTP 200)"
+              echo "Health check passed! (HTTP 200)"
               break
               else
-              echo "   아직 준비되지 않았습니다. 10초 후 재시도..."
+              echo "아직 준비되지 않았습니다. 10초 후 재시도..."
               sleep 10
               fi
               
               if [ "$i" -eq 15 ]; then
-              echo "❌ Health check failed after 15 tries."
+              echo "Health check failed after 15 tries."
               docker-compose -f docker-compose-prod.yml logs
               exit 1
               fi
