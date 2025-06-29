@@ -71,39 +71,49 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script_stop: true
-          script: |
+          script: |-
             cd ~/fitpass
+
+            echo "🧹 기존 컨테이너 중지 및 삭제"
+            docker-compose -f docker-compose-prod.yml down || true
+            docker rm -f redis-prod || true
+            docker rm -f spring-app-prod || true
+
+            echo "🚀 새 컨테이너 빌드 및 시작"
+            docker-compose -f docker-compose-prod.yml up --build -d
+
+            echo "📜 최근 로그 출력"
+            docker-compose -f docker-compose-prod.yml logs --tail=50
 
             echo "💡 서비스 헬스체크 시작..."
             for i in {1..15}; do
-            echo "⏳ ($i/15) curl 시도 중..."
-          
-            # 응답 코드 + 본문까지 확인
-            RESPONSE=$(docker exec spring-app-prod curl -s -w "HTTP_CODE:%{http_code}" http://127.0.0.1:8080/health || echo "FAILED")
-            
-            if [[ "$RESPONSE" == *"FAILED"* ]]; then
-            echo "🚫 curl 실행 자체 실패"
-            STATUS="000"
-            BODY=""
-            else
-            STATUS=$(echo "$RESPONSE" | sed -n 's/.*HTTP_CODE:\(.*\)/\1/p')
-            BODY=$(echo "$RESPONSE" | sed 's/HTTP_CODE:.*//')
-            fi
+              echo "⏳ ($i/15) curl 시도 중..."
 
-          echo "🩺 상태 코드: $STATUS"
-          echo "📦 응답 본문: $BODY"
-          
-            if [ "$STATUS" = "200" ]; then
-            echo "✅ Health check passed! (HTTP 200)"
-            break
-            else
-            echo "   아직 준비되지 않았습니다. 10초 후 재시도..."
-            sleep 10
-            fi
-          
-            if [ "$i" -eq 15 ]; then
-            echo "❌ Health check failed after 15 tries."
-            docker-compose -f docker-compose-prod.yml logs
-            exit 1
-            fi
+              RESPONSE=$(docker exec spring-app-prod curl -s -w "HTTP_CODE:%{http_code}" http://127.0.0.1:8080/health || echo "FAILED")
+
+              if [[ "$RESPONSE" == *"FAILED"* ]]; then
+                echo "🚫 curl 실행 자체 실패"
+                STATUS="000"
+                BODY=""
+              else
+                STATUS=$(echo "$RESPONSE" | sed -n 's/.*HTTP_CODE:\(.*\)/\1/p')
+                BODY=$(echo "$RESPONSE" | sed 's/HTTP_CODE:.*//')
+              fi
+
+              echo "🩺 상태 코드: $STATUS"
+              echo "📦 응답 본문: $BODY"
+
+              if [ "$STATUS" = "200" ]; then
+                echo "✅ Health check passed! (HTTP 200)"
+                break
+              else
+                echo "   아직 준비되지 않았습니다. 10초 후 재시도..."
+                sleep 10
+              fi
+
+              if [ "$i" -eq 15 ]; then
+                echo "❌ Health check failed after 15 tries."
+                docker-compose -f docker-compose-prod.yml logs
+                exit 1
+              fi
             done
