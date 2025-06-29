@@ -395,7 +395,7 @@ public class ReservationService {
         // 알림 전송
         String url = "/gyms/" + gymId + "/trainers/" + trainerId + "/reservations/" + reservation.getId();
         String content =
-            trainer.getName() + "트레이너님" + "예약이 승인되었습니다. 예약 날짜: " + reservation.getReservationDate()
+            trainer.getName() + "트레이너님" + " 예약이 승인되었습니다. 예약 날짜: " + reservation.getReservationDate()
                 + " " + reservation.getReservationTime();
         // 유저에게 전송
         notifyService.send(reservation.getUser(), NotificationType.RESERVATION, content, url);
