@@ -98,7 +98,7 @@
               for i in $(seq 1 15); do
               echo "($i/15) curl 시도 중..."
               
-              RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" http://localhost:8080/actuator/health || echo "FAILED")
+              RESPONSE=$(docker exec spring-app-prod curl -s -w "\nHTTP_CODE:%{http_code}" http://localhost:8080/actuator/health || echo "FAILED")
               
               echo "Raw RESPONSE:"
               echo "$RESPONSE"
