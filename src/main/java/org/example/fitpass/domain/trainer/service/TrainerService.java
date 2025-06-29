@@ -65,9 +65,7 @@ public class TrainerService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TrainerResponseDto> getAllTrainer(Long userId, Long gymId, Pageable pageable) {
-        // 유저 조회
-        User user = userRepository.findByIdOrElseThrow(userId);
+    public Page<TrainerResponseDto> getAllTrainer(Long gymId, Pageable pageable) {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         Page<Trainer> trainers = trainerRepository.findAllByGym(gym, pageable);
@@ -75,9 +73,7 @@ public class TrainerService {
     }
 
     @Transactional(readOnly = true)
-    public TrainerDetailResponseDto getTrainerById(Long userId, Long gymId, Long trainerId) {
-        // 유저 조회
-        User user = userRepository.findByIdOrElseThrow(userId);
+    public TrainerDetailResponseDto getTrainerById(Long gymId, Long trainerId) {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 트레이너 조회

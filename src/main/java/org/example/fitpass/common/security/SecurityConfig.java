@@ -49,6 +49,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 .requestMatchers(HttpMethod.POST, "/images").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers(HttpMethod.GET, "/gyms/{gymId}/trainers/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/gyms/{gymId}/memberships/**").permitAll()
                 .requestMatchers(
                     "/auth/**",
                     "/login",

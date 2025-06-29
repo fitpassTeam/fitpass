@@ -47,10 +47,9 @@ public class MembershipController {
     // 모든 이용권 조회
     @GetMapping
     public ResponseEntity<ResponseMessage<List<MembershipResponseDto>>> getAllMemberships(
-        @PathVariable("gymId") Long gymId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @PathVariable("gymId") Long gymId
     ) {
-        List<MembershipResponseDto> response = membershipService.getAllByGym(gymId, userDetails.getId());
+        List<MembershipResponseDto> response = membershipService.getAllByGym(gymId);
         return ResponseEntity.status(SuccessCode.GET_MEMBERSHIP_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_MEMBERSHIP_SUCCESS, response));
     }
@@ -58,10 +57,9 @@ public class MembershipController {
     @GetMapping("/{membershipId}")
     public ResponseEntity<ResponseMessage<MembershipResponseDto>> getMembershipById(
         @PathVariable("gymId") Long gymId,
-        @PathVariable("membershipId") Long membershipId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @PathVariable("membershipId") Long membershipId
     ) {
-        MembershipResponseDto response = membershipService.getMembershipById(gymId, membershipId, userDetails.getId());
+        MembershipResponseDto response = membershipService.getMembershipById(gymId, membershipId);
         return ResponseEntity.status(SuccessCode.GET_MEMBERSHIP_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_MEMBERSHIP_SUCCESS, response));
     }
