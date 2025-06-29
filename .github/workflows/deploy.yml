@@ -63,14 +63,17 @@
             source: './build/libs/*.jar,./Dockerfile,./docker-compose-prod.yml,.env,src/main/resources/application.properties,src/main/resources/application-prod.properties'
             target: "~/fitpass"
 
-        - name: Deploy Spring App
+        - name: SSH and deploy via docker-compose (prod)
           uses: appleboy/ssh-action@v0.1.6
           with:
-            host: ${{ secrets.HOST }}
-            username: ${{ secrets.USERNAME }}
-            key: ${{ secrets.PRIVATE_KEY }}
+            host: ${{ secrets.SSH_HOST }}
+            username: ubuntu
+            key: ${{ secrets.SSH_KEY }}
             port: 22
-            script: |
+            script_stop: true
+            script: |-
+              cd ~/fitpass
+              
               echo "🧹 기존 컨테이너 중지 및 삭제"
               docker-compose -f docker-compose-prod.yml down || true
               docker rm -f redis || true
@@ -91,9 +94,12 @@
               echo "💡 서비스 헬스체크 시작..."
               for i in {1..15}; do
                 echo "⏳ ($i/15) curl 시도 중..."
+              
                 RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" http://localhost:8080/actuator/health || echo "FAILED")
+              
                 echo "💬 Raw RESPONSE:"
                 echo "$RESPONSE"
+              
                 if [[ "$RESPONSE" == *"FAILED"* ]]; then
                   echo "🚫 curl 실행 자체 실패"
                   STATUS="000"
@@ -101,5 +107,22 @@
                 else
                   STATUS=$(echo "$RESPONSE" | grep "HTTP_CODE" | cut -d':' -f2)
                   BODY=$(echo "$RESPONSE" | sed '/^HTTP_CODE:/d')
+                fi
+              
+                echo "🩺 상태 코드: $STATUS"
+                echo "📦 응답 본문: $BODY"
+              
+                if [ "$STATUS" = "200" ]; then
+                  echo "✅ Health check passed! (HTTP 200)"
+                  break
+                else
+                  echo "   아직 준비되지 않았습니다. 10초 후 재시도..."
+                  sleep 10
+                fi
+              
+                if [ "$i" -eq 15 ]; then
+                  echo "❌ Health check failed after 15 tries."
+                  docker-compose -f docker-compose-prod.yml logs
+                  exit 1
                 fi
               done
