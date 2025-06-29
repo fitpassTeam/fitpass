@@ -1,119 +1,119 @@
-name: Deploy
+  name: Deploy
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-      - dev
-      - fix/Authorization
+  on:
+    workflow_dispatch:
+    push:
+      branches:
+        - main
+        - dev
+        - fix/Authorization
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  jobs:
+    deploy:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'adopt'
+        - name: Set up JDK 17
+          uses: actions/setup-java@v4
+          with:
+            java-version: '17'
+            distribution: 'adopt'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+        - name: Grant execute permission for gradlew
+          run: chmod +x ./gradlew
 
-      - name: gradlew bootJar
-        run: ./gradlew bootJar
+        - name: gradlew bootJar
+          run: ./gradlew bootJar
 
-      - name: Debug paths in GitHub Actions
-        run: |
-          echo "Checking paths to be copied"
-          ls -la ./build/libs
-          ls -la ./
+        - name: Debug paths in GitHub Actions
+          run: |
+            echo "Checking paths to be copied"
+            ls -la ./build/libs
+            ls -la ./
 
-      - name: Create .env file
-        run: |
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-          echo "SQL_PORT=${{ secrets.SQL_PORT }}" >> .env
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-          echo "ACCESS_KEY=${{ secrets.ACCESS_KEY }}" >> .env
-          echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
-          echo "OAUTH_NAVER_CLIENT_ID=${{ secrets.OAUTH_NAVER_CLIENT_ID }}" >> .env
-          echo "OAUTH_NAVER_CLIENT_SECRET=${{ secrets.OAUTH_NAVER_CLIENT_SECRET }}" >> .env
-          echo "REDIS_HOST=redis" >> .env
-          echo "REDIS_PORT=6379" >> .env
-          echo "RDS_ENDPOINT=${{ secrets.RDS_ENDPOINT }}" >> .env
-        shell: bash
+        - name: Create .env file
+          run: |
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+            echo "SQL_PORT=${{ secrets.SQL_PORT }}" >> .env
+            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+            echo "ACCESS_KEY=${{ secrets.ACCESS_KEY }}" >> .env
+            echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
+            echo "OAUTH_NAVER_CLIENT_ID=${{ secrets.OAUTH_NAVER_CLIENT_ID }}" >> .env
+            echo "OAUTH_NAVER_CLIENT_SECRET=${{ secrets.OAUTH_NAVER_CLIENT_SECRET }}" >> .env
+            echo "REDIS_HOST=redis" >> .env
+            echo "REDIS_PORT=6379" >> .env
+            echo "RDS_ENDPOINT=${{ secrets.RDS_ENDPOINT }}" >> .env
+          shell: bash
 
-      - name: Debug check exact .env location
-        run: |
-          find . -name ".env"
+        - name: Debug check exact .env location
+          run: |
+            find . -name ".env"
 
-      - name: Copy all docker-related files to server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          source: './build/libs/*.jar,./Dockerfile,./docker-compose-prod.yml,.env,src/main/resources/application.properties,src/main/resources/application-prod.properties'
-          target: "~/fitpass"
+        - name: Copy all docker-related files to server
+          uses: appleboy/scp-action@master
+          with:
+            host: ${{ secrets.SSH_HOST }}
+            username: ubuntu
+            key: ${{ secrets.SSH_KEY }}
+            port: 22
+            source: './build/libs/*.jar,./Dockerfile,./docker-compose-prod.yml,.env,src/main/resources/application.properties,src/main/resources/application-prod.properties'
+            target: "~/fitpass"
 
-      - name: SSH and deploy via docker-compose (prod)
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script_stop: true
-          script: |-
-            cd ~/fitpass
-
-            echo "🧹 기존 컨테이너 중지 및 삭제"
-            docker-compose -f docker-compose-prod.yml down || true
-            docker rm -f redis-prod || true
-            docker rm -f spring-app-prod || true
-
-            echo "🚀 새 컨테이너 빌드 및 시작"
-            docker-compose -f docker-compose-prod.yml up --build -d
-
-            echo "📜 최근 로그 출력"
-            docker-compose -f docker-compose-prod.yml logs --tail=50
-
-            echo "💡 서비스 헬스체크 시작..."
-            for i in {1..15}; do
-              echo "⏳ ($i/15) curl 시도 중..."
-
-              RESPONSE=$(docker exec spring-app-prod curl -s -w "HTTP_CODE:%{http_code}" http://127.0.0.1:8080/health || echo "FAILED")
-
-              if [[ "$RESPONSE" == *"FAILED"* ]]; then
-                echo "🚫 curl 실행 자체 실패"
-                STATUS="000"
-                BODY=""
-              else
-                STATUS=$(echo "$RESPONSE" | sed -n 's/.*HTTP_CODE:\(.*\)/\1/p')
-                BODY=$(echo "$RESPONSE" | sed 's/HTTP_CODE:.*//')
-              fi
-
-              echo "🩺 상태 코드: $STATUS"
-              echo "📦 응답 본문: $BODY"
-
-              if [ "$STATUS" = "200" ]; then
-                echo "✅ Health check passed! (HTTP 200)"
-                break
-              else
-                echo "   아직 준비되지 않았습니다. 10초 후 재시도..."
-                sleep 10
-              fi
-
-              if [ "$i" -eq 15 ]; then
-                echo "❌ Health check failed after 15 tries."
-                docker-compose -f docker-compose-prod.yml logs
-                exit 1
-              fi
-            done
+        - name: SSH and deploy via docker-compose (prod)
+          uses: appleboy/ssh-action@v0.1.6
+          with:
+            host: ${{ secrets.SSH_HOST }}
+            username: ubuntu
+            key: ${{ secrets.SSH_KEY }}
+            port: 22
+            script_stop: true
+            script: |-
+              cd ~/fitpass
+              
+              echo "🧹 기존 컨테이너 중지 및 삭제"
+              docker-compose -f docker-compose-prod.yml down || true
+              docker rm -f redis-prod || true
+              docker rm -f spring-app-prod || true
+              
+              echo "🚀 새 컨테이너 빌드 및 시작"
+              docker-compose -f docker-compose-prod.yml up --build -d
+              
+              echo "📜 최근 로그 출력"
+              docker-compose -f docker-compose-prod.yml logs --tail=50
+              
+              echo "💡 서비스 헬스체크 시작..."
+              for i in {1..15}; do
+                echo "⏳ ($i/15) curl 시도 중..."
+              
+                RESPONSE=$(docker exec spring-app-prod curl -s -w "HTTP_CODE:%{http_code}" http://127.0.0.1:8080/actuator/health || echo "FAILED")
+              
+                if [[ "$RESPONSE" == *"FAILED"* ]]; then
+                  echo "🚫 curl 실행 자체 실패"
+                  STATUS="000"
+                  BODY=""
+                else
+                  STATUS=$(echo "$RESPONSE" | sed -n 's/.*HTTP_CODE:\(.*\)/\1/p')
+                  BODY=$(echo "$RESPONSE" | sed 's/HTTP_CODE:.*//')
+                fi
+              
+                echo "🩺 상태 코드: $STATUS"
+                echo "📦 응답 본문: $BODY"
+              
+                if [ "$STATUS" = "200" ]; then
+                  echo "✅ Health check passed! (HTTP 200)"
+                  break
+                else
+                  echo "   아직 준비되지 않았습니다. 10초 후 재시도..."
+                  sleep 10
+                fi
+              
+                if [ "$i" -eq 15 ]; then
+                  echo "❌ Health check failed after 15 tries."
+                  docker-compose -f docker-compose-prod.yml logs
+                  exit 1
+                fi
+              done
