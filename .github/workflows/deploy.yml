@@ -120,7 +120,7 @@
               break
               else
               echo "아직 준비되지 않았습니다. 10초 후 재시도..."
-              sleep 10
+              sleep 30
               fi
               
               if [ "$i" -eq 15 ]; then
