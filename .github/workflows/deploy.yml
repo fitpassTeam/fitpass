@@ -89,15 +89,18 @@
               for i in {1..15}; do
                 echo "⏳ ($i/15) curl 시도 중..."
               
-                RESPONSE=$(curl -s -w "HTTP_CODE:%{http_code}" http://localhost:8080/actuator/health || echo "FAILED")
+                RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" http://localhost:8080/actuator/health || echo "FAILED")
+              
+                echo "💬 Raw RESPONSE:"
+                echo "$RESPONSE"
               
                 if [[ "$RESPONSE" == *"FAILED"* ]]; then
                   echo "🚫 curl 실행 자체 실패"
                   STATUS="000"
                   BODY=""
                 else
-                  STATUS=$(echo "$RESPONSE" | sed -n 's/.*HTTP_CODE:\(.*\)/\1/p')
-                  BODY=$(echo "$RESPONSE" | sed 's/HTTP_CODE:.*//')
+                  STATUS=$(echo "$RESPONSE" | grep "HTTP_CODE" | cut -d':' -f2)
+                  BODY=$(echo "$RESPONSE" | sed '/^HTTP_CODE:/d')
                 fi
               
                 echo "🩺 상태 코드: $STATUS"
