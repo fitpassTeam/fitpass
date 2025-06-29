@@ -77,7 +77,6 @@
               echo "기존 컨테이너 중지 및 삭제"
               docker-compose -f docker-compose-prod.yml down || true
               
-              # 컨테이너 개별 삭제는 사실 필요 없지만 혹시 남아있을 경우 대비
               docker rm -f redis || true
               docker rm -f spring-app || true
               
@@ -94,6 +93,8 @@
               docker-compose -f docker-compose-prod.yml logs spring-app --tail=50
               
               echo "서비스 헬스체크 시작..."
+              
+              success=false
               
               for i in $(seq 1 15); do
                 echo "($i/15) curl 시도 중..."
@@ -117,14 +118,18 @@
               
                 if [ "$STATUS" = "200" ]; then
                   echo "✅ Health check passed! (HTTP 200)"
-                  exit 0
+                  success=true
+                  break
                 else
-                  if [ "$i" -eq 15 ]; then
-                    echo "❌ Health check failed after 15 tries."
-                    docker-compose -f docker-compose-prod.yml logs
-                    exit 1
-                  fi
                   echo "아직 준비되지 않았습니다. 30초 후 재시도..."
                   sleep 30
                 fi
               done
+              
+              if [ "$success" = true ]; then
+                exit 0
+              else
+                echo "❌ Health check failed after 15 tries."
+                docker-compose -f docker-compose-prod.yml logs
+                exit 1
+              fi
