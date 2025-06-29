@@ -94,7 +94,8 @@
               docker-compose -f docker-compose-prod.yml logs spring-app --tail=50
               
               echo "서비스 헬스체크 시작..."
-              for i in {1..15}; do
+    
+              for i in $(seq 1 15); do
               echo "($i/15) curl 시도 중..."
               
               RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" http://localhost:8080/actuator/health || echo "FAILED")
