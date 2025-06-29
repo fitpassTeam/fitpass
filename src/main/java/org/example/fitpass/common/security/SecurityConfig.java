@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/images").permitAll()
                 .requestMatchers(HttpMethod.GET, "/gyms/{gymId}/trainers/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/gyms/{gymId}/memberships/**").permitAll()
-                .requestMatchers("/health").permitAll()
+                .requestMatchers("/actuator/health","/health").permitAll()
                 .requestMatchers(
                     "/auth/**",
                     "/login",
