@@ -121,7 +121,15 @@ public enum SuccessCode implements BaseCode {
     GET_NOT_STARTED_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12009", "아직 시작하지 않은 이용권 목록 조회가 완료되었습니다."),
 
     // 13000: 좋아요
-    LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "13001","좋아요 상태가 변경되었습니다.");
+    LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "13001","좋아요 상태가 변경되었습니다."),
+
+    // 14000: 결제 성공 코드
+    PAYMENT_PREPARE_SUCCESS(HttpStatus.OK, "14001", "결제 준비가 완료되었습니다."),
+    PAYMENT_CONFIRM_SUCCESS(HttpStatus.OK, "14002", "결제 승인이 완료되었습니다."),
+    PAYMENT_FAIL_SUCCESS(HttpStatus.OK, "14003", "결제 실패 처리가 완료되었습니다."),
+    PAYMENT_HISTORY_GET_SUCCESS(HttpStatus.OK, "14004", "결제 내역 조회가 완료되었습니다."),
+    PAYMENT_STATUS_GET_SUCCESS(HttpStatus.OK, "14005", "결제 상태 조회가 완료되었습니다."),
+    PAYMENT_CANCEL_SUCCESS(HttpStatus.OK, "14006", "결제 취소가 완료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

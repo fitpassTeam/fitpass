@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="icon"
+      href="https://static.toss.im/icons/png/4x/icon-toss-logo.png"
+    />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitPass 결제 완료</title>
+  </head>
+  <body>
+    <div class="result wrapper">
+      <div class="box_section">
+        <h2 style="padding: 20px 0px 10px 0px; color: #4F46E5;">
+          <img
+            width="35px"
+            src="https://static.toss.im/3d-emojis/u1F389_apng.png"
+          />
+          🏋️ FitPass 포인트 충전 완료!
+        </h2>
+
+        <p id="paymentKey"></p>
+        <p id="orderId"></p>
+        <p id="amount"></p>
+        
+        <div style="margin-top: 30px;">
+          <button class="button" onclick="goToMainPage()" style="margin-right: 10px;">
+            메인으로
+          </button>
+          <button class="button" onclick="goToPaymentPage()">
+            추가 충전
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      // 쿼리 파라미터 값이 결제 요청할 때 보낸 데이터와 동일한지 반드시 확인하세요.
+      // 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다.
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // 서버로 결제 승인에 필요한 결제 정보를 보내세요.
+      async function confirm() {
+        const requestData = {
+          paymentKey: urlParams.get("paymentKey"),
+          orderId: urlParams.get("orderId"),
+          amount: parseInt(urlParams.get("amount")),
+        };
+
+        try {
+          const response = await fetch("/api/payments/confirm", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+          });
+
+          const json = await response.json();
+
+          if (!response.ok) {
+            // 결제 실패 비즈니스 로직
+            console.log(json);
+            window.location.href = `/payment/fail?message=${json.message}&code=${json.code}`;
+            return;
+          }
+
+          // 결제 성공 비즈니스 로직
+          console.log("✅ 결제 승인 성공:", json);
+          
+          // 성공 메시지 표시
+          document.querySelector('h2').innerHTML = `
+            <img width="35px" src="https://static.toss.im/3d-emojis/u1F389_apng.png" />
+            🎉 포인트 충전 완료!
+          `;
+          
+        } catch (error) {
+          console.error("결제 승인 요청 실패:", error);
+          window.location.href = `/payment/fail?message=네트워크 오류가 발생했습니다`;
+        }
+      }
+      
+      // 즉시 결제 승인 요청
+      confirm();
+
+      const paymentKeyElement = document.getElementById("paymentKey");
+      const orderIdElement = document.getElementById("orderId");
+      const amountElement = document.getElementById("amount");
+
+      orderIdElement.textContent = "주문번호: " + urlParams.get("orderId");
+      amountElement.textContent = "충전 금액: " + parseInt(urlParams.get("amount")).toLocaleString() + "원";
+      paymentKeyElement.textContent = "결제키: " + urlParams.get("paymentKey");
+      
+      function goToMainPage() {
+        window.location.href = "/";
+      }
+      
+      function goToPaymentPage() {
+        window.location.href = "/payment.html";
+      }
+    </script>
+  </body>
+</html>

@@ -89,6 +89,12 @@ dependencies {
 
     // OAuth2 Resource Server (API 서버가 토큰을 검증해야 할 때)
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    
+    // HTTP 클라이언트 (토스페이먼츠 API 호출용)
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 // Querydsl 빌드 옵션 설정

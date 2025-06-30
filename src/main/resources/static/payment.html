@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="icon"
+      href="https://static.toss.im/icons/png/4x/icon-toss-logo.png"
+    />
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitPass 포인트 충전</title>
+    <!-- 결제위젯 SDK 추가 -->
+    <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+  </head>
+
+  <body>
+    <!-- 주문서 영역 -->
+    <div class="wrapper">
+      <div
+        class="box_section"
+        style="
+          padding: 40px 30px 50px 30px;
+          margin-top: 30px;
+          margin-bottom: 50px;
+        "
+      >
+        <h2 style="margin-bottom: 20px; color: #4F46E5; text-align: center;">
+          🏋️ FitPass 포인트 충전
+        </h2>
+        
+        <!-- 충전 금액 선택 -->
+        <div style="margin-bottom: 30px;">
+          <h3 style="margin-bottom: 15px; color: #333;">충전 금액 선택</h3>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;">
+            <button class="amount-btn" data-amount="10000">10,000원</button>
+            <button class="amount-btn" data-amount="30000">30,000원</button>
+            <button class="amount-btn" data-amount="50000">50,000원</button>
+            <button class="amount-btn" data-amount="100000">100,000원</button>
+          </div>
+          <div>
+            <input type="number" id="custom-amount" placeholder="직접 입력 (최소 1,000원)" 
+                   min="1000" step="1000" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+          </div>
+        </div>
+
+        <!-- 결제 UI -->
+        <div id="payment-method"></div>
+        <!-- 이용약관 UI -->
+        <div id="agreement"></div>
+        
+        <!-- 결제하기 버튼 -->
+        <div class="result wrapper">
+          <button class="button" id="payment-button" style="margin-top: 30px" disabled>
+            결제하기
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      .amount-btn {
+        padding: 12px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .amount-btn:hover {
+        border-color: #4F46E5;
+        background-color: #f8f9ff;
+      }
+      .amount-btn.selected {
+        border-color: #4F46E5;
+        background-color: #4F46E5;
+        color: white;
+      }
+    </style>
+    
+    <script>
+      const button = document.getElementById("payment-button");
+      const generateRandomString = () =>
+        window.btoa(Math.random()).slice(0, 20);
+      
+      let selectedAmount = 0;
+      
+      // ------  결제위젯 초기화 ------
+      const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+      const customerKey = generateRandomString();
+      const paymentWidget = PaymentWidget(widgetClientKey, customerKey);
+      let paymentMethodWidget;
+
+      // 충전 금액 선택 버튼
+      document.querySelectorAll('.amount-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+          this.classList.add('selected');
+          selectedAmount = parseInt(this.dataset.amount);
+          document.getElementById('custom-amount').value = '';
+          updatePaymentWidget();
+        });
+      });
+
+      // 직접 입력
+      document.getElementById('custom-amount').addEventListener('input', function() {
+        document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+        selectedAmount = parseInt(this.value) || 0;
+        updatePaymentWidget();
+      });
+
+      // ------  결제 UI 렌더링 ------
+      function updatePaymentWidget() {
+        if (selectedAmount >= 1000) {
+          // 기존 위젯 제거
+          document.getElementById('payment-method').innerHTML = '';
+          document.getElementById('agreement').innerHTML = '';
+          
+          // 새 위젯 렌더링
+          paymentMethodWidget = paymentWidget.renderPaymentMethods(
+            "#payment-method",
+            { value: selectedAmount },
+            { variantKey: "DEFAULT" }
+          );
+          
+          // 이용약관 UI 렌더링
+          paymentWidget.renderAgreement("#agreement", { variantKey: "AGREEMENT" });
+          
+          button.disabled = false;
+        } else {
+          button.disabled = true;
+        }
+      }
+
+      // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+      button.addEventListener("click", function () {
+        if (selectedAmount < 1000) {
+          alert('최소 1,000원 이상 충전해주세요.');
+          return;
+        }
+        
+        const orderId = "ORDER_" + Date.now() + "_" + generateRandomString();
+        
+        // 결제를 요청하기 전에 orderId, amount를 서버에 저장
+        paymentWidget.requestPayment({
+          orderId: orderId,
+          orderName: `FitPass 포인트 ${selectedAmount.toLocaleString()}원 충전`,
+          successUrl: window.location.origin + "/payment/success",
+          failUrl: window.location.origin + "/payment/fail",
+          customerEmail: "customer@fitpass.com",
+          customerName: "FitPass 회원",
+        });
+      });
+    </script>
+  </body>
+</html>
