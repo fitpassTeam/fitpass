@@ -91,6 +91,7 @@ public enum ExceptionCode implements BaseCode {
     MEMBERSHIP_NOT_ACTIVE(HttpStatus.NOT_FOUND, "404", "활성화된 이용권을 찾을 수 없습니다."),
     MEMBERSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "이용권을 찾을 수 없습니다."),
     NOT_FOUND_PURCHASE(HttpStatus.NOT_FOUND, "404", "구매한 이용권을 찾을 수 없습니다."),
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "결제 정보를 찾을 수 없습니다."),
     CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND,"404","채팅방을 찾을 수 없습니다."),
 
     // 409 Conflict = 서버와 충돌, 데이터가 이미 존재할때(400 보다 명확함)
@@ -104,7 +105,14 @@ public enum ExceptionCode implements BaseCode {
     S3_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"500", "S3 삭제를 실패하였습니다."),
     RESERVATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "해당 시간에 이미 예약이 존재합니다."),
     RESERVATION_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "예약 처리 중 인터럽트가 발생했습니다."),
-    FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "500", "이미지 업로드에 실패했습니다.");
+    FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "500", "이미지 업로드에 실패했습니다."),
+    TOSS_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "토스페이먼츠 API 호출에 실패했습니다."),
+    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "400", "결제 금액이 일치하지 않습니다."),
+    PAYMENT_NOT_CANCELLABLE(HttpStatus.BAD_REQUEST, "400", "취소할 수 있는 결제가 아닙니다."),
+    PAYMENT_KEY_NOT_FOUND(HttpStatus.BAD_REQUEST, "400", "결제 키가 없어 취소할 수 없습니다."),
+    TOSS_PAYMENT_CONFIRM_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "토스페이먼츠 결제 승인에 실패했습니다."),
+    TOSS_PAYMENT_CANCEL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "토스페이먼츠 결제 취소에 실패했습니다."),
+    TOSS_PAYMENT_STATUS_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "500", "토스페이먼츠 결제 상태 조회에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -125,7 +125,15 @@ public enum SuccessCode implements BaseCode {
 
     // 14000: 인기 검색어 조회
     GET_POPULAR_KEYWORD_SUCCESS(HttpStatus.OK,"14001", "인기 검색어 조회가 완료되었습니다."),
-    GET_CHATROOM(HttpStatus.OK,"14002" ,"인기 검색어 조회가 완료되었습니다." );
+    GET_CHATROOM(HttpStatus.OK,"14002" ,"인기 검색어 조회가 완료되었습니다." ),
+
+    // 15000: 결제 성공 코드
+    PAYMENT_PREPARE_SUCCESS(HttpStatus.OK, "14001", "결제 준비가 완료되었습니다."),
+    PAYMENT_CONFIRM_SUCCESS(HttpStatus.OK, "14002", "결제 승인이 완료되었습니다."),
+    PAYMENT_FAIL_SUCCESS(HttpStatus.OK, "14003", "결제 실패 처리가 완료되었습니다."),
+    PAYMENT_HISTORY_GET_SUCCESS(HttpStatus.OK, "14004", "결제 내역 조회가 완료되었습니다."),
+    PAYMENT_STATUS_GET_SUCCESS(HttpStatus.OK, "14005", "결제 상태 조회가 완료되었습니다."),
+    PAYMENT_CANCEL_SUCCESS(HttpStatus.OK, "14006", "결제 취소가 완료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

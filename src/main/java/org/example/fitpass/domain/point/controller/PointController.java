@@ -1,10 +1,14 @@
 package org.example.fitpass.domain.point.controller;
 
 import java.util.List;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.common.security.CustomUserDetails;
+import org.example.fitpass.domain.payment.dto.request.PaymentRequestDto;
+import org.example.fitpass.domain.payment.dto.response.PaymentUrlResponseDto;
+import org.example.fitpass.domain.payment.service.PaymentService;
 import org.example.fitpass.domain.point.dto.request.PointCashOutRequestDto;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
 import org.example.fitpass.domain.point.dto.response.PointBalanceResponseDto;
@@ -25,6 +29,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class PointController {
 
     private final PointService pointService;
+    private final PaymentService paymentService;
+
+    // 포인트 충전 결제 준비 (토스페이먼츠)
+    @PostMapping("/charge/prepare")
+    public ResponseEntity<ResponseMessage<PaymentUrlResponseDto>> preparePointCharge(
+        @Valid @RequestBody PaymentRequestDto request,
+        @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        PaymentUrlResponseDto responseDto = paymentService.preparePayment(user.getId(),
+            request.amount(), request.orderName());
+        return ResponseEntity.status(SuccessCode.PAYMENT_PREPARE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.PAYMENT_PREPARE_SUCCESS, responseDto));
+    }
 
     // 포인트 사용
     @PostMapping("/use")
