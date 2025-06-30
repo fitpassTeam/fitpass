@@ -57,11 +57,10 @@ public class TrainerController {
     // 전체 조회
     @GetMapping
     public ResponseEntity<ResponseMessage<Page<TrainerResponseDto>>> getAllTrainer(
-        @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable("gymId") Long gymId,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        Page<TrainerResponseDto> response = trainerService.getAllTrainer(user.getId(), gymId, pageable);
+        Page<TrainerResponseDto> response = trainerService.getAllTrainer(gymId, pageable);
         return ResponseEntity.status(SuccessCode.GET_TRAINER_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response));
     }
@@ -69,10 +68,9 @@ public class TrainerController {
     // 단일 조회
     @GetMapping("/{trainerId}")
     public ResponseEntity<ResponseMessage<TrainerDetailResponseDto>> getTrainerById(
-        @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable("gymId") Long gymId,
         @PathVariable("trainerId") Long trainerId) {
-        TrainerDetailResponseDto response = trainerService.getTrainerById(user.getId(), gymId, trainerId);
+        TrainerDetailResponseDto response = trainerService.getTrainerById(gymId, trainerId);
         return ResponseEntity.status(SuccessCode.GET_TRAINER_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_TRAINER_SUCCESS, response));
     }

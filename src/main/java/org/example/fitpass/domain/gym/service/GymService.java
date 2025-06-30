@@ -67,6 +67,7 @@ public class GymService {
         Gym gym = gymRepository.findByIdAndGymPostStatusOrElseThrow(gymId, GymPostStatus.APPROVED);
         GymRatingResponseDto rating = reviewRepository.findGymRatingByGymIdOrElseThrow(gymId);
         return GymDetailResponDto.from(
+            gym.getOwner().getId(),
             gym.getName(),
             gym.getNumber(),
             gym.getContent(),

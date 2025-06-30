@@ -1,5 +1,6 @@
 package org.example.fitpass.domain.search.repository;
 
+import java.util.List;
 import org.example.fitpass.domain.search.entity.SearchKeywordGym;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,4 +10,5 @@ public interface SearchGymRepository extends JpaRepository<SearchKeywordGym, Lon
 
     Optional<SearchKeywordGym> findByKeyword (String keyword);
 
+    List<SearchKeywordGym> findTop5ByOrderByCountDesc();
 }

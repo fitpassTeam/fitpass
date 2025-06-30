@@ -1,5 +1,6 @@
 package org.example.fitpass.domain.search.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.dto.PageResponse;
 import org.example.fitpass.common.error.SuccessCode;
@@ -46,6 +47,14 @@ public class SearchGymController {
         PageResponse<GymResDto> pageResponse = new PageResponse<>(page);
 
         ResponseMessage<PageResponse<GymResDto>> responseMessage = ResponseMessage.success(SuccessCode.GYM_SEARCH_SUCCESS, pageResponse);
+        return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus()).body(responseMessage);
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<ResponseMessage<List<String>>> searchGymPopular (
+    ){
+        List<String> response = searchService.searchPopularGym();
+        ResponseMessage<List<String>> responseMessage = ResponseMessage.success(SuccessCode.GET_POPULAR_KEYWORD_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 

@@ -40,7 +40,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -48,6 +47,9 @@ public class SecurityConfig {
                 // 공개 API (GET /gyms 포함)
                 .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 .requestMatchers(HttpMethod.POST, "/images").permitAll()
+                .requestMatchers(HttpMethod.GET, "/gyms/{gymId}/trainers/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/gyms/{gymId}/memberships/**").permitAll()
+                .requestMatchers("/actuator/health","/health").permitAll()
                 .requestMatchers(
                     "/auth/**",
                     "/login",
@@ -113,9 +115,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // 프론트엔드 주소 허용 (필요에 따라 추가)
-        configuration.setAllowedOrigins(List.of(
+        configuration.setAllowedOriginPatterns(List.of(
             "http://127.0.0.1:5500",
-            "http://localhost:5173"
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "https://www.fitpass-13.com",
+            "https://fitpass-13.com"
         ));
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));

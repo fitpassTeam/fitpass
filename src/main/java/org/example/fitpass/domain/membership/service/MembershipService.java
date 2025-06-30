@@ -54,9 +54,7 @@ public class MembershipService {
     }
     // 모든 이용권 조회
     @Transactional(readOnly = true)
-    public List<MembershipResponseDto> getAllByGym(Long gymId, Long userId) {
-        // 유저 조회
-        User user = userRepository.findByIdOrElseThrow(userId);
+    public List<MembershipResponseDto> getAllByGym(Long gymId) {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         return membershipRepository.findAllByGym(gym).stream()
@@ -65,9 +63,7 @@ public class MembershipService {
     }
     // 이용권 상세 조회
     @Transactional(readOnly = true)
-    public MembershipResponseDto getMembershipById(Long gymId, Long membershipId, Long userId) {
-        // 유저 조회
-        User user = userRepository.findByIdOrElseThrow(userId);
+    public MembershipResponseDto getMembershipById(Long gymId, Long membershipId) {
         // 체육관 조회
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
         // 이용권 조회
