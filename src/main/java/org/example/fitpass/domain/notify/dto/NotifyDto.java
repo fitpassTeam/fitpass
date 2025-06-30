@@ -28,7 +28,7 @@ public class NotifyDto {
         public static Response createResponse(Notify notify) {
             return new Response(
                 notify.getId().toString(),
-                notify.getReceiver().getName(),
+                notify.getReceiverName(), // 헬퍼 메소드 사용
                 notify.getContent(),
                 notify.getNotificationType().name(),
                 notify.getCreatedAt().toString()
