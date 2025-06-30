@@ -1,0 +1,86 @@
+package org.example.fitpass.domain.search.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.example.fitpass.domain.post.dto.response.PostResponseDto;
+import org.example.fitpass.domain.post.entity.Post;
+import org.example.fitpass.domain.post.repository.PostRepository;
+import org.example.fitpass.domain.search.entity.SearchKeywordPost;
+import org.example.fitpass.domain.search.repository.SearchPostRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
+import org.springframework.data.domain.*;
+
+class SearchPostServiceTest {
+
+    @Mock
+    private SearchPostRepository searchPostRepository;
+
+    @Mock
+    private PostRepository postRepository;
+
+    @InjectMocks
+    private SearchPostService searchPostService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void 게시글_검색_성공_테스트() {
+        // given
+        String keyword = "운동";
+        Pageable pageable = PageRequest.of(0, 10);
+        Post post = mock(Post.class);
+        Page<Post> postPage = new PageImpl<>(List.of(post));
+
+        when(postRepository.searchByTitleOrContent(keyword, pageable)).thenReturn(postPage);
+
+        PostResponseDto dto = mock(PostResponseDto.class);
+        try (MockedStatic<PostResponseDto> mockedStatic = mockStatic(PostResponseDto.class)) {
+            mockedStatic.when(() -> PostResponseDto.from(post)).thenReturn(dto);
+
+            // when
+            Page<PostResponseDto> result = searchPostService.searchPost(keyword, pageable);
+
+            // then
+            assertThat(result).hasSize(1);
+            assertThat(result.getContent().get(0)).isEqualTo(dto);
+            verify(postRepository).searchByTitleOrContent(keyword, pageable);
+        }
+    }
+
+    @Test
+    void 게시글_검색어_기존_존재시_카운트증가() {
+        // given
+        String keyword = "트레이너";
+        SearchKeywordPost existing = mock(SearchKeywordPost.class);
+        when(searchPostRepository.findByKeyword(keyword)).thenReturn(Optional.of(existing));
+
+        // when
+        searchPostService.saveSearchKeywordPost(keyword);
+
+        // then
+        verify(existing).increaseCount();
+        verify(searchPostRepository, never()).save(any());
+    }
+
+    @Test
+    void 게시글_검색어_존재하지않을경우_새로_저장() {
+        // given
+        String keyword = "식단";
+        when(searchPostRepository.findByKeyword(keyword)).thenReturn(Optional.empty());
+
+        // when
+        searchPostService.saveSearchKeywordPost(keyword);
+
+        // then
+        verify(searchPostRepository).save(any(SearchKeywordPost.class));
+    }
+}
