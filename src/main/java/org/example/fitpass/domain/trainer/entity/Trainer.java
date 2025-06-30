@@ -61,9 +61,6 @@ public class Trainer extends BaseEntity {
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "trainer")
-    private List<User> members = new ArrayList<>();
-
     public Trainer(List<Image> trainerImage, String name, int price, String content, String experience) {
         this.name = name;
         this.price = price;
