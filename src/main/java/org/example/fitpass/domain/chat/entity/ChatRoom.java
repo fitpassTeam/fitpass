@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
-import org.example.fitpass.domain.trainer.entity.Trainer;
+import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.user.entity.User;
 
 @Entity
@@ -29,15 +29,15 @@ public class ChatRoom extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trainer_id", nullable = false)
-    private Trainer trainer;
+    @JoinColumn(name = "gym_id", nullable = false)
+    private Gym gym;
 
-    public ChatRoom(User user, Trainer trainer) {
+    public ChatRoom(User user, Gym gym) {
         this.user = user;
-        this.trainer = trainer;
+        this.gym = gym;
     }
 
-    public static ChatRoom of(User user, Trainer trainer) {
-        return new ChatRoom(user, trainer);
+    public static ChatRoom of(User user, Gym gym) {
+        return new ChatRoom(user, gym);
     }
 }

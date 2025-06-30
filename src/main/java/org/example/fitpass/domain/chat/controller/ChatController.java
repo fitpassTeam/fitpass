@@ -27,8 +27,8 @@ public class ChatController {
     @PostMapping
     public ResponseEntity<ResponseMessage<ChatRoomResponseDto>> createOrGetChatRoom(
         @RequestParam("userId") Long userId,
-        @RequestParam("trainerId") Long trainerId) {
-        ChatRoomResponseDto chatRoom = chatService.createOrGetChatRoom(userId, trainerId);
+        @RequestParam("gymId") Long gymId) {
+        ChatRoomResponseDto chatRoom = chatService.createOrGetChatRoom(userId, gymId);
         return ResponseEntity.status((SuccessCode.CREATE_CHATROOM.getHttpStatus()))
             .body(ResponseMessage.success(SuccessCode.CREATE_CHATROOM, chatRoom));
     }
@@ -50,6 +50,13 @@ public class ChatController {
         List<ChatMessageResponseDto> messages = chatService.getMessageByChatRoomId(chatRoomId);
         return ResponseEntity.status(SuccessCode.GET_ALL_CHATTING.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_ALL_CHATTING, messages));
+    }
+
+    @GetMapping("/{chatRoomId}")
+    public ResponseEntity<ResponseMessage<ChatRoomResponseDto>> getChatRoom(
+        @PathVariable("chatRoomId") Long chatRoomId) {
+        ChatRoomResponseDto chatRoom = chatService.getChatRoomById(chatRoomId);
+        return ResponseEntity.ok(ResponseMessage.success(SuccessCode.GET_CHATROOM, chatRoom));
     }
 
 }

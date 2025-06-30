@@ -124,7 +124,8 @@ public enum SuccessCode implements BaseCode {
     LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "13001","좋아요 상태가 변경되었습니다."),
 
     // 14000: 인기 검색어 조회
-    GET_POPULAR_KEYWORD_SUCCESS(HttpStatus.OK,"14001", "인기 검색어 조회가 완료되었습니다.");
+    GET_POPULAR_KEYWORD_SUCCESS(HttpStatus.OK,"14001", "인기 검색어 조회가 완료되었습니다."),
+    GET_CHATROOM(HttpStatus.OK,"14002" ,"인기 검색어 조회가 완료되었습니다." );
 
     private final HttpStatus httpStatus;
     private final String code;

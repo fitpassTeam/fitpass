@@ -1,5 +1,6 @@
 package org.example.fitpass.domain.user.service;
 
+import com.nimbusds.openid.connect.sdk.UserInfoResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
@@ -225,5 +226,10 @@ public class UserService {
         if (!passwordEncoder.matches(encodedPassword, rawPassword)) {
             throw new BaseException(ExceptionCode.INVALID_PASSWORD);
         }
+    }
+
+    public UserResponseDto getUser(Long userId) {
+        User user = userRepository.findByIdOrElseThrow(userId);
+        return UserResponseDto.from(user);
     }
 }

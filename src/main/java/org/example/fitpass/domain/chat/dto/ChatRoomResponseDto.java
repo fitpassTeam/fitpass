@@ -6,15 +6,15 @@ import org.example.fitpass.domain.chat.enums.SenderType;
 
 public record ChatRoomResponseDto(
     Long chatRoomId,
-    Long senderId,
-    Long receiverId,
+    Long userId,    // ← 변경
+    Long gymId,     // ← 변경
     String content,
     SenderType senderType
 ) {
-    public ChatRoomResponseDto(Long chatRoomId, Long senderId, Long receiverId, String content, SenderType senderType){
+    public ChatRoomResponseDto(Long chatRoomId, Long userId, Long gymId, String content, SenderType senderType){
         this.chatRoomId = chatRoomId;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
+        this.userId = userId;
+        this.gymId = gymId;
         this.content = content;
         this.senderType = senderType;
     }
@@ -22,11 +22,10 @@ public record ChatRoomResponseDto(
     public static ChatRoomResponseDto from(ChatRoom chatRoom, ChatMessage lastMessage){
         return new ChatRoomResponseDto(
             chatRoom.getId(),
-            chatRoom.getUser().getId(),
-            chatRoom.getTrainer().getId(),
+            chatRoom.getUser().getId(), // userId
+            chatRoom.getGym().getId(),  // gymId
             lastMessage != null ? lastMessage.getContent() : null,
             lastMessage != null ? lastMessage.getSenderType() : null
         );
     }
-
 }
