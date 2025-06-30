@@ -32,7 +32,7 @@ public class ChatMessage extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private SenderType senderType; // USER 또는 TRAINER
+    private SenderType senderType; // USER 또는 GYM
 
     @Column(nullable = false)
     private String content;

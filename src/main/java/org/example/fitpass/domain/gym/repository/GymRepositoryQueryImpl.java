@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.entity.QGym;
+import org.example.fitpass.domain.gym.enums.GymPostStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ public class GymRepositoryQueryImpl implements GymRepositoryQuery {
         QGym gym = QGym.gym;
 
         BooleanBuilder builder = new BooleanBuilder();
+        builder.and(gym.gymPostStatus.eq(GymPostStatus.APPROVED));
 
         if (keyword != null && !keyword.isEmpty()) {
             builder.and(gym.name.containsIgnoreCase(keyword));

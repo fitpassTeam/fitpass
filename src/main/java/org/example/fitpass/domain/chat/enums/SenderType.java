@@ -6,7 +6,7 @@ import org.example.fitpass.common.error.ExceptionCode;
 
 public enum SenderType {
 
-    USER, TRAINER;
+    USER, GYM;
 
     public static SenderType of(String type) {
         return Arrays.stream(SenderType.values())

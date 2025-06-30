@@ -1,5 +1,6 @@
 package org.example.fitpass.domain.user.controller;
 
+import com.nimbusds.openid.connect.sdk.UserInfoResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,10 @@ import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.user.dto.request.UserInfoUpdateRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -128,6 +131,15 @@ public class UserController {
         List<GymResponseDto> response = gymService.getAllMyGyms(user.getId());
         return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GYM_SEARCH_SUCCESS, response));
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<ResponseMessage<UserResponseDto>> getUser(
+        @PathVariable Long userId
+    ) {
+        UserResponseDto response = userService.getUser(userId);
+        return ResponseEntity.status(SuccessCode.USER_GET_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.USER_GET_SUCCESS, response));
     }
 
 }

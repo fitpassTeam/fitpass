@@ -123,7 +123,11 @@ public enum SuccessCode implements BaseCode {
     // 13000: 좋아요
     LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "13001","좋아요 상태가 변경되었습니다."),
 
-    // 14000: 결제 성공 코드
+    // 14000: 인기 검색어 조회
+    GET_POPULAR_KEYWORD_SUCCESS(HttpStatus.OK,"14001", "인기 검색어 조회가 완료되었습니다."),
+    GET_CHATROOM(HttpStatus.OK,"14002" ,"인기 검색어 조회가 완료되었습니다." ),
+
+    // 15000: 결제 성공 코드
     PAYMENT_PREPARE_SUCCESS(HttpStatus.OK, "14001", "결제 준비가 완료되었습니다."),
     PAYMENT_CONFIRM_SUCCESS(HttpStatus.OK, "14002", "결제 승인이 완료되었습니다."),
     PAYMENT_FAIL_SUCCESS(HttpStatus.OK, "14003", "결제 실패 처리가 완료되었습니다."),
