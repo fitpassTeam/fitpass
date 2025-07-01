@@ -9,6 +9,7 @@ on:
     branches:
       - main
       - dev
+      - feature/test-code
 
 jobs:
   deploy:
