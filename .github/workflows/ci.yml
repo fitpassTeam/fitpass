@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
-      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
     
     steps:
@@ -38,12 +36,6 @@ jobs:
           spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
           
           spring.h2.console.enabled=true
-          
-          cloud.aws.s3.bucket=fitpass-test
-          cloud.aws.credentials.access-key=${ACCESS_KEY}
-          cloud.aws.credentials.secret-key=${AWS_SECRET_KEY}
-          cloud.aws.region.static=ap-northeast-2
-          cloud.aws.stack.auto=false
           
           jwt.secret=${SECRET_KEY}
           EOF
