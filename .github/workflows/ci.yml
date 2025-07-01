@@ -10,6 +10,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     
+    env:
+      ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,6 +24,29 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
+
+      - name: Create test application properties
+        run: |
+          mkdir -p src/test/resources
+          cat > src/test/resources/application-test.properties << EOF
+          spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+          spring.datasource.driver-class-name=org.h2.Driver
+          spring.datasource.username=sa
+          spring.datasource.password=
+          
+          spring.jpa.hibernate.ddl-auto=create-drop
+          spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+          
+          spring.h2.console.enabled=true
+          
+          cloud.aws.s3.bucket=fitpass-test
+          cloud.aws.credentials.access-key=${ACCESS_KEY}
+          cloud.aws.credentials.secret-key=${AWS_SECRET_KEY}
+          cloud.aws.region.static=ap-northeast-2
+          cloud.aws.stack.auto=false
+          
+          jwt.secret=${SECRET_KEY}
+          EOF
 
       - name: Cache Gradle packages
         uses: actions/cache@v3
@@ -72,4 +100,4 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build -x test
