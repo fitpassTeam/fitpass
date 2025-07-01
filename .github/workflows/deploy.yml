@@ -6,7 +6,7 @@
       branches:
         - main
         - dev
-        - fix/Authorization
+        - feature/test-code
 
   jobs:
     deploy:
