@@ -99,7 +99,3 @@ jobs:
         run: ./gradlew build -x test
 
 
-      - name: Debug workflow_run info
-        run: |
-          echo "Conclusion: ${{ github.event.workflow_run.conclusion }}"
-          echo "Head Branch: ${{ github.event.workflow_run.head_branch }}"
