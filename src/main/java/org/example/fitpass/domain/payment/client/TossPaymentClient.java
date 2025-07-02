@@ -10,6 +10,7 @@ import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.payment.config.TossPaymentConfig;
 import org.example.fitpass.domain.payment.dto.request.PaymentConfirmRequestDto;
+import org.example.fitpass.domain.payment.dto.response.PaymentCancelResponseDto;
 import org.example.fitpass.domain.payment.dto.response.PaymentResponseDto;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -82,7 +83,7 @@ public class TossPaymentClient {
     }
 
     // 토스페이먼츠 결제 취소 API 호출
-    public PaymentResponseDto cancelPayment(String paymentKey, String cancelReason) {
+    public PaymentCancelResponseDto cancelPayment(String paymentKey, String cancelReason) {
         try {
             String auth = encodeSecretKey(tossPaymentConfig.getSecretKey());
 
@@ -101,7 +102,7 @@ public class TossPaymentClient {
             );
 
             log.info("토스페이먼츠 결제 취소 성공 - paymentKey: {}, reason: {}", paymentKey, cancelReason);
-            return objectMapper.readValue(response.getBody(), PaymentResponseDto.class);
+            return objectMapper.readValue(response.getBody(), PaymentCancelResponseDto.class);
 
         } catch (Exception e) {
             log.error("토스페이먼츠 결제 취소 실패 - paymentKey: {}", paymentKey, e);

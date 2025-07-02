@@ -1,0 +1,334 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 5,
+  "links": [],
+  "templating": {
+    "list": []
+  },
+  "panels": [
+    {
+      "title": "🎯 총 HTTP 요청 수",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "query": "SELECT COUNT(value) FROM http_reqs WHERE $timeFilter",
+          "alias": "총 요청 수",
+          "refId": "A",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      }
+    },
+    {
+      "title": "📊 응답 상태 분포",
+      "type": "piechart",
+      "gridPos": {"h": 8, "w": 8, "x": 6, "y": 0},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "alias": "Status 0 (Connection Error)",
+          "query": "SELECT COUNT(value) FROM http_reqs WHERE status='0' AND $timeFilter",
+          "refId": "A",
+          "rawQuery": true
+        },
+        {
+          "alias": "Status 200 (OK)",
+          "query": "SELECT COUNT(value) FROM http_reqs WHERE status='200' AND $timeFilter",
+          "refId": "B",
+          "rawQuery": true
+        },
+        {
+          "alias": "Status 404 (Not Found)",
+          "query": "SELECT COUNT(value) FROM http_reqs WHERE status='404' AND $timeFilter",
+          "refId": "C",
+          "rawQuery": true
+        },
+        {
+          "alias": "Status 409 (Conflict)",
+          "query": "SELECT COUNT(value) FROM http_reqs WHERE status='409' AND $timeFilter",
+          "refId": "D",
+          "rawQuery": true
+        }
+      ],
+      "options": {
+        "displayLabels": ["name", "value", "percent"],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": ["value", "percent"]
+        },
+        "pieType": "donut"
+      }
+    },
+    {
+      "title": "⚡ 응답시간 통계",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 10, "x": 14, "y": 0},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "alias": "평균 응답시간",
+          "query": "SELECT MEAN(value) FROM http_req_duration WHERE $timeFilter GROUP BY time(5s) fill(null)",
+          "refId": "A",
+          "rawQuery": true
+        },
+        {
+          "alias": "95% 응답시간",
+          "query": "SELECT PERCENTILE(value, 95) FROM http_req_duration WHERE $timeFilter GROUP BY time(5s) fill(null)",
+          "refId": "B",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "ms",
+          "min": 0
+        }
+      },
+      "options": {
+        "legend": {
+          "calcs": ["lastNotNull", "max", "min"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "title": "🔍 요청별 상세 정보",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 4},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "query": "SELECT COUNT(value) FROM http_reqs WHERE method='GET' AND $timeFilter",
+          "alias": "GET 요청",
+          "refId": "A",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "unit": "short"
+        }
+      },
+      "options": {
+        "colorMode": "background",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"]
+        },
+        "textMode": "value_and_name"
+      }
+    },
+    {
+      "title": "📈 요청 처리량 (RPS)",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 8},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "alias": "요청/초",
+          "query": "SELECT DERIVATIVE(MEAN(value), 1s) FROM http_reqs WHERE $timeFilter GROUP BY time(1s) fill(0)",
+          "refId": "A",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "min": 0
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "title": "🏃‍♂️ 가상 사용자 수",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 8},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "alias": "활성 VU",
+          "query": "SELECT MEAN(value) FROM vus WHERE $timeFilter GROUP BY time(1s) fill(null)",
+          "refId": "A",
+          "rawQuery": true
+        },
+        {
+          "alias": "최대 VU",
+          "query": "SELECT MEAN(value) FROM vus_max WHERE $timeFilter GROUP BY time(1s) fill(null)",
+          "refId": "B",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short",
+          "min": 0
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "title": "💾 네트워크 트래픽",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 14},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "alias": "Data Received",
+          "query": "SELECT DERIVATIVE(MEAN(value), 1s) FROM data_received WHERE $timeFilter GROUP BY time(1s) fill(0)",
+          "refId": "A",
+          "rawQuery": true
+        },
+        {
+          "alias": "Data Sent",
+          "query": "SELECT DERIVATIVE(MEAN(value), 1s) FROM data_sent WHERE $timeFilter GROUP BY time(1s) fill(0)",
+          "refId": "B",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "Bps",
+          "min": 0
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "title": "⏱️ 요청 지연 분석",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 14},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "alias": "Connection Time",
+          "query": "SELECT MEAN(value) FROM http_req_connecting WHERE $timeFilter GROUP BY time(1s) fill(null)",
+          "refId": "A",
+          "rawQuery": true
+        },
+        {
+          "alias": "Waiting Time",
+          "query": "SELECT MEAN(value) FROM http_req_waiting WHERE $timeFilter GROUP BY time(1s) fill(null)",
+          "refId": "B",
+          "rawQuery": true
+        },
+        {
+          "alias": "Receiving Time",
+          "query": "SELECT MEAN(value) FROM http_req_receiving WHERE $timeFilter GROUP BY time(1s) fill(null)",
+          "refId": "C",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "ms",
+          "min": 0
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        }
+      }
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 41,
+  "tags": ["k6", "performance", "load-testing"],
+  "time": {
+    "from": "now-10m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "🔥 K6 Load Testing Dashboard - Fixed",
+  "uid": "k6-fixed-dashboard",
+  "version": 2
+}

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import org.example.fitpass.domain.fitnessGoal.entity.WeightRecord;
 
 public record WeightRecordResponseDto(
-    Long id,
+    Long weightRecordId,
     Long fitnessGoalId,
     Double weight,
     LocalDate recordDate,
