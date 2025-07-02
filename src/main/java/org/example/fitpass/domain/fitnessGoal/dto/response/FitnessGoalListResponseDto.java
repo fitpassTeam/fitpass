@@ -6,7 +6,7 @@ import org.example.fitpass.domain.fitnessGoal.enums.GoalStatus;
 import org.example.fitpass.domain.fitnessGoal.enums.GoalType;
 
 public record FitnessGoalListResponseDto(
-    Long id,
+    Long fitnessGoalId,
     String title,
     GoalType goalType,
     GoalStatus goalStatus,
