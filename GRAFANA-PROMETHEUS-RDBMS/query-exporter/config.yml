@@ -2,6 +2,7 @@ databases:
   my-db:
     dsn: mysql://root:123456789@mysql:3306/fitpass
 
+
 metrics:
   # 사용자 관련
   user_total:

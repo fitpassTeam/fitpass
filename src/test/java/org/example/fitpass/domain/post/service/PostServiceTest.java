@@ -1,4 +1,4 @@
-package org.example.fitpass.post;
+package org.example.fitpass.domain.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,7 +17,6 @@ import org.example.fitpass.domain.post.entity.Post;
 import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
 import org.example.fitpass.domain.post.repository.PostRepository;
-import org.example.fitpass.domain.post.service.PostService;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.enums.Gender;
 import org.example.fitpass.domain.user.enums.UserRole;

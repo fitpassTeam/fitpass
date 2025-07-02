@@ -25,7 +25,7 @@ public class SearchGymController {
     private final SearchGymService searchService;
 //    private final TestService testService;
 
-    @GetMapping("/v1")
+    @GetMapping
     public ResponseEntity<ResponseMessage<PageResponse<GymResDto>>> searchGym (
         @RequestParam(name = "keyword", required = false) String keyword,
         @RequestParam(name = "city", required = false) String city,
@@ -57,20 +57,4 @@ public class SearchGymController {
         ResponseMessage<List<String>> responseMessage = ResponseMessage.success(SuccessCode.GET_POPULAR_KEYWORD_SUCCESS, response);
         return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus()).body(responseMessage);
     }
-
-
-//    @GetMapping("/search/gyms/v2")
-//    public ResponseEntity<ResponseMessage<PageResponse<GymResponseDto>>> searchGym2 (
-//            @RequestParam(name = "keyword") String keyword,
-//            @PageableDefault(page = 0, size = 20) Pageable pageable
-//    ){
-//        testService.saveSearchKeyword(keyword);
-//
-//        Page<GymResponseDto> responseDto = testService.searchGym2(keyword, pageable);
-//        PageResponse<GymResponseDto> pageResponse = new PageResponse<>(page);
-
-//        ResponseMessage<PageResponse<GymResponseDto>> responseMessage = ResponseMessage.success(SuccessCode.GYM_SEARCH_SUCCESS, responseDto);
-//        return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus()).body(responseMessage);
-//    }
-
 }
