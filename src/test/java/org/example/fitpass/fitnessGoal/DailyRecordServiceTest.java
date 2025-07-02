@@ -74,7 +74,7 @@ class DailyRecordServiceTest {
         DailyRecordResponseDto response = dailyRecordService.createDailyRecord(fitnessGoalId, imageUrls, memo, recordDate, userId);
 
         // then
-        assertEquals(100L, response.id());
+        assertEquals(100L, response.dailyRecordId());
         assertEquals(memo, response.memo());
         assertEquals(imageUrls.size(), response.imageUrls().size());
         verify(fitnessGoalRepository).findByIdAndUserIdOrElseThrow(fitnessGoalId, userId);
@@ -137,7 +137,7 @@ class DailyRecordServiceTest {
         DailyRecordResponseDto response = dailyRecordService.getDailyRecord(dailyRecordId, fitnessGoalId, userId);
 
         // then
-        assertEquals(dailyRecordId, response.id());
+        assertEquals(dailyRecordId, response.dailyRecordId());
         verify(record, times(2)).getFitnessGoal();
     }
 

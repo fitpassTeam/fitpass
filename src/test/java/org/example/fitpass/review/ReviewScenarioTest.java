@@ -138,7 +138,7 @@ class ReviewScenarioTest {
             .getResponse()
             .getContentAsString();
 
-        Number reviewIdNum = JsonPath.read(responseBody, "$.data.id");
+        Number reviewIdNum = JsonPath.read(responseBody, "$.data.reviewId");
         Long reviewId = reviewIdNum.longValue();
 
         // 2. 리뷰 수정

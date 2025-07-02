@@ -8,6 +8,7 @@ import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.payment.dto.request.PaymentConfirmRequestDto;
 import org.example.fitpass.domain.payment.dto.request.PaymentRequestDto;
+import org.example.fitpass.domain.payment.dto.response.PaymentCancelResponseDto;
 import org.example.fitpass.domain.payment.dto.response.PaymentResponseDto;
 import org.example.fitpass.domain.payment.dto.response.PaymentUrlResponseDto;
 import org.example.fitpass.domain.payment.entity.Payment;
@@ -90,11 +91,11 @@ public class PaymentController {
     
     // 결제 취소
     @PostMapping("/cancel/{orderId}")
-    public ResponseEntity<ResponseMessage<PaymentResponseDto>> cancelPayment(
+    public ResponseEntity<ResponseMessage<PaymentCancelResponseDto>> cancelPayment(
         @PathVariable String orderId,
         @RequestParam String cancelReason
     ) {
-        PaymentResponseDto response = paymentService.cancelPayment(orderId, cancelReason);
+        PaymentCancelResponseDto response = paymentService.cancelPayment(orderId, cancelReason);
         
         return ResponseEntity.ok(
             ResponseMessage.success(SuccessCode.PAYMENT_CANCEL_SUCCESS, response)

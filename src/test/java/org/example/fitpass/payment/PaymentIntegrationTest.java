@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.*;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.payment.client.TossPaymentClient;
+import org.example.fitpass.domain.payment.dto.response.PaymentCancelResponseDto;
 import org.example.fitpass.domain.payment.dto.response.PaymentResponseDto;
 import org.example.fitpass.domain.payment.dto.response.PaymentUrlResponseDto;
 import org.example.fitpass.domain.payment.entity.Payment;
@@ -60,7 +61,8 @@ public class PaymentIntegrationTest {
         // Given: 토스 API 응답 모킹
         PaymentResponseDto mockTossResponse = new PaymentResponseDto(
             "test_payment_key", "ORDER_TEST_123", "프리미엄 포인트 충전", 15000, "DONE",
-            null, null, "카드", "KRW"
+            java.time.LocalDateTime.now(), // approvedAt 추가
+            "카드"
         );
         given(tossPaymentClient.confirmPayment(anyString(), anyString(), anyInt()))
             .willReturn(mockTossResponse);
@@ -171,15 +173,17 @@ public class PaymentIntegrationTest {
         // 결제 승인 모킹
         PaymentResponseDto mockConfirmResponse = new PaymentResponseDto(
             "cancel_test_key", prepareResponse.orderId(), "취소 통합 테스트", 25000, "DONE",
-            null, null, "카드", "KRW"
+            java.time.LocalDateTime.now(), // approvedAt 추가
+            "카드"
         );
         given(tossPaymentClient.confirmPayment(anyString(), anyString(), anyInt()))
             .willReturn(mockConfirmResponse);
 
         // 결제 취소 모킹
-        PaymentResponseDto mockCancelResponse = new PaymentResponseDto(
+        PaymentCancelResponseDto mockCancelResponse = new PaymentCancelResponseDto(
             "cancel_test_key", prepareResponse.orderId(), "취소 통합 테스트", 25000, "CANCELED",
-            null, null, "카드", "KRW"
+            java.time.LocalDateTime.now(), // cancelledAt 추가
+            "카드"
         );
         given(tossPaymentClient.cancelPayment(anyString(), anyString()))
             .willReturn(mockCancelResponse);
@@ -188,7 +192,7 @@ public class PaymentIntegrationTest {
         paymentService.confirmPayment("cancel_test_key", prepareResponse.orderId(), 25000);
 
         // When: 결제 취소
-        PaymentResponseDto cancelResponse = paymentService.cancelPayment(
+        PaymentCancelResponseDto cancelResponse = paymentService.cancelPayment(
             prepareResponse.orderId(), "고객 요청"
         );
 
@@ -219,7 +223,8 @@ public class PaymentIntegrationTest {
         // Given: 토스 API 상태 조회 모킹
         PaymentResponseDto mockStatusResponse = new PaymentResponseDto(
             "status_test_key", "ORDER_STATUS_TEST", "상태 조회 테스트", 12000, "DONE",
-            null, null, "카드", "KRW"
+            java.time.LocalDateTime.now(), // approvedAt 추가
+            "카드"
         );
         given(tossPaymentClient.getPayment("status_test_key"))
             .willReturn(mockStatusResponse);

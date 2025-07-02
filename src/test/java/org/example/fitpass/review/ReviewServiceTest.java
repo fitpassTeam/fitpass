@@ -104,7 +104,7 @@ class ReviewServiceTest {
             4
         );
 
-        assertEquals(200L, dto.id());
+        assertEquals(200L, dto.reviewId());
         verify(reviewRepository).save(Mockito.any(Review.class));
     }
 

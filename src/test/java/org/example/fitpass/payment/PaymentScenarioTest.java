@@ -1,18 +1,22 @@
 package org.example.fitpass.payment;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.payment.client.TossPaymentClient;
 import org.example.fitpass.domain.payment.dto.request.PaymentRequestDto;
-import org.example.fitpass.domain.payment.dto.response.PaymentResponseDto;
+import org.example.fitpass.domain.payment.dto.response.PaymentCancelResponseDto;
 import org.example.fitpass.domain.payment.entity.Payment;
 import org.example.fitpass.domain.payment.enums.PaymentStatus;
 import org.example.fitpass.domain.payment.repository.PaymentRepository;
-import org.example.fitpass.domain.payment.service.PaymentService;
 import org.example.fitpass.domain.point.entity.Point;
 import org.example.fitpass.domain.point.enums.PointType;
 import org.example.fitpass.domain.point.repository.PointRepository;
@@ -24,7 +28,6 @@ import org.example.fitpass.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -37,10 +40,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.List;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest
@@ -197,16 +196,14 @@ public class PaymentScenarioTest {
         pointService.chargePoint(user.getId(), 20000, "토스페이먼츠 충전 - " + payment.getOrderName());
 
         // 토스페이먼츠 취소 응답 DTO 준비 및 mocking
-        PaymentResponseDto cancelResponse = new PaymentResponseDto(
+        PaymentCancelResponseDto cancelResponse = new PaymentCancelResponseDto(
             "test_payment_key_for_cancel",
             payment.getOrderId(),
             "취소 테스트 충전",
             20000,
             "CANCELED",
-            null,
-            null,
-            "카드",
-            "KRW"
+            LocalDateTime.now(), // cancelledAt
+            "카드"
         );
 
         given(tossPaymentClient.cancelPayment("test_payment_key_for_cancel", "고객 변심"))
