@@ -1,9 +1,14 @@
 package org.example.fitpass.payment;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.never;
+import static org.mockito.BDDMockito.verify;
 
+import java.util.List;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.payment.client.TossPaymentClient;
@@ -29,8 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @SpringBootTest
 @Transactional

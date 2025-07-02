@@ -7,8 +7,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
@@ -17,8 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.likes.entity.Like;
-
-import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.enums.Gender;
 import org.example.fitpass.domain.user.enums.UserRole;
 

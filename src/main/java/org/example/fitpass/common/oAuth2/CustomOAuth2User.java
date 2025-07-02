@@ -1,7 +1,6 @@
 package org.example.fitpass.common.oAuth2;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

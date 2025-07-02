@@ -6,7 +6,6 @@ import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.review.dto.response.GymRatingResponseDto;
 import org.example.fitpass.domain.review.entity.Review;
-import org.example.fitpass.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -1,13 +1,16 @@
 package org.example.fitpass.reservation;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Field;
@@ -18,12 +21,17 @@ import java.util.List;
 import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.reservation.dto.request.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.request.UpdateReservationRequestDto;
-import org.example.fitpass.domain.reservation.dto.response.*;
+import org.example.fitpass.domain.reservation.dto.response.AllGymReservationResponseDto;
+import org.example.fitpass.domain.reservation.dto.response.GetReservationResponseDto;
+import org.example.fitpass.domain.reservation.dto.response.ReservationResponseDto;
+import org.example.fitpass.domain.reservation.dto.response.TrainerReservationResponseDto;
+import org.example.fitpass.domain.reservation.dto.response.UpdateReservationResponseDto;
+import org.example.fitpass.domain.reservation.dto.response.UserReservationResponseDto;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.service.ReservationService;
-import org.example.fitpass.domain.user.enums.UserRole;
-import org.example.fitpass.domain.user.enums.Gender;
 import org.example.fitpass.domain.user.entity.User;
+import org.example.fitpass.domain.user.enums.Gender;
+import org.example.fitpass.domain.user.enums.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,7 +153,7 @@ class ReservationControllerTest {
     @Test
     void updateReservation_success() throws Exception {
         // Given
-        LocalDate newDate = LocalDate.of(2026, 7, 2);
+        LocalDate newDate = LocalDate.of(2025, 7, 2);
         LocalTime newTime = LocalTime.of(15, 0);
         
         UpdateReservationRequestDto updateDto = new UpdateReservationRequestDto(

@@ -1,5 +1,9 @@
 package org.example.fitpass.domain.fitnessGoal.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +30,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/fitness-goals")
 @RequiredArgsConstructor
+@Tag(name = "피트니스 목표 관리", description = "피트니스 목표 생성, 조회, 수정, 삭제 관련 API")
 public class FitnessGoalController {
 
     private final FitnessGoalService fitnessGoalService;
 
     // 목표 생성
+    @Operation(
+        summary = "피트니스 목표 생성",
+        description = "새로운 피트니스 목표를 생성합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "목표 생성 성공"),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터"),
+        @ApiResponse(responseCode = "401", description = "인증 실패")
+    })
     @PostMapping
     public ResponseEntity<ResponseMessage<FitnessGoalResponseDto>> createGoal (
         @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -50,6 +64,14 @@ public class FitnessGoalController {
     }
 
     // 내 목표 목록 조회
+    @Operation(
+        summary = "내 목표 목록 조회",
+        description = "로그인한 사용자의 피트니스 목표 목록을 조회합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "목표 목록 조회 성공"),
+        @ApiResponse(responseCode = "401", description = "인증 실패")
+    })
     @GetMapping
     public ResponseEntity<ResponseMessage<List<FitnessGoalListResponseDto>>> getMyGoals(
         @AuthenticationPrincipal CustomUserDetails userDetails
@@ -60,6 +82,16 @@ public class FitnessGoalController {
     }
 
     // 목표 상세 조회
+    @Operation(
+        summary = "목표 상세 조회",
+        description = "특정 피트니스 목표의 상세 정보를 조회합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "목표 상세 조회 성공"),
+        @ApiResponse(responseCode = "401", description = "인증 실패"),
+        @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
+        @ApiResponse(responseCode = "404", description = "목표를 찾을 수 없음")
+    })
     @GetMapping("/{fitnessGoalId}")
     public ResponseEntity<ResponseMessage<FitnessGoalResponseDto>> getGoal (
         @PathVariable Long fitnessGoalId,
@@ -72,6 +104,17 @@ public class FitnessGoalController {
     }
 
     // 목표 수정
+    @Operation(
+        summary = "목표 수정",
+        description = "피트니스 목표 정보를 수정합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "목표 수정 성공"),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터"),
+        @ApiResponse(responseCode = "401", description = "인증 실패"),
+        @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
+        @ApiResponse(responseCode = "404", description = "목표를 찾을 수 없음")
+    })
     @PutMapping("/{fitnessGoalId}")
     public ResponseEntity<ResponseMessage<FitnessGoalResponseDto>> updateGoal (
         @PathVariable Long fitnessGoalId,
@@ -91,6 +134,16 @@ public class FitnessGoalController {
     }
 
     // 목표 취소
+    @Operation(
+        summary = "목표 취소",
+        description = "진행 중인 피트니스 목표를 취소합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "목표 취소 성공"),
+        @ApiResponse(responseCode = "401", description = "인증 실패"),
+        @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
+        @ApiResponse(responseCode = "404", description = "목표를 찾을 수 없음")
+    })
     @PatchMapping("/{fitnessGoalId}/cancel")
     public ResponseEntity<ResponseMessage<FitnessGoalResponseDto>> cancelGoal (
         @PathVariable Long fitnessGoalId,
@@ -102,6 +155,16 @@ public class FitnessGoalController {
     }
 
     // 목표 삭제
+    @Operation(
+        summary = "목표 삭제",
+        description = "피트니스 목표를 삭제합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "목표 삭제 성공"),
+        @ApiResponse(responseCode = "401", description = "인증 실패"),
+        @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
+        @ApiResponse(responseCode = "404", description = "목표를 찾을 수 없음")
+    })
     @DeleteMapping("/{fitnessGoalId}")
     public ResponseEntity<ResponseMessage<Void>> deleteGoal (
         @PathVariable Long fitnessGoalId,

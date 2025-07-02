@@ -1,7 +1,6 @@
 package org.example.fitpass.domain.chat.repository;
 
 import static org.example.fitpass.common.error.ExceptionCode.CHAT_NOT_FOUND;
-import static org.example.fitpass.common.error.ExceptionCode.USER_NOT_FOUND;
 
 import java.util.List;
 import java.util.Optional;

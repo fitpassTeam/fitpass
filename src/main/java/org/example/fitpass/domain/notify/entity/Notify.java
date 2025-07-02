@@ -1,6 +1,5 @@
 package org.example.fitpass.domain.notify.entity;
 
-import com.querydsl.core.BooleanBuilder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import javax.management.Notification;
 import lombok.Getter;
 import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.domain.notify.NotificationType;

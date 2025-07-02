@@ -1,13 +1,17 @@
 package org.example.fitpass.domain.search;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-
 import org.example.fitpass.domain.gym.dto.response.GymResDto;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
@@ -16,8 +20,13 @@ import org.example.fitpass.domain.search.repository.SearchGymRepository;
 import org.example.fitpass.domain.search.service.SearchGymService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.data.domain.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 class SearchGymServiceTest {
 
@@ -104,19 +113,16 @@ class SearchGymServiceTest {
 
     @Test
     void 키워드가_존재하면_카운트_증가() {
-        // given
         String keyword = "헬스장";
+
         SearchKeywordGym existing = mock(SearchKeywordGym.class);
 
-        when(searchGymRepository.findByKeyword(keyword))
-                .thenReturn(Optional.of(existing));
+        when(searchGymRepository.findByKeyword(keyword)).thenReturn(Optional.of(existing));
 
-        // when
         searchGymService.saveSearchKeywordGym(keyword);
 
-        // then
-        verify(existing).increaseCount(); // count 증가 확인
-        verify(searchGymRepository, never()).save(any()); // save는 호출되지 않아야 함
+        verify(existing).increaseCount();
+        verify(searchGymRepository, never()).save(any());
     }
 
     @Test

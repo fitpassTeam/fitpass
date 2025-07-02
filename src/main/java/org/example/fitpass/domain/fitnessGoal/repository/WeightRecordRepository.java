@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.domain.fitnessGoal.dto.response.WeightRecordResponseDto;
 import org.example.fitpass.domain.fitnessGoal.entity.WeightRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

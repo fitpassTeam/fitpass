@@ -3,9 +3,9 @@ package org.example.fitpass.common.oAuth2;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.enums.Gender;
 import org.example.fitpass.domain.user.enums.UserRole;
-import org.example.fitpass.domain.user.entity.User;
 
 @Getter
 @RequiredArgsConstructor

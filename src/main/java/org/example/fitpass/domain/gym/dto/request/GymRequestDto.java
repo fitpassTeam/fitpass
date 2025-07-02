@@ -5,10 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 public record GymRequestDto(
     @NotBlank(message = "체육관의 이름을 입력해주세요.")

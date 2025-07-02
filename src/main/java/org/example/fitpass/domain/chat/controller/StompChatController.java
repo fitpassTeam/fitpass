@@ -1,7 +1,6 @@
 package org.example.fitpass.domain.chat.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.fitpass.common.error.BaseException;
@@ -79,8 +78,10 @@ public class StompChatController {
 
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
-    public ChatMessageResponseDto addUser(@Payload ChatMessageRequestDto chatMessageRequest,
-        SimpMessageHeaderAccessor headerAccessor) {
+    public ChatMessageResponseDto addUser(
+        @Payload ChatMessageRequestDto chatMessageRequest,
+        SimpMessageHeaderAccessor headerAccessor
+    ) {
         headerAccessor.getSessionAttributes().put("userId", chatMessageRequest.senderId());
         headerAccessor.getSessionAttributes().put("userType", chatMessageRequest.senderType());
 

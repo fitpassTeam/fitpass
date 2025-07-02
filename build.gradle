@@ -84,7 +84,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     // swagger
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'	//Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
     // OAuth2 Client (구글, 카카오, 네이버 등 소셜 로그인용)
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
