@@ -116,8 +116,8 @@ class SearchGymServiceTest {
         searchGymService.saveSearchKeywordGym(keyword);
 
         // then
-        verify(existing).increaseCount(); // count 증가 확인
-        verify(searchGymRepository).save(existing); // 수정 저장 확인
+        verify(existing).increaseCount(); // count 증가는 호출됨
+        verify(searchGymRepository, never()).save(any()); // save는 호출되지 않아야 함
     }
 
     @Test
