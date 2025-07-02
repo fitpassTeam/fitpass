@@ -1,7 +1,6 @@
-package org.example.fitpass.domain.Search;
+package org.example.fitpass.domain.search;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
@@ -117,7 +116,7 @@ class SearchGymServiceTest {
 
         // then
         verify(existing).increaseCount(); // count 증가 확인
-        verify(searchGymRepository).save(existing); // 수정 저장 확인
+        verify(searchGymRepository, never()).save(any()); // save는 호출되지 않아야 함
     }
 
     @Test

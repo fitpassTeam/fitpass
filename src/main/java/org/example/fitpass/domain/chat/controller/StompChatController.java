@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.chat.dto.ChatMessageRequestDto;
 import org.example.fitpass.domain.chat.dto.ChatMessageResponseDto;
 import org.example.fitpass.domain.chat.entity.ChatMessage;
@@ -45,11 +47,11 @@ public class StompChatController {
 
             User user = userRepository.findById(
                     senderType == SenderType.USER ? senderId : receiverId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new BaseException(ExceptionCode.USER_NOT_FOUND));
 
             Gym gym = gymRepository.findById(
                     senderType == SenderType.USER ? receiverId : senderId)
-                .orElseThrow(() -> new EntityNotFoundException("Gym not found"));
+                .orElseThrow(() -> new BaseException(ExceptionCode.GYM_NOT_FOUND));
 
             ChatRoom room = chatRoomRepository.findByUserAndGym(
                     senderType == SenderType.USER ? senderId : receiverId,
