@@ -71,6 +71,7 @@ public class PostService {
         return posts.map(PostResponseDto::from);
     }
 
+    //Notice 게시물 조회
     @Transactional(readOnly = true)
     public List<PostResponseDto> findAllPostByNotice(User user, Long gymId, PostType postType) {
 
@@ -104,7 +105,7 @@ public class PostService {
                 post.getUpdatedAt()
         );
     }
-
+    //사진 수정
     @Transactional
     public List<String> updatePhoto(List<MultipartFile> files, Long postId, Long userId) {
         Post post = postRepository.findByIdOrElseThrow(postId);

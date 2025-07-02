@@ -1,5 +1,7 @@
 services:
   mysql:
+    env_file:
+      - .env
     image: mysql:8.0.36
     container_name: mysql-dev
     environment:
@@ -21,12 +23,16 @@ services:
       start_period: 40s
 
   redis:
+    env_file:
+      - .env
     image: redis:alpine
     container_name: redis-dev
     ports:
       - "6379:6379"
 
   grafana:
+    env_file:
+      - .env
     image: grafana/grafana
     container_name: grafana-dev
     restart: unless-stopped
@@ -39,6 +45,8 @@ services:
       - my-network
 
   prometheus:
+    env_file:
+      - .env
     image: prom/prometheus
     container_name: prometheus-dev
     restart: unless-stopped
@@ -59,6 +67,8 @@ services:
       - my-network
 
   query-exporter:
+    env_file:
+      - .env
     image: adonato/query-exporter
     environment:
       DB_HOST: mysql

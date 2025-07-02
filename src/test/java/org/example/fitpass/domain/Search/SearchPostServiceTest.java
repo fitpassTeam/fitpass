@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.search.service;
+package org.example.fitpass.domain.Search;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -11,6 +11,7 @@ import org.example.fitpass.domain.post.entity.Post;
 import org.example.fitpass.domain.post.repository.PostRepository;
 import org.example.fitpass.domain.search.entity.SearchKeywordPost;
 import org.example.fitpass.domain.search.repository.SearchPostRepository;
+import org.example.fitpass.domain.search.service.SearchPostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;

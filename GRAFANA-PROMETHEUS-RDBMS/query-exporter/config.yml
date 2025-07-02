@@ -1,6 +1,6 @@
 databases:
   my-db:
-    dsn:
+    dsn: mysql://DB_USERNAME:DB_PASSWORD@mysql:3306/DB_NAME
 
 metrics:
   user_total:
