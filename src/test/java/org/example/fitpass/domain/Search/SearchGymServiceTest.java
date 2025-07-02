@@ -1,6 +1,7 @@
-package org.example.fitpass.domain.search.service;
+package org.example.fitpass.domain.Search;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import java.lang.reflect.Field;
@@ -104,16 +105,19 @@ class SearchGymServiceTest {
 
     @Test
     void 키워드가_존재하면_카운트_증가() {
+        // given
         String keyword = "헬스장";
-
         SearchKeywordGym existing = mock(SearchKeywordGym.class);
 
-        when(searchGymRepository.findByKeyword(keyword)).thenReturn(Optional.of(existing));
+        when(searchGymRepository.findByKeyword(keyword))
+                .thenReturn(Optional.of(existing));
 
+        // when
         searchGymService.saveSearchKeywordGym(keyword);
 
-        verify(existing).increaseCount();
-        verify(searchGymRepository, never()).save(any());
+        // then
+        verify(existing).increaseCount(); // count 증가 확인
+        verify(searchGymRepository).save(existing); // 수정 저장 확인
     }
 
     @Test
