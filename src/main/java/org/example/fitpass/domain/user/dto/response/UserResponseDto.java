@@ -5,7 +5,7 @@ import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.entity.User;
 
 public record UserResponseDto(
-    Long id,
+    Long userId,
     String email,
     String name,
     String phone,

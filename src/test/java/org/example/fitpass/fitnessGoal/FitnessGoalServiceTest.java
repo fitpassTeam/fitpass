@@ -69,7 +69,7 @@ public class FitnessGoalServiceTest {
 
         // then
         assertNotNull(response);
-        assertEquals(10L, response.id());
+        assertEquals(10L, response.fitnessGoalId());
         assertEquals("목표1", response.title());
     }
 
@@ -109,7 +109,7 @@ public class FitnessGoalServiceTest {
         FitnessGoalResponseDto response = fitnessGoalService.getGoal(1L, 10L);
 
         // then
-        assertEquals(10L, response.id());
+        assertEquals(10L, response.fitnessGoalId());
         assertEquals("목표1", response.title());
         verify(goal).checkAndUpdateExpiredStatus();
     }

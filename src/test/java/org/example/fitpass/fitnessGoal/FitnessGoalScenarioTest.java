@@ -82,7 +82,7 @@ public class FitnessGoalScenarioTest {
             .andExpect(jsonPath("$.data.title").value("체중 감량 목표"))
             .andReturn().getResponse().getContentAsString();
 
-        Number idNum = JsonPath.read(createResponse, "$.data.id");
+        Number idNum = JsonPath.read(createResponse, "$.data.fitnessGoalId");
         fitnessGoalId = idNum.longValue();
 
         // 2. 체중 기록 추가
@@ -98,7 +98,7 @@ public class FitnessGoalScenarioTest {
             .andExpect(jsonPath("$.data.weight").value(69.0))
             .andReturn().getResponse().getContentAsString();
 
-        Number weightRecordIdNum = JsonPath.read(weightCreateResponse, "$.data.id");
+        Number weightRecordIdNum = JsonPath.read(weightCreateResponse, "$.data.weightRecordId");
         weightRecordId = weightRecordIdNum.longValue();
 
         // 3. 일일 기록 추가
@@ -114,7 +114,7 @@ public class FitnessGoalScenarioTest {
             .andExpect(jsonPath("$.data.memo").value("운동 기록 메모"))
             .andReturn().getResponse().getContentAsString();
 
-        Number dailyRecordIdNum = JsonPath.read(dailyRecordResponse, "$.data.id");
+        Number dailyRecordIdNum = JsonPath.read(dailyRecordResponse, "$.data.dailyRecordId");
         dailyRecordId = dailyRecordIdNum.longValue();
 
         // 4. 체중 기록 수정

@@ -57,7 +57,7 @@ public class UserController {
         return ResponseEntity.status(SuccessCode.USER_GET_SUCCESS.getHttpStatus())
                 .body(ResponseMessage.success(SuccessCode.USER_GET_SUCCESS, response));
     }
-
+    // 모든 유저 조회
     @GetMapping
     public ResponseEntity<ResponseMessage<List<UserResponseDto>>> getAllUsers(
         @AuthenticationPrincipal CustomUserDetails userDetails
@@ -123,7 +123,7 @@ public class UserController {
         return ResponseEntity.status(SuccessCode.OWNER_UPGRADE_REQUEST_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.OWNER_UPGRADE_REQUEST_SUCCESS, response));
     }
-
+    // 오너 체육관 조회
     @GetMapping("/me/gyms")
     public ResponseEntity<ResponseMessage<List<GymResponseDto>>> getAllGyms(
         @AuthenticationPrincipal CustomUserDetails user
@@ -132,7 +132,7 @@ public class UserController {
         return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GYM_SEARCH_SUCCESS, response));
     }
-
+    // 특정 유저 조회
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseMessage<UserResponseDto>> getUser(
         @PathVariable Long userId

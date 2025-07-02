@@ -81,7 +81,7 @@ class WeightRecordServiceTest {
             fitnessGoal.getId(), weight, recordDate, memo, user.getId());
 
         assertNotNull(responseDto);
-        assertEquals(100L, responseDto.id());
+        assertEquals(100L, responseDto.weightRecordId());
         verify(weightRecordRepository).save(Mockito.any(WeightRecord.class));
         verify(fitnessGoalRepository).findByIdAndUserIdOrElseThrow(fitnessGoal.getId(), user.getId());
     }
@@ -111,7 +111,7 @@ class WeightRecordServiceTest {
         WeightRecordResponseDto dto = weightRecordService.getWeightRecord(
             user.getId(), fitnessGoal.getId(), 100L);
 
-        assertEquals(100L, dto.id());
+        assertEquals(100L, dto.weightRecordId());
     }
 
     @Test
