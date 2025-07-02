@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.search.service;
+package org.example.fitpass.domain.Search;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.example.fitpass.domain.search.entity.SearchKeywordTrainer;
 import org.example.fitpass.domain.search.repository.SearchTrainerRepository;
+import org.example.fitpass.domain.search.service.SearchTrainerService;
 import org.example.fitpass.domain.trainer.dto.response.TrainerResponseDto;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.trainer.repository.TrainerRepository;

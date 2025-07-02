@@ -29,7 +29,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String requestURI = request.getRequestURI();
 
-        if (requestURI.startsWith("/auth")) {
+        // 인증이 필요없는 경로들은 필터를 건너뜀
+        if (shouldSkipAuthentication(requestURI)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -69,5 +70,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean shouldSkipAuthentication(String requestURI) {
+        // 인증이 필요없는 경로들
+        String[] publicPaths = {
+            "/auth",
+            "/search",
+            "/gyms",
+            "/actuator/health",
+            "/health",
+            "/login",
+            "/ws",
+            "/error",
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/api-docs",
+            "/memberships/purchases",
+            "/api/payments/confirm",
+            "/api/payments/fail",
+            "/payment"
+        };
+
+        for (String path : publicPaths) {
+            if (requestURI.startsWith(path)) {
+                return true;
+            }
+        }
+        
+        // GET 요청인 경우 특정 경로들 허용
+        if (requestURI.matches("/gyms/\\d+/trainers/.*") || 
+            requestURI.matches("/gyms/\\d+/memberships/.*")) {
+            return true;
+        }
+        
+        return false;
     }
 }
