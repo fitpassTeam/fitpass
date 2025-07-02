@@ -1,16 +1,109 @@
 databases:
   my-db:
-    dsn:
+    dsn: mysql://root:123456789@mysql:3306/fitpass
 
 metrics:
+  # 사용자 관련
   user_total:
     type: gauge
     description: Total number of users
+  
+  # 예약 관련 메트릭
+  reservation_total:
+    type: gauge
+    description: Total number of reservations
+  
+  reservation_status_count:
+    type: gauge
+    description: Count of reservations by status
+    labels: [reservation_status]
+  
+  reservation_by_trainer:
+    type: gauge
+    description: Reservations per trainer
+    labels: [trainer_id]
+  
+  # 동시성 제어 관련
+  active_reservations:
+    type: gauge
+    description: Currently active/pending reservations
+  
+  recent_reservations:
+    type: gauge
+    description: Reservations created in last 1 minute
+  
+  cancelled_reservations_recent:
+    type: gauge
+    description: Cancelled reservations in last 5 minutes
 
 queries:
+  # 기본 사용자 수
   user_count_query:
     interval: 30
     databases: [my-db]
     metrics: [user_total]
     sql: |
       SELECT COUNT(*) as user_total FROM users
+  
+  # 전체 예약 수
+  reservation_count_query:
+    interval: 15
+    databases: [my-db]
+    metrics: [reservation_total]
+    sql: |
+      SELECT COUNT(*) as reservation_total FROM reservations
+  
+  # 예약 상태별 카운트 (동시성 테스트에서 중요!)
+  reservation_status_query:
+    interval: 10
+    databases: [my-db]
+    metrics: [reservation_status_count]
+    sql: |
+      SELECT 
+        reservation_status,
+        COUNT(*) as reservation_status_count
+      FROM reservations 
+      GROUP BY reservation_status
+  
+  # 트레이너별 예약 수 (동시성 테스트 시 특정 트레이너에 몰리는 예약 모니터링)
+  trainer_reservation_query:
+    interval: 15
+    databases: [my-db]
+    metrics: [reservation_by_trainer]
+    sql: |
+      SELECT 
+        trainer_id,
+        COUNT(*) as reservation_by_trainer
+      FROM reservations 
+      GROUP BY trainer_id
+  
+  # 활성 예약 (대기중/확정된 예약)
+  active_reservations_query:
+    interval: 10
+    databases: [my-db]
+    metrics: [active_reservations]
+    sql: |
+      SELECT COUNT(*) as active_reservations 
+      FROM reservations 
+      WHERE reservation_status IN ('PENDING', 'CONFIRMED')
+  
+  # 최근 1분간 생성된 예약 (K6 테스트 중 실시간 모니터링)
+  recent_reservations_query:
+    interval: 5
+    databases: [my-db]
+    metrics: [recent_reservations]
+    sql: |
+      SELECT COUNT(*) as recent_reservations
+      FROM reservations 
+      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+  
+  # 최근 취소된 예약들 (동시성 제어 실패로 인한 취소 모니터링)
+  recent_cancelled_reservations:
+    interval: 10
+    databases: [my-db]
+    metrics: [cancelled_reservations_recent]
+    sql: |
+      SELECT COUNT(*) as cancelled_reservations_recent
+      FROM reservations 
+      WHERE reservation_status = 'CANCELLED' 
+      AND updated_at >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)
