@@ -1,4 +1,3 @@
-/*
 package org.example.fitpass.trainer;
 
 import org.example.fitpass.common.error.BaseException;
@@ -89,7 +88,7 @@ class TrainerIntegrationTest {
         gym1 = Gym.of(
             List.of("gym1_1.jpg", "gym1_2.jpg"), "강남 피트니스", "02-1111-1111",
             "강남 최고의 헬스장", "서울", "강남구", "테헤란로 100",
-            LocalTime.of(6, 0), LocalTime.of(24, 0), "24시간 운영", ownerUser1
+            LocalTime.of(6, 0), LocalTime.of(23, 59), "24시간 운영", ownerUser1
         );
         gym1 = gymRepository.save(gym1);
 
@@ -512,4 +511,3 @@ class TrainerIntegrationTest {
         }
     }
 }
-*/

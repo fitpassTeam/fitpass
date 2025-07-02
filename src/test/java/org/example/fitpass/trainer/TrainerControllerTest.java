@@ -1,13 +1,11 @@
-/*
 package org.example.fitpass.trainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.lang.reflect.Field;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.security.CustomUserDetails;
-import org.example.fitpass.config.RedisDao;
 import org.example.fitpass.config.RedisService;
-import org.example.fitpass.domain.trainer.controller.TrainerController;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerRequestDto;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerUpdateRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerDetailResponseDto;
@@ -23,13 +21,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -56,9 +50,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
-@WebMvcTest(TrainerController.class)
-@DisplayName("TrainerController 단위 테스트")
 class TrainerControllerTest {
 
     @Autowired
@@ -85,10 +79,13 @@ class TrainerControllerTest {
     private TrainerResponseDto trainerResponseDto;
     private TrainerDetailResponseDto trainerDetailResponseDto;
 
+    private User ownerUser;
+    private static final Long TEST_USER_ID = 123L;
+
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         // 🔹 인증된 사용자 직접 생성 (User 객체)
-        User ownerUser = new User(
+        ownerUser = new User(
             "owner@test.com",
             null,
             "password123",
@@ -100,7 +97,8 @@ class TrainerControllerTest {
             UserRole.OWNER,
             "LOCAL"
         );
-        setId(ownerUser, 1L); // 🔑 ID 수동 설정 메서드 필요 (리플렉션)
+
+        setUserIdByReflection(ownerUser, TEST_USER_ID); // 🔑 ID 수동 설정 메서드 필요 (리플렉션)
 
         // 🔹 CustomUserDetails로 Wrapping
         CustomUserDetails userDetails = new CustomUserDetails(ownerUser);
@@ -125,20 +123,13 @@ class TrainerControllerTest {
             "김트레이너", 50000, "전문 트레이너", "5년 경력", 
             TrainerStatus.ACTIVE, Collections.emptyList(), LocalDateTime.now()
         );
+
     }
 
-    void setupSecurityContext() {
-        User mockUser = new User(...); // 최소 필드만
-        setId(mockUser, 1L);
-
-        CustomUserDetails userDetails = new CustomUserDetails(mockUser);
-
-        UsernamePasswordAuthenticationToken auth =
-            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(auth);
-        SecurityContextHolder.setContext(context);
+    private void setUserIdByReflection(User user, Long id) throws Exception {
+        Field idField = User.class.getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(user, id);
     }
 
     @Nested
@@ -530,4 +521,3 @@ class TrainerControllerTest {
         }
     }
 }
-*/
