@@ -100,6 +100,28 @@ src/main/java/org/example/fitpass/
 ```
 ---
 
+# 서비스 플로우
+
+### 사용자 인증/인가 - PT 예약, 이용권 구매
+![image](https://github.com/user-attachments/assets/2a218348-f7a9-4bc1-ae3c-a96be97db9ce)
+
+### 사용자 Owner 신청 - 체육관, 트레이너, 이용권 등록
+![image](https://github.com/user-attachments/assets/993c565d-7cc8-4b88-81f7-f55d3d6c7b8b)
+
+### 포인트 플로우
+![image](https://github.com/user-attachments/assets/167c538c-ee9b-4657-8cee-06e78631fb77)
+
+### 헬스케어 관리
+![image](https://github.com/user-attachments/assets/41a5c7c8-f16d-4e6c-b80a-8de5ad0f470a)
+
+### 실시간 채팅
+![image](https://github.com/user-attachments/assets/623e9967-b07b-4d40-ab8e-e17bd32e9374)
+
+### 알림 시스템
+![image](https://github.com/user-attachments/assets/71a846b8-f273-4b7e-a686-7917af94c651)
+
+---
+
 ## 기술 스택
 
 ### Language & Framework
