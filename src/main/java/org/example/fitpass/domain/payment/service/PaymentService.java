@@ -8,6 +8,7 @@ import org.example.fitpass.domain.payment.client.TossPaymentClient;
 import org.example.fitpass.domain.payment.config.TossPaymentConfig;
 import org.example.fitpass.domain.payment.dto.request.PaymentConfirmRequestDto;
 import org.example.fitpass.domain.payment.dto.request.PaymentRequestDto;
+import org.example.fitpass.domain.payment.dto.response.PaymentCancelResponseDto;
 import org.example.fitpass.domain.payment.dto.response.PaymentResponseDto;
 import org.example.fitpass.domain.payment.dto.response.PaymentUrlResponseDto;
 import org.example.fitpass.domain.payment.entity.Payment;
@@ -83,6 +84,7 @@ public class PaymentService {
             payment.updatePaymentKey(paymentKey);
             payment.updateStatus(PaymentStatus.CONFIRMED);
             payment.updateMethod(tossResponse.method());
+            payment.updateApprovedAt(tossResponse.approvedAt());
             
             // 5. 포인트 충전
             pointService.chargePoint(
@@ -150,7 +152,7 @@ public class PaymentService {
     
     // 결제 취소 처리
     @Transactional
-    public PaymentResponseDto cancelPayment(String orderId, String cancelReason) {
+    public PaymentCancelResponseDto cancelPayment(String orderId, String cancelReason) {
         // 1. 주문 정보 조회
         Payment payment = paymentRepository.findByIdOrElseThrow(orderId);
         
@@ -165,11 +167,12 @@ public class PaymentService {
         
         try {
             // 3. 토스페이먼츠 결제 취소 요청
-            PaymentResponseDto tossResponse = tossPaymentClient.cancelPayment(payment.getPaymentKey(), cancelReason);
+            PaymentCancelResponseDto tossResponse = tossPaymentClient.cancelPayment(payment.getPaymentKey(), cancelReason);
             
             // 4. 결제 정보 업데이트 (취소 상태로 변경)
             payment.updateStatus(PaymentStatus.CANCELLED);
             payment.updateFailureReason(cancelReason);
+            payment.updateCancelledAt(tossResponse.cancelledAt());
             
             // 5. 포인트 차감 (충전했던 포인트 되돌리기)
             pointService.usePoint(

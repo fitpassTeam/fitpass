@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import org.example.fitpass.domain.review.entity.Review;
 
 public record ReviewResponseDto(
-    Long id,
+    Long reviewId,
     String content,
     int gymRating,
     int trainerRating,

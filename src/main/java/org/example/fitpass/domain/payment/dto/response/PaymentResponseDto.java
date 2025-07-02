@@ -8,9 +8,7 @@ public record PaymentResponseDto(
     String orderName,
     Integer amount,
     String status,
-    LocalDateTime requestedAt,
     LocalDateTime approvedAt,
-    String method,
-    String currency
+    String method
 ) {
 }

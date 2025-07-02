@@ -8,7 +8,7 @@ import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.fitnessGoal.entity.DailyRecord;
 
 public record DailyRecordResponseDto(
-    Long id,
+    Long dailyRecordId,
     Long fitnessGoalId,
     List<String> imageUrls,
     String memo,
