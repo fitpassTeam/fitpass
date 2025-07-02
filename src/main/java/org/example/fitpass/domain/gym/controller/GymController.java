@@ -1,5 +1,7 @@
 package org.example.fitpass.domain.gym.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -32,11 +34,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/gyms")
+@Tag(name = "GYM API", description = "체육관 ")
 @RequiredArgsConstructor
 public class GymController {
 
     private final GymService gymService;
 
+    @Operation(
+        summary = "체육관 생성",
+        description = "요청 본문에 체육관 정보를 입력하여 새로운 체육관을 등록합니다. 인증된 사용자(트레이너)만 체육관을 등록할 수 있습니다."
+    )
     @PostMapping
     public ResponseEntity<ResponseMessage<GymStatusResponseDto>> postGym(
         @Valid @RequestBody GymRequestDto request,
@@ -58,6 +65,10 @@ public class GymController {
             .body(ResponseMessage.success(SuccessCode.GYM_REQUEST_POST_SUCCESS, response));
     }
 
+    @Operation(
+        summary = "체육관 상세 조회",
+        description = "체육관 ID를 이용해 특정 체육관의 상세 정보를 조회합니다."
+    )
     @GetMapping("/{gymId}")
     public ResponseEntity<ResponseMessage<GymDetailResponDto>> getGym(@PathVariable Long gymId) {
         GymDetailResponDto response = gymService.getGym(gymId);
@@ -65,6 +76,10 @@ public class GymController {
             .body(ResponseMessage.success(SuccessCode.GYM_FIND_SUCCESS, response));
     }
 
+    @Operation(
+        summary = "전체 체육관 목록 조회",
+        description = "페이지네이션을 사용하여 전체 체육관 리스트를 조회합니다. 로그인 여부에 따라 좋아요 여부도 함께 반환됩니다."
+    )
     @GetMapping
     public ResponseEntity<ResponseMessage<PageResponse<GymResponseDto>>> getAllGyms(
         @PageableDefault(page = 0, size = 10) Pageable pageable,
@@ -77,9 +92,13 @@ public class GymController {
             .body(ResponseMessage.success(SuccessCode.GYM_FIND_ALL_SUCCESS, pageResponse));
     }
 
+    @Operation(
+        summary = "체육관 이미지 수정",
+        description = "해당 체육관의 이미지를 수정합니다. 이미지 파일들을 multipart/form-data 형식으로 전송해야 합니다. 체육관 생성 당사자만 수정 가능합니다."
+    )
     @PatchMapping("/{gymId}/photo")
     public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
-        @RequestParam("images")List<MultipartFile> files,
+        @RequestParam("images") List<MultipartFile> files,
         @PathVariable Long gymId,
         @AuthenticationPrincipal CustomUserDetails user) {
         List<String> updatedImageUrls = gymService.updatePhoto(files, gymId, user.getId());
@@ -87,6 +106,10 @@ public class GymController {
             .body(ResponseMessage.success(SuccessCode.GYM_EDIT_PHOTO_SUCCESS, updatedImageUrls));
     }
 
+    @Operation(
+        summary = "체육관 정보 수정",
+        description = "체육관 ID를 기준으로 체육관의 이름, 번호, 주소, 운영 시간 등의 정보를 수정합니다. 체육관 생성 당사자만 수정 가능합니다."
+    )
     @PatchMapping("/{gymId}")
     public ResponseEntity<ResponseMessage<GymResDto>> updateGym(
         @RequestBody GymRequestDto request,
@@ -110,6 +133,10 @@ public class GymController {
             .body(ResponseMessage.success(SuccessCode.GYM_EDIT_INFO_SUCCESS, response));
     }
 
+    @Operation(
+        summary = "체육관 삭제",
+        description = "해당 체육관 ID의 체육관을 삭제합니다. 체육관 생성 당사자만 삭제 가능합니다."
+    )
     @DeleteMapping("/{gymId}")
     public ResponseEntity<ResponseMessage<Void>> deleteGym(
         @PathVariable Long gymId,
@@ -119,6 +146,10 @@ public class GymController {
             .body(ResponseMessage.success(SuccessCode.GYM_DELETE_SUCCESS));
     }
 
+    @Operation(
+        summary = "체육관 별점 조회",
+        description = "해당 체육관의 평균 별점과 리뷰 수를 조회합니다. 로그인한 사용자 기준으로 즐겨찾기 여부도 함께 반환됩니다."
+    )
     @GetMapping("/{gymId}/rating")
     public ResponseEntity<ResponseMessage<GymRatingResponseDto>> getGymRating(
         @PathVariable Long gymId,
