@@ -2,6 +2,7 @@ databases:
   my-db:
     dsn: mysql://root:123456789@mysql:3306/fitpass
 
+
 metrics:
   # 사용자 관련
   user_total:
@@ -12,7 +13,7 @@ metrics:
   reservation_total:
     type: gauge
     description: Total number of reservations
-
+  
   reservation_status_count:
     type: gauge
     description: Count of reservations by status

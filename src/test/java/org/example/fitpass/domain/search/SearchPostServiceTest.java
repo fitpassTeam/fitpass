@@ -1,4 +1,4 @@
-package org.example.fitpass.domain.Search;
+package org.example.fitpass.domain.search;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
