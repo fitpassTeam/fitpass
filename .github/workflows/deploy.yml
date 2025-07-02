@@ -126,6 +126,10 @@ jobs:
           echo "REDIS_HOST=redis" >> .env
           echo "REDIS_PORT=6379" >> .env
           echo "RDS_ENDPOINT=${{ secrets.RDS_ENDPOINT }}" >> .env
+          echo "TOSS_CLIENT_KEY=${{ secrets.TOSS_CLIENT_KEY }}" >> .env
+          echo "TOSS_SECRET_KEY=${{ secrets.TOSS_SECRET_KEY }}" >> .env
+          echo "TOSS_FAIL_URL=${{ secrets.TOSS_FAIL_URL }}" >> .env
+          echo "TOSS_SUCCESS_URL=${{ secrets.TOSS_SUCCESS_URL }}" >> .env
 
       - name: Copy all docker-related files to server
         uses: appleboy/scp-action@master
