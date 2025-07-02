@@ -1,0 +1,23 @@
+apiVersion: 1
+
+datasources:
+  # K6 테스트 결과용 InfluxDB
+  - name: InfluxDB-K6
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    database: k6
+    user: k6
+    password: k6
+    isDefault: false
+    editable: true
+    jsonData:
+      httpMode: GET
+
+  # 기존 Prometheus (있다면 유지)
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true

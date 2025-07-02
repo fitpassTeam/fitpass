@@ -1,0 +1,102 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "templating": {
+    "list": []
+  },
+  "panels": [
+    {
+      "title": "총 HTTP 요청 수",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 0},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "query": "SELECT COUNT(*) FROM http_reqs",
+          "refId": "A",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
+      },
+      "options": {
+        "colorMode": "background",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"]
+        }
+      }
+    },
+    {
+      "title": "HTTP 응답 상태",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 0},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "query": "SELECT COUNT(*) FROM http_reqs WHERE status = '200'",
+          "refId": "A",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
+      },
+      "options": {
+        "colorMode": "background",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"]
+        }
+      }
+    },
+    {
+      "title": "응답시간 통계",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 6},
+      "datasource": {
+        "type": "influxdb",
+        "uid": "InfluxDB-K6"
+      },
+      "targets": [
+        {
+          "query": "SELECT MEAN(value) FROM http_req_duration GROUP BY time(5s)",
+          "refId": "A",
+          "rawQuery": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        }
+      }
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 41,
+  "tags": ["k6", "simple"],
+  "time": {
+    "from": "now-10m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "K6 Simple Dashboard",
+  "uid": "k6-simple-dashboard",
+  "version": 1
+}

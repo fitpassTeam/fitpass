@@ -82,17 +82,17 @@ public enum SuccessCode implements BaseCode {
     FITNESSGOAL_LIST_SUCCESS(HttpStatus.OK, "8002", "운동 목표 목록 조회가 완료되었습니다."),
     FITNESSGOAL_GET_SUCCESS(HttpStatus.OK,"8003", "운동 목표 조회가 완료되었습니다."),
     FITNESSGOAL_UPDATE_SUCCESS(HttpStatus.OK, "8004", "운동 목표 수정이 완료되었습니다."),
-    FITNESSGOAL_DELETE_SUCCESS(HttpStatus.OK, "8005", "운동 목표 삭제가 완료되었습니다."),
+    FITNESSGOAL_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "8005", "운동 목표 삭제가 완료되었습니다."),
     FITNESSGOAL_CANCEL_SUCCESS(HttpStatus.OK, "8006", "운동 목표 취소가 완료되었습니다."),
     FITNESSGOAL_WEIGHTRECORD_CREATE_SUCCESS(HttpStatus.CREATED, "8007", "체중 기록 생성이 완료되었습니다."),
     FITNESSGOAL_WEIGHTRECORD_LIST_SUCCESS(HttpStatus.OK,"8008", "체중 기록 목록 조회가 완료되었습니다."),
     FITNESSGOAL_WEIGHTRECORD_GET_SUCCESS(HttpStatus.OK, "8009", "체중 기록 상세 조회가 완료되었습니다."),
     FITNESSGOAL_WEIGHTRECORD_UPDATE_SUCCESS(HttpStatus.OK, "8010", "체중 기록 수정이 완료되었습니다."),
-    FITNESSGOAL_WEIGHTRECORD_DELETE_SUCCESS(HttpStatus.OK, "8011", "체중 기록 삭제가 완료되었습니다."),
+    FITNESSGOAL_WEIGHTRECORD_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "8011", "체중 기록 삭제가 완료되었습니다."),
     FITNESSGOAL_DAILYRECORD_CREATE_SUCCESS(HttpStatus.CREATED, "8012", "일일 기록 생성 완료되었습니다."),
     FITNESSGOAL_DAILYRECORD_LIST_SUCCESS(HttpStatus.OK, "8013", "특정 목표의 일일 기록 목록 조회가 완료되었습니다."),
     FITNESSGOAL_DAILYRECORD_GET_SUCCESS(HttpStatus.OK, "8014", "일일 기록 상세 조회가 완료되었습니다."),
-    FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS(HttpStatus.OK, "8015", "일일 기록 삭제가 완료되었습니다."),
+    FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "8015", "일일 기록 삭제가 완료되었습니다."),
 
     // 9000 s3 성공 코드
     S3_UPLOAD_SUCCESS(HttpStatus.CREATED,"9001", "이미지 업로드가 완료되었습니다"),
@@ -106,7 +106,7 @@ public enum SuccessCode implements BaseCode {
     // 11000 : 리뷰 성공 코드
     REVIEW_CREATE_SUCCESS(HttpStatus.CREATED,"11001", "리뷰 등록이 완료되었습니다."),
     REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "11002", "리뷰 수정이 완료되었습니다."),
-    REVIEW_DELETE_SUCCESS(HttpStatus.OK, "11003", "리뷰 삭제가 완료되었습니다."),
+    REVIEW_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "11003", "리뷰 삭제가 완료되었습니다."),
     REVIEW_GET_SUCCESS(HttpStatus.OK, "11004", "리뷰 조회가 완료되었습니다."),
 
     // 12000 : 맴버십 성공 코드

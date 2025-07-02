@@ -21,9 +21,5 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
         return payment;
     }
     
-    Optional<Payment> findByPaymentKey(String paymentKey);
-    
-    List<Payment> findByUserIdAndStatus(Long userId, PaymentStatus status);
-    
     List<Payment> findByUserIdOrderByCreatedAtDesc(Long userId);
 }
