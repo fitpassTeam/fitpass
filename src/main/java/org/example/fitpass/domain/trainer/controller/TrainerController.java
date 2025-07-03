@@ -133,25 +133,6 @@ public class TrainerController {
             .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_SUCCESS, response));
     }
 
-    @Operation(summary = "트레이너 사진 수정", description = "체육관에 속한 트레이너의 사진을 수정하는 기능입니다.")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "트레이너 사진 수정 성공"),
-        @ApiResponse(responseCode = "404", description = "체육관 또는 트레이너를 찾을 수 없음"),
-        @ApiResponse(responseCode = "403", description = "수정 권한이 없음")
-    })
-    @Parameter(name = "gymId", description = "체육관 ID")
-    @Parameter(name = "trainerId", description = "트레이너 ID")
-    @Parameter(name = "images", description = "업로드할 트레이너 사진 파일들")
-    @PatchMapping("/{trainerId}/photo")
-    public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
-        @AuthenticationPrincipal CustomUserDetails userDetails,
-        @RequestParam("images")List<MultipartFile> files,
-        @PathVariable("gymId") Long gymId,
-        @PathVariable("trainerId") Long trainerId) {
-        List<String> response = trainerService.updatePhoto(userDetails.getId(), files, gymId, trainerId);
-        return ResponseEntity.status(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS.getHttpStatus())
-            .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS, response));
-    }
 
     @Operation(summary = "트레이너 삭제", description = "체육관에 속한 트레이너를 삭제하는 기능입니다.")
     @ApiResponses({

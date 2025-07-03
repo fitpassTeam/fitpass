@@ -129,24 +129,6 @@ public class PostController {
         return ResponseEntity.status(SuccessCode.GET_ONLY_POST_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_ONLY_POST_SUCCESS, findPostById));
     }
-    @Operation(summary = "게시물 이미지 수정",
-            description = "게시물을 작성한 한 유저가 게시물의 사진을 수정 할 수 있습니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시물 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "체육관을 찾을 수 없습니다."),
-            @ApiResponse(responseCode = "404", description = "게시물을 찾을 수 없습니다.")
-    })
-    @PatchMapping("/posts/{postId}/photo")
-    @Parameter(name = "gymId", description = "체육관 ID", required = true)
-    @Parameter(name = "postId", description = "게시물 ID", required = true)
-    public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
-            @RequestParam("images")List<MultipartFile> files,
-            @PathVariable Long postId,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<String> updatedImageUrls = postService.updatePhoto(files, postId, userDetails.getId());
-        return ResponseEntity.status(SuccessCode.POST_EDIT_PHOTO_SUCCESS.getHttpStatus())
-                .body(ResponseMessage.success(SuccessCode.POST_EDIT_PHOTO_SUCCESS, updatedImageUrls));
-    }
 
     @Operation(summary = "게시물 수정",
             description = "게시물을 작성한 한 유저가 게시물의 수정 할 수 있습니다.")

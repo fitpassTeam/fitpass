@@ -66,7 +66,7 @@ public class SecurityConfig {
                     "/memberships/purchases/**",
                     "/api/payments/confirm",  // 토스페이먼츠 콜백용 공개 API
                     "/api/payments/fail",     // 토스페이먼츠 실패 콜백용 공개 API
-                    "/payment/**"             // 결제 페이지 공개
+                    "/payment/**" // 결제 페이지 공개
                 ).permitAll()
                 // 관리자만 접근 가능
                 .requestMatchers("/admin/**").hasRole("ADMIN")

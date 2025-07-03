@@ -95,37 +95,6 @@ public class TrainerService {
     }
 
     @Transactional
-    public List<String> updatePhoto(Long userId, List<MultipartFile> files, Long gymId, Long trainerId) {
-        // 유저 조회
-        User user = userRepository.findByIdOrElseThrow(userId);
-        // 오너인지 확인 여부
-        if (user.getUserRole() != UserRole.OWNER) {
-            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
-        }
-        // 체육관 조회
-        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        // 이 체육관의 소유자인지 확인
-        if (!Objects.equals(gym.getOwner().getId(), userId)) {
-            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
-        }
-        Trainer trainer = trainerRepository.findByIdOrElseThrow(trainerId);
-        // 트레이너가 해당 체육관 소속인지 확인
-        if (!trainer.getGym().getId().equals(gymId)) {
-            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
-        }
-        trainer.validateTrainerBelongsToGym(trainer, gym);
-
-        for (Image image : trainer.getImages()) {
-            s3Service.deleteFileFromS3(image.getUrl());
-        }
-
-        List<String> imageUrls = s3Service.uploadFiles(files);
-        trainer.updatePhoto(imageUrls, trainer);
-        trainerRepository.save(trainer);
-        return imageUrls;
-    }
-
-    @Transactional
     public TrainerResponseDto updateTrainer(Long userId, Long gymId, Long trainerId, String name, int price,
         String content, String experience, TrainerStatus trainerStatus, List<String> imgs) {
         // 유저 조회
