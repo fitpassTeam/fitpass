@@ -100,6 +100,28 @@ src/main/java/org/example/fitpass/
 ```
 ---
 
+# 서비스 플로우
+
+### 사용자 인증/인가 - PT 예약, 이용권 구매
+![image](https://github.com/user-attachments/assets/2a218348-f7a9-4bc1-ae3c-a96be97db9ce)
+
+### 사용자 Owner 신청 - 체육관, 트레이너, 이용권 등록
+![image](https://github.com/user-attachments/assets/993c565d-7cc8-4b88-81f7-f55d3d6c7b8b)
+
+### 포인트 플로우
+![image](https://github.com/user-attachments/assets/167c538c-ee9b-4657-8cee-06e78631fb77)
+
+### 헬스케어 관리
+![image](https://github.com/user-attachments/assets/41a5c7c8-f16d-4e6c-b80a-8de5ad0f470a)
+
+### 실시간 채팅
+![image](https://github.com/user-attachments/assets/623e9967-b07b-4d40-ab8e-e17bd32e9374)
+
+### 알림 시스템
+![image](https://github.com/user-attachments/assets/71a846b8-f273-4b7e-a686-7917af94c651)
+
+---
+
 ## 기술 스택
 
 ### Language & Framework
@@ -154,7 +176,7 @@ src/main/java/org/example/fitpass/
 ---
 
 ## 프로젝트 주요 기능
-(자세한 정리는 WIKI URL 여기에 정리해두었습니다.)
+(자세한 정리는 [WIKI URL](https://github.com/fitpassTeam/fitpass/wiki) 여기에 정리해두었습니다.)
 
 ### 사용자 기능
 JWT 기반 회원가입/로그인, OAuth2 소셜 로그인, 프로필 관리
@@ -238,8 +260,26 @@ AWS
 ---
 
 ## 기술적 의사 결정
+* [OAuth2 소셜 로그인 기술적 의사 결정](https://github.com/fitpassTeam/fitpass/wiki/OAuth2-%EC%86%8C%EC%85%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B8%B0%EC%88%A0%EC%A0%81-%EC%9D%98%EC%82%AC-%EA%B2%B0%EC%A0%95)
+* [스케줄러 시스템 기술적 의사결정](https://github.com/fitpassTeam/fitpass/wiki/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EA%B8%B0%EC%88%A0%EC%A0%81-%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95)
+* [예약 시스템 락(Lock) 기술적 의사결정](https://github.com/fitpassTeam/fitpass/wiki/%EC%98%88%EC%95%BD-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EB%9D%BD(Lock)-%EA%B8%B0%EC%88%A0%EC%A0%81-%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95)
+* [토스페이먼츠를 활용한 포인트 충전 시스템 구축기](https://github.com/fitpassTeam/fitpass/wiki/%ED%86%A0%EC%8A%A4%ED%8E%98%EC%9D%B4%EB%A8%BC%EC%B8%A0%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EC%B6%A9%EC%A0%84-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EA%B5%AC%EC%B6%95%EA%B8%B0)
+* [Redis Pub Sub 기반 즉시 알림 시스템 도입 기술적 의사결정](https://github.com/fitpassTeam/fitpass/wiki/Redis-Pub-Sub-%EA%B8%B0%EB%B0%98-%EC%A6%89%EC%8B%9C-%EC%95%8C%EB%A6%BC-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EB%8F%84%EC%9E%85-%EA%B8%B0%EC%88%A0%EC%A0%81-%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95)
+* [Redis 도입 기술적 의사결정](https://github.com/fitpassTeam/fitpass/wiki/Redis-%EB%8F%84%EC%9E%85-%EA%B8%B0%EC%88%A0%EC%A0%81-%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95)
+* [모니터링 기술 선택 의사 결정](https://github.com/fitpassTeam/fitpass/wiki/%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81-%EA%B8%B0%EC%88%A0-%EC%84%A0%ED%83%9D-%EC%9D%98%EC%82%AC-%EA%B2%B0%EC%A0%95)
+* [1:1 실시간 채팅 기능 - 기술적 의사결정](https://github.com/fitpassTeam/fitpass/wiki/1:1-%EC%8B%A4%EC%8B%9C%EA%B0%84-%EC%B1%84%ED%8C%85-%EA%B8%B0%EB%8A%A5-%E2%80%90-%EA%B8%B0%EC%88%A0%EC%A0%81-%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95)
+
 
 
 ## 트러블 슈팅
+* [예약 생성 동시성 제어 - 트랜잭션과 락 획득 순서를 바꿔서 해결](https://github.com/fitpassTeam/fitpass/wiki/%EC%98%88%EC%95%BD-%EC%83%9D%EC%84%B1-%EB%8F%99%EC%8B%9C%EC%84%B1-%EC%A0%9C%EC%96%B4-%ED%8A%B8%EB%9F%AC%EB%B8%94%EC%8A%88%ED%8C%85-%E2%80%90-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%EA%B3%BC-%EB%9D%BD-%ED%9A%8D%EB%93%9D-%EC%88%9C%EC%84%9C%EB%A5%BC-%EB%B0%94%EA%BF%94%EC%84%9C-%ED%95%B4%EA%B2%B0)
+* [예약 상태 관리 - 자동화된 상태 변경 및 승인 프로세스 개선](https://github.com/fitpassTeam/fitpass/wiki/%EC%98%88%EC%95%BD-%EC%83%81%ED%83%9C-%EA%B4%80%EB%A6%AC-%ED%8A%B8%EB%9F%AC%EB%B8%94%EC%8A%88%ED%8C%85-%E2%80%90-%EC%9E%90%EB%8F%99%ED%99%94%EB%90%9C-%EC%83%81%ED%83%9C-%EB%B3%80%EA%B2%BD-%EB%B0%8F-%EC%8A%B9%EC%9D%B8-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%EA%B0%9C%EC%84%A0)
+* [Prometheus Grafana Query Exporter 구성 중 발생한 문제 해결 과정](https://github.com/fitpassTeam/fitpass/wiki/Prometheus---Grafana---Query-Exporter-%EA%B5%AC%EC%84%B1-%EC%A4%91-%EB%B0%9C%EC%83%9D%ED%95%9C-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0-%EA%B3%BC%EC%A0%95)
+* [검색 기능에서 QueryMethod 사용 시 마주한 문제와 선택](https://github.com/fitpassTeam/fitpass/wiki/%EA%B2%80%EC%83%89-%EA%B8%B0%EB%8A%A5%EC%97%90%EC%84%9C-QueryMethod-%EC%82%AC%EC%9A%A9-%EC%8B%9C-%EB%A7%88%EC%A3%BC%ED%95%9C-%EB%AC%B8%EC%A0%9C%EC%99%80-%EC%84%A0%ED%83%9D)
+* [예약 시스템에서 Master‐Replica와 분산 락 적용 중 발생한 문제](https://github.com/fitpassTeam/fitpass/wiki/%EC%98%88%EC%95%BD-%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%97%90%EC%84%9C-Master%E2%80%90Replica%EC%99%80-%EB%B6%84%EC%82%B0-%EB%9D%BD-%EC%A0%81%EC%9A%A9-%EC%A4%91-%EB%B0%9C%EC%83%9D%ED%95%9C-%EB%AC%B8%EC%A0%9C)
+* [1:1 채팅 기능에서 WebSocket STOMP 적용 중 발생한 문제](https://github.com/fitpassTeam/fitpass/wiki/1:1-%EC%B1%84%ED%8C%85-%EA%B8%B0%EB%8A%A5%EC%97%90%EC%84%9C-WebSocket---STOMP-%EC%A0%81%EC%9A%A9-%EC%A4%91-%EB%B0%9C%EC%83%9D%ED%95%9C-%EB%AC%B8%EC%A0%9C)
+
 
 ## 성능 테스트
+* [K6로 테스트 해본 예약 동시성 성능 테스트](https://github.com/fitpassTeam/fitpass/wiki/K6%EB%A1%9C-%ED%85%8C%EC%8A%A4%ED%8A%B8-%ED%95%B4%EB%B3%B8-%EC%98%88%EC%95%BD-%EB%8F%99%EC%8B%9C%EC%84%B1-%EC%84%B1%EB%8A%A5-%ED%85%8C%EC%8A%A4%ED%8A%B8)
+* [체육관 검색 API 성능 비교 보고서 (v1: 캐시 vs v2: 인메모리)](https://github.com/fitpassTeam/fitpass/wiki/%EC%B2%B4%EC%9C%A1%EA%B4%80-%EA%B2%80%EC%83%89-API-%EC%84%B1%EB%8A%A5-%EB%B9%84%EA%B5%90-%EB%B3%B4%EA%B3%A0%EC%84%9C-(v1:-%EC%BA%90%EC%8B%9C-vs-v2:-%EC%9D%B8%EB%A9%94%EB%AA%A8%EB%A6%AC))
