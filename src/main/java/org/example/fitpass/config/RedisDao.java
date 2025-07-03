@@ -2,15 +2,14 @@ package org.example.fitpass.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import org.example.fitpass.domain.notify.entity.Notify;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
-
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class RedisDao {

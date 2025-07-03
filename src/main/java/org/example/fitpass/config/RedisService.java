@@ -1,12 +1,10 @@
 package org.example.fitpass.config;
 
-import lombok.RequiredArgsConstructor;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class RedisService {

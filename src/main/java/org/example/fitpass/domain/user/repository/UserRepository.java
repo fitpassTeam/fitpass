@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.entity.User;
+import org.example.fitpass.domain.user.enums.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {

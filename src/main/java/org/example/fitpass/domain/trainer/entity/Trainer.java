@@ -25,7 +25,6 @@ import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.trainer.enums.TrainerStatus;
-import org.example.fitpass.domain.user.entity.User;
 
 
 @Getter

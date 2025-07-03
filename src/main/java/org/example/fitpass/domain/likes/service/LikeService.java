@@ -2,8 +2,6 @@ package org.example.fitpass.domain.likes.service;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.domain.gym.entity.Gym;
-import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.likes.LikeType;
 import org.example.fitpass.domain.likes.entity.Like;
 import org.example.fitpass.domain.likes.repository.LikeRepository;

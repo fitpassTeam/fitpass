@@ -1,8 +1,5 @@
     package org.example.fitpass.domain.chat.service;
 
-    import static org.example.fitpass.common.error.ExceptionCode.GYM_NOT_FOUND;
-    import static org.example.fitpass.common.error.ExceptionCode.USER_NOT_FOUND;
-
     import java.util.List;
     import java.util.stream.Collectors;
     import lombok.RequiredArgsConstructor;

@@ -1,10 +1,9 @@
 package org.example.fitpass.domain.post.enums;
 
+import java.util.Arrays;
 import lombok.Getter;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-
-import java.util.Arrays;
 
 @Getter
 public enum PostStatus {

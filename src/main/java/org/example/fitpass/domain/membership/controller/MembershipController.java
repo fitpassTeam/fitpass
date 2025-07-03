@@ -46,7 +46,8 @@ public class MembershipController {
     public ResponseEntity<ResponseMessage<MembershipResponseDto>> createMembership(
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @PathVariable("gymId") Long gymId,
-        @Valid @RequestBody MembershipRequestDto dto) {
+        @Valid @RequestBody MembershipRequestDto dto
+    ) {
         MembershipResponseDto response = membershipService.createMembership(
             gymId,
             userDetails.getId(),

@@ -9,20 +9,17 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.domain.notify.NotificationType;
-import org.example.fitpass.domain.notify.service.NotifyService;
-import org.example.fitpass.domain.reservation.dto.response.AllGymReservationResponseDto;
-import org.example.fitpass.domain.user.enums.UserRole;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
+import org.example.fitpass.domain.notify.NotificationType;
+import org.example.fitpass.domain.notify.service.NotifyService;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
 import org.example.fitpass.domain.point.dto.response.PointBalanceResponseDto;
 import org.example.fitpass.domain.point.service.PointService;
 import org.example.fitpass.domain.reservation.dto.request.ReservationRequestDto;
+import org.example.fitpass.domain.reservation.dto.response.AllGymReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.response.GetReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.response.ReservationResponseDto;
 import org.example.fitpass.domain.reservation.dto.response.TrainerReservationResponseDto;
@@ -34,9 +31,11 @@ import org.example.fitpass.domain.reservation.repository.ReservationRepository;
 import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.trainer.repository.TrainerRepository;
 import org.example.fitpass.domain.user.entity.User;
+import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.repository.UserRepository;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -52,7 +51,7 @@ public class ReservationService {
     private final NotifyService notifyService;
 
     // 예약 가능 시간 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LocalTime> getAvailableTimes(Long userId, Long gymId, Long trainerId,
         LocalDate date) {
         User user = userRepository.findByIdOrElseThrow(userId);
@@ -129,6 +128,7 @@ public class ReservationService {
     }
 
     // 예약 생성
+    @Transactional
     public ReservationResponseDto createReservation(
         LocalDate reservationDate, LocalTime reservationTime,
         Long userId, Long gymId, Long trainerId) {

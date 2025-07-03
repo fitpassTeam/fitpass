@@ -1,7 +1,6 @@
 package org.example.fitpass.domain.search.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.domain.search.entity.SearchKeywordGym;
 import org.example.fitpass.domain.search.entity.SearchKeywordTrainer;
 import org.example.fitpass.domain.search.repository.SearchTrainerRepository;
 import org.example.fitpass.domain.trainer.dto.response.TrainerResponseDto;
