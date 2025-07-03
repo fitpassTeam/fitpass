@@ -88,7 +88,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/memberships/purchases",
             "/api/payments/confirm",
             "/api/payments/fail",
-            "/payment"
+            "/payment",
+            "/auth/reissue"
         };
 
         for (String path : publicPaths) {
