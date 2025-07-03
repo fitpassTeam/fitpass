@@ -1,6 +1,10 @@
 package org.example.fitpass.domain.search.controller;
 
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.dto.PageResponse;
 import org.example.fitpass.common.error.SuccessCode;
@@ -19,12 +23,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "SEARCH API", description = "검색에 대한 설명입니다.")
 @RequestMapping("/search/gyms")
 public class SearchGymController {
 
     private final SearchGymService searchService;
 //    private final TestService testService;
 
+    @Operation(summary = "체육관 검색",
+     description =  "필요 파라미터 = 검색어, 시, 군/구")
+    @Parameter(name = "keyword", description = "검색어")
+    @Parameter(name = "city", description = "시")
+    @Parameter(name = "keyword", description = "군/구")
     @GetMapping
     public ResponseEntity<ResponseMessage<PageResponse<GymResDto>>> searchGym (
         @RequestParam(name = "keyword", required = false) String keyword,
@@ -50,6 +60,8 @@ public class SearchGymController {
         return ResponseEntity.status(SuccessCode.GYM_SEARCH_SUCCESS.getHttpStatus()).body(responseMessage);
     }
 
+    @Operation(summary = "체육관 인기 검색어",
+            description =  "많이 검색된 5가지 검색어가 나옵니다.")
     @GetMapping("/popular")
     public ResponseEntity<ResponseMessage<List<String>>> searchGymPopular (
     ){

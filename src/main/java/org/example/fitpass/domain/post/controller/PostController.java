@@ -1,6 +1,11 @@
 package org.example.fitpass.domain.post.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.dto.PageResponse;
 import org.example.fitpass.common.error.SuccessCode;
@@ -26,6 +31,7 @@ import java.util.Locale;
 
 
 @RestController
+@Tag(name = "POST API", description = "게시물 관리에 대한 설명입니다.")
 @RequiredArgsConstructor
 @RequestMapping("gyms/{gymId}")
 public class PostController {
@@ -33,7 +39,14 @@ public class PostController {
     private final PostService postService;
 
     //게시물 생성
+    @Operation(summary = "게시물 생성",
+        description = "회원 가입이 된 모든 유저들은 게시물을 작성 할 수 있습니다." )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시물 생성 완료"),
+            @ApiResponse(responseCode = "404", description = "체육관을 찾을 수 없습니다.")
+    })
     @PostMapping("/posts")
+    @Parameter(name = "gymId", description = "체육관 ID", required = true)
     public ResponseEntity<ResponseMessage<PostResponseDto>> creatPost(
         @RequestBody PostCreateRequestDto request,
         @AuthenticationPrincipal CustomUserDetails user,
@@ -52,7 +65,13 @@ public class PostController {
     }
 
     //General 게시물 전체조회
+    @Operation(summary = "GENERAL 게시물 조회",
+        description = "회원 가입을 한 유저들이 GENERAL 게시물을 조회 할 수 있습니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "GENERAL 게시물 조회 성공")
+    })
     @GetMapping("/general-posts")
+    @Parameter(name = "gymId", description = "체육관 ID", required = true)
     public ResponseEntity<ResponseMessage<PageResponse<PostResponseDto>>> findAllGeneralPost(
         @PageableDefault(page = 0, size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
         @AuthenticationPrincipal CustomUserDetails user,
@@ -66,7 +85,13 @@ public class PostController {
     }
 
     //Notice 게시물 전체조회
+    @Operation(summary = "NOTICE 게시물 조회",
+            description = "회원 가입을 한 유저들이 NOTICE 게시물을 조회 할 수 있습니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "NOTICE 게시물 조회 성공")
+    })
     @GetMapping("/notice-posts")
+    @Parameter(name = "gymId", description = "체육관 ID", required = true)
     public ResponseEntity<ResponseMessage<List<PostResponseDto>>> findAllNoticePost(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable("gymId") Long gymId
@@ -79,7 +104,16 @@ public class PostController {
 
 
     //게시물 단건 조회
+    @Operation(summary = "게시물 단건 조회",
+            description = "회원 가입을 한 유저들이 단건의 게시물을 조회 할 수 있습니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시물 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "체육관을 찾을 수 없습니다."),
+            @ApiResponse(responseCode = "404", description = "게시물을 찾을 수 없습니다.")
+    })
     @GetMapping("/posts/{postId}")
+    @Parameter(name = "gymId", description = "체육관 ID", required = true)
+    @Parameter(name = "postId", description = "게시물 ID", required = true)
     public ResponseEntity<ResponseMessage<PostImageResponseDto>> findPostById(
         @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable("gymId") Long gymId,
@@ -90,8 +124,16 @@ public class PostController {
         return ResponseEntity.status(SuccessCode.GET_ONLY_POST_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_ONLY_POST_SUCCESS, findPostById));
     }
-
+    @Operation(summary = "게시물 이미지 수정",
+            description = "게시물을 작성한 한 유저가 게시물의 사진을 수정 할 수 있습니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시물 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "체육관을 찾을 수 없습니다."),
+            @ApiResponse(responseCode = "404", description = "게시물을 찾을 수 없습니다.")
+    })
     @PatchMapping("/posts/{postId}/photo")
+    @Parameter(name = "gymId", description = "체육관 ID", required = true)
+    @Parameter(name = "postId", description = "게시물 ID", required = true)
     public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
             @RequestParam("images")List<MultipartFile> files,
             @PathVariable Long postId,
@@ -101,7 +143,16 @@ public class PostController {
                 .body(ResponseMessage.success(SuccessCode.POST_EDIT_PHOTO_SUCCESS, updatedImageUrls));
     }
 
+    @Operation(summary = "게시물 수정",
+            description = "게시물을 작성한 한 유저가 게시물의 수정 할 수 있습니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "게시물 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "체육관을 찾을 수 없습니다."),
+            @ApiResponse(responseCode = "404", description = "게시물을 찾을 수 없습니다.")
+    })
     @PatchMapping("/posts/{postId}")
+    @Parameter(name = "gymId", description = "체육관 ID", required = true)
+    @Parameter(name = "postId", description = "게시물 ID", required = true)
     public ResponseEntity<ResponseMessage<PostResponseDto>> updatePost(
         @RequestBody PostUpdateRequestDto request,
         @AuthenticationPrincipal CustomUserDetails user,
