@@ -33,7 +33,7 @@ public class SearchGymController {
      description =  "필요 파라미터 = 검색어, 시, 군/구")
     @Parameter(name = "keyword", description = "검색어")
     @Parameter(name = "city", description = "시")
-    @Parameter(name = "keyword", description = "군/구")
+    @Parameter(name = "district", description = "군/구")
     @GetMapping
     public ResponseEntity<ResponseMessage<PageResponse<GymResDto>>> searchGym (
         @RequestParam(name = "keyword", required = false) String keyword,
