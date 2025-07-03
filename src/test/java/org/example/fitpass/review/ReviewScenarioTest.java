@@ -61,6 +61,11 @@ class ReviewScenarioTest {
 
     @BeforeEach
     void setUp() {
+        reservationRepository.deleteAllInBatch();
+        trainerRepository.deleteAllInBatch();
+        gymRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
+
         user = new User(
             "test@test.com",
             "profile.jpg",
@@ -74,6 +79,8 @@ class ReviewScenarioTest {
         );
         user = userRepository.save(user); // 변경된 부분
 
+        userRepository.flush();
+
         CustomUserDetails userDetails = new CustomUserDetails(user);
         UsernamePasswordAuthenticationToken authentication =
             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -85,18 +92,19 @@ class ReviewScenarioTest {
         // GIVEN: 사용자, 체육관, 트레이너, 예약 데이터 준비
         Gym gym = new Gym(
             Collections.emptyList(), // 이미지 리스트
-            "헬스장", 
+            "헬스장",
             UUID.randomUUID().toString(), // 고유한 번호 생성
-            "좋은 헬스장입니다", 
-            "서울", 
-            "강남구", 
-            "테헤란로 123", 
-            LocalTime.of(6, 0), 
-            LocalTime.of(23, 0), 
-            "최고의 헬스장", 
+            "좋은 헬스장입니다",
+            "서울",
+            "강남구",
+            "테헤란로 123",
+            LocalTime.of(6, 0),
+            LocalTime.of(23, 0),
+            "최고의 헬스장",
             user
         );
         gym = gymRepository.save(gym); // 변경된 부분
+        reservationRepository.flush();
 
         Trainer trainer = new Trainer(
             Collections.emptyList(), // 이미지 리스트
@@ -105,8 +113,11 @@ class ReviewScenarioTest {
             "전문 트레이너입니다",
             "5년 경력"
         );
-        trainer.assignToGym(gym);
+        trainer.assignToGym(gym);          // Trainer → Gym
+        gym.getTrainers().add(trainer);    // Gym → Trainer 리스트에 추가
+
         trainerRepository.save(trainer);
+        trainerRepository.flush();
 
         Reservation reservation = new Reservation(
             LocalDate.now().minusDays(1),
@@ -117,7 +128,7 @@ class ReviewScenarioTest {
             trainer
         );
         reservationRepository.save(reservation);
-
+        reservationRepository.flush();
         Long reservationId = reservation.getId();
 
         // 1. 리뷰 작성
