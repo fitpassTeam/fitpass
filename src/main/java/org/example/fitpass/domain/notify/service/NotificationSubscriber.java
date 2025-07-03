@@ -41,7 +41,7 @@ public class NotificationSubscriber implements MessageListener {
             Notify notification = createAndSaveNotification(event);
 
             // SSE로 실시간 전송
-            sendToSseEmitters(event.getReceiverId(), event.getReceiverType(), notification);
+            sendToSseEmitters(event.receiverId(), event.receiverType(), notification);
 
         } catch (Exception e) {
             // 에러 처리
@@ -52,14 +52,14 @@ public class NotificationSubscriber implements MessageListener {
     private Notify createAndSaveNotification(NotificationEvent event) {
         Notify notification;
 
-        if ("USER".equals(event.getReceiverType())) {
-            User user = userRepository.findById(event.getReceiverId()).orElseThrow();
-            notification = new Notify(user, event.getNotificationType(),
-                    event.getContent(), event.getUrl(), false);
+        if ("USER".equals(event.receiverType())) {
+            User user = userRepository.findById(event.receiverId()).orElseThrow();
+            notification = new Notify(user, event.notificationType(),
+                    event.content(), event.url(), false);
         } else {
-            Trainer trainer = trainerRepository.findById(event.getReceiverId()).orElseThrow();
-            notification = new Notify(trainer, event.getNotificationType(),
-                    event.getContent(), event.getUrl(), false);
+            Trainer trainer = trainerRepository.findById(event.receiverId()).orElseThrow();
+            notification = new Notify(trainer, event.notificationType(),
+                    event.content(), event.url(), false);
         }
 
         return notifyRepository.save(notification);

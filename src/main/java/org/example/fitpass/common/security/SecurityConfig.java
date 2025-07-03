@@ -48,6 +48,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/gyms").permitAll()
                 .requestMatchers(HttpMethod.GET,"/gyms/{gymId}").permitAll()
                 .requestMatchers(HttpMethod.POST, "/images").permitAll()
+                .requestMatchers("/test/images/**").permitAll() // 테스트 API 공개
+                .requestMatchers("/images/presigned-url").permitAll() // Presigned URL API 공개
                 .requestMatchers(HttpMethod.GET, "/gyms/{gymId}/trainers/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/gyms/{gymId}/memberships/**").permitAll()
                 .requestMatchers("/actuator/health","/health").permitAll()
@@ -124,7 +126,9 @@ public class SecurityConfig {
             "http://localhost:5173",
             "http://localhost:5174",
             "https://www.fitpass-13.com",
-            "https://fitpass-13.com"
+            "https://fitpass-13.com",
+            "file://*",  // 로컬 HTML 파일 허용
+            "*"  // 모든 출처 허용 (개발 환경에서만)
         ));
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));

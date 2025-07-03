@@ -72,7 +72,7 @@ class ReviewScenarioTest {
             Gender.MAN,
             UserRole.USER
         );
-        userRepository.save(user);
+        user = userRepository.save(user); // 변경된 부분
 
         CustomUserDetails userDetails = new CustomUserDetails(user);
         UsernamePasswordAuthenticationToken authentication =
@@ -85,35 +85,35 @@ class ReviewScenarioTest {
         // GIVEN: 사용자, 체육관, 트레이너, 예약 데이터 준비
         Gym gym = new Gym(
             Collections.emptyList(), // 이미지 리스트
-            "헬스장", 
-            "123-45-67890", 
-            "좋은 헬스장입니다", 
-            "서울", 
-            "강남구", 
-            "테헤란로 123", 
-            LocalTime.of(6, 0), 
-            LocalTime.of(23, 0), 
-            "최고의 헬스장", 
+            "헬스장",
+            "123-45-67890",
+            "좋은 헬스장입니다",
+            "서울",
+            "강남구",
+            "테헤란로 123",
+            LocalTime.of(6, 0),
+            LocalTime.of(23, 0),
+            "최고의 헬스장",
             user
         );
-        gymRepository.save(gym);
-        
+        gym = gymRepository.save(gym); // 변경된 부분
+
         Trainer trainer = new Trainer(
             Collections.emptyList(), // 이미지 리스트
-            "김트레이너", 
-            50000, 
-            "전문 트레이너입니다", 
+            "김트레이너",
+            50000,
+            "전문 트레이너입니다",
             "5년 경력"
         );
         trainer.assignToGym(gym);
         trainerRepository.save(trainer);
-        
+
         Reservation reservation = new Reservation(
-            LocalDate.now().minusDays(1), 
-            LocalTime.of(10, 0), 
-            ReservationStatus.COMPLETED, 
-            user, 
-            gym, 
+            LocalDate.now().minusDays(1),
+            LocalTime.of(10, 0),
+            ReservationStatus.COMPLETED,
+            user,
+            gym,
             trainer
         );
         reservationRepository.save(reservation);

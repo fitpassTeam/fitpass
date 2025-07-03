@@ -25,6 +25,10 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import java.util.Date;
+
 @ExtendWith(MockitoExtension.class)
 @DisplayName("S3 서비스 테스트")
 class S3ServiceTest {
@@ -218,6 +222,176 @@ class S3ServiceTest {
         verify(amazonS3, times(1)).putObject(argThat(request -> {
             assertThat(request.getMetadata().getContentLength()).isEqualTo(file.getSize());
             assertThat(request.getMetadata().getContentType()).isEqualTo("image/jpeg");
+            return true;
+        }));
+    }
+
+    @Test
+    @DisplayName("Presigned URL 생성 성공 테스트")
+    void generatePresignedUrl_Success() throws Exception {
+        // Given
+        String filename = "test-image.jpg";
+        String contentType = "image/jpeg";
+        String expectedPresignedUrl = "https://test-bucket.s3.amazonaws.com/uuid.jpg?presigned=true";
+        
+        URL mockUrl = new URL(expectedPresignedUrl);
+        when(amazonS3.generatePresignedUrl(any(GeneratePresignedUrlRequest.class)))
+            .thenReturn(mockUrl);
+
+        // When
+        String result = s3Service.generatePresignedUrl(filename, contentType);
+
+        // Then
+        assertThat(result).isEqualTo(expectedPresignedUrl);
+        verify(amazonS3, times(1)).generatePresignedUrl(argThat(request -> {
+            assertThat(request.getBucketName()).isEqualTo(TEST_BUCKET_NAME);
+            assertThat(request.getMethod()).isEqualTo(HttpMethod.PUT);
+            assertThat(request.getExpiration()).isNotNull();
+            assertThat(request.getContentType()).isEqualTo(contentType);
+            // 파일명이 UUID 형태로 변경되었는지 확인
+            assertThat(request.getKey()).isNotEqualTo(filename);
+            assertThat(request.getKey()).endsWith(".jpg");
+            return true;
+        }));
+    }
+
+    @Test
+    @DisplayName("Presigned URL 생성 실패 - 허용되지 않는 파일 타입")
+    void generatePresignedUrl_InvalidFileType() {
+        // Given
+        String filename = "malicious-file.exe";
+        String contentType = "application/x-executable";
+
+        // When & Then
+        assertThatThrownBy(() -> s3Service.generatePresignedUrl(filename, contentType))
+            .isInstanceOf(BaseException.class)
+            .hasFieldOrPropertyWithValue("errorCode", ExceptionCode.INVALID_FILE_TYPE);
+
+        verify(amazonS3, never()).generatePresignedUrl(any(GeneratePresignedUrlRequest.class));
+    }
+
+    @Test
+    @DisplayName("Presigned URL 생성 - 다양한 이미지 파일 타입 테스트")
+    void generatePresignedUrl_VariousImageTypes() throws Exception {
+        // Given
+        String[] allowedFiles = {
+            "test.jpg", "test.jpeg", "test.png", "test.gif", 
+            "test.webp", "test.bmp", "test.tiff"
+        };
+        String contentType = "image/jpeg";
+        String expectedPresignedUrl = "https://test-bucket.s3.amazonaws.com/uuid.jpg?presigned=true";
+        
+        URL mockUrl = new URL(expectedPresignedUrl);
+        when(amazonS3.generatePresignedUrl(any(GeneratePresignedUrlRequest.class)))
+            .thenReturn(mockUrl);
+
+        // When & Then
+        for (String filename : allowedFiles) {
+            String result = s3Service.generatePresignedUrl(filename, contentType);
+            assertThat(result).isEqualTo(expectedPresignedUrl);
+        }
+
+        verify(amazonS3, times(allowedFiles.length))
+            .generatePresignedUrl(any(GeneratePresignedUrlRequest.class));
+    }
+
+    @Test
+    @DisplayName("Presigned URL 생성 - 대소문자 구분 없이 파일 타입 검증")
+    void generatePresignedUrl_CaseInsensitiveFileType() throws Exception {
+        // Given
+        String[] caseVariations = {"test.JPG", "test.Png", "test.GIF", "TEST.JPEG"};
+        String contentType = "image/jpeg";
+        String expectedPresignedUrl = "https://test-bucket.s3.amazonaws.com/uuid.jpg?presigned=true";
+        
+        URL mockUrl = new URL(expectedPresignedUrl);
+        when(amazonS3.generatePresignedUrl(any(GeneratePresignedUrlRequest.class)))
+            .thenReturn(mockUrl);
+
+        // When & Then
+        for (String filename : caseVariations) {
+            String result = s3Service.generatePresignedUrl(filename, contentType);
+            assertThat(result).isEqualTo(expectedPresignedUrl);
+        }
+
+        verify(amazonS3, times(caseVariations.length))
+            .generatePresignedUrl(any(GeneratePresignedUrlRequest.class));
+    }
+
+    @Test
+    @DisplayName("확장자 없는 파일명 → 실패")
+    void generatePresignedUrl_NoExtension() {
+        // Given
+        String filename = "testfile";  // 확장자 없음
+        String contentType = "image/jpeg";
+
+        // When & Then
+        assertThatThrownBy(() -> s3Service.generatePresignedUrl(filename, contentType))
+            .isInstanceOf(BaseException.class)
+            .hasMessageContaining("허용되지 않는 파일 형식입니다");
+    }
+
+    @Test
+    @DisplayName("URL에서 파일명 추출 성공 테스트")
+    void extractFileNameFromUrl_Success() {
+        // Given
+        String presignedUrl = "https://test-bucket.s3.amazonaws.com/uuid-filename.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&expires=123";
+
+        // When
+        String result = s3Service.extractFileNameFromUrl(presignedUrl);
+
+        // Then
+        assertThat(result).isEqualTo("uuid-filename.jpg");
+    }
+
+    @Test
+    @DisplayName("URL에서 파일명 추출 - 쿼리 파라미터 없는 경우")
+    void extractFileNameFromUrl_NoQueryParams() {
+        // Given
+        String presignedUrl = "https://test-bucket.s3.amazonaws.com/uuid-filename.jpg";
+
+        // When
+        String result = s3Service.extractFileNameFromUrl(presignedUrl);
+
+        // Then
+        assertThat(result).isEqualTo("uuid-filename.jpg");
+    }
+
+    @Test
+    @DisplayName("URL에서 파일명 추출 실패 - 잘못된 URL 형식")
+    void extractFileNameFromUrl_InvalidUrl() {
+        String invalidUrl = "invalid-url-format";
+        String result = s3Service.extractFileNameFromUrl(invalidUrl);
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Presigned URL 만료 시간 검증")
+    void generatePresignedUrl_ExpirationTime() throws Exception {
+        // Given
+        String filename = "test.jpg";
+        String contentType = "image/jpeg";
+        String expectedPresignedUrl = "https://test-bucket.s3.amazonaws.com/uuid.jpg?presigned=true";
+        
+        URL mockUrl = new URL(expectedPresignedUrl);
+        when(amazonS3.generatePresignedUrl(any(GeneratePresignedUrlRequest.class)))
+            .thenReturn(mockUrl);
+
+        long beforeTime = System.currentTimeMillis();
+
+        // When
+        s3Service.generatePresignedUrl(filename, contentType);
+
+        long afterTime = System.currentTimeMillis();
+
+        // Then
+        verify(amazonS3, times(1)).generatePresignedUrl(argThat(request -> {
+            Date expiration = request.getExpiration();
+            long expirationTime = expiration.getTime();
+            long expectedExpirationTime = beforeTime + (5 * 60 * 1000); // 5분 후
+            long maxExpectedTime = afterTime + (5 * 60 * 1000) + 1000; // 테스트 실행 시간 고려
+            
+            // 만료 시간이 대략 5분 후인지 확인 (약간의 오차 허용)
+            assertThat(expirationTime).isBetween(expectedExpirationTime - 1000, maxExpectedTime);
             return true;
         }));
     }

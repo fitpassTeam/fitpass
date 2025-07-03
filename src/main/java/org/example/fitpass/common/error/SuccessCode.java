@@ -43,8 +43,8 @@ public enum SuccessCode implements BaseCode {
     AVAILABLE_TIMES_GET_SUCCESS(HttpStatus.OK, "4005", "예약 가능 시간 조회가 완료되었습니다."),
     TRAINER_RESERVATION_LIST_SUCCESS(HttpStatus.OK, "4006", "트레이너 예약 목록 조회가 완료되었습니다."),
     USER_RESERVATION_LIST_SUCCESS(HttpStatus.OK, "4007", "사용자 예약 목록 조회가 완료되었습니다."),
-    RESERVATION_CONFIRM_SUCCESS(HttpStatus.OK, "4008","예약 승인이 완료되었습니다."),
-    RESERVATION_REJECT_SUCCESS(HttpStatus.OK, "4009","예약 거부가 완료되었습니다."),
+    RESERVATION_CONFIRM_SUCCESS(HttpStatus.OK, "4008", "예약 승인이 완료되었습니다."),
+    RESERVATION_REJECT_SUCCESS(HttpStatus.OK, "4009", "예약 거부가 완료되었습니다."),
 
     // 5000: Gym 성공 코드
     GYM_POST_SUCCESS(HttpStatus.OK, "5001", "체육관 등록 완료되었습니다."),
@@ -80,12 +80,12 @@ public enum SuccessCode implements BaseCode {
     // 8000 FitnessGoal 성공코드
     FITNESSGOAL_CREATE_SUCCESS(HttpStatus.CREATED, "8001", "운동 목표 생성이 완료되었습니다."),
     FITNESSGOAL_LIST_SUCCESS(HttpStatus.OK, "8002", "운동 목표 목록 조회가 완료되었습니다."),
-    FITNESSGOAL_GET_SUCCESS(HttpStatus.OK,"8003", "운동 목표 조회가 완료되었습니다."),
+    FITNESSGOAL_GET_SUCCESS(HttpStatus.OK, "8003", "운동 목표 조회가 완료되었습니다."),
     FITNESSGOAL_UPDATE_SUCCESS(HttpStatus.OK, "8004", "운동 목표 수정이 완료되었습니다."),
     FITNESSGOAL_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "8005", "운동 목표 삭제가 완료되었습니다."),
     FITNESSGOAL_CANCEL_SUCCESS(HttpStatus.OK, "8006", "운동 목표 취소가 완료되었습니다."),
     FITNESSGOAL_WEIGHTRECORD_CREATE_SUCCESS(HttpStatus.CREATED, "8007", "체중 기록 생성이 완료되었습니다."),
-    FITNESSGOAL_WEIGHTRECORD_LIST_SUCCESS(HttpStatus.OK,"8008", "체중 기록 목록 조회가 완료되었습니다."),
+    FITNESSGOAL_WEIGHTRECORD_LIST_SUCCESS(HttpStatus.OK, "8008", "체중 기록 목록 조회가 완료되었습니다."),
     FITNESSGOAL_WEIGHTRECORD_GET_SUCCESS(HttpStatus.OK, "8009", "체중 기록 상세 조회가 완료되었습니다."),
     FITNESSGOAL_WEIGHTRECORD_UPDATE_SUCCESS(HttpStatus.OK, "8010", "체중 기록 수정이 완료되었습니다."),
     FITNESSGOAL_WEIGHTRECORD_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "8011", "체중 기록 삭제가 완료되었습니다."),
@@ -95,37 +95,39 @@ public enum SuccessCode implements BaseCode {
     FITNESSGOAL_DAILYRECORD_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "8015", "일일 기록 삭제가 완료되었습니다."),
 
     // 9000 s3 성공 코드
-    S3_UPLOAD_SUCCESS(HttpStatus.CREATED,"9001", "이미지 업로드가 완료되었습니다"),
-    S3_DELETE_SUCCESS(HttpStatus.OK,"9002","이미지 삭제가 완료되었습니다."),
+    S3_UPLOAD_SUCCESS(HttpStatus.CREATED, "9001", "이미지 업로드가 완료되었습니다"),
+    S3_DELETE_SUCCESS(HttpStatus.OK, "9002", "이미지 삭제가 완료되었습니다."),
+    S3_PRESIGNED_URL_GENERATED(HttpStatus.OK, "9003", "Presigned URL 생성이 완료되었습니다."),
 
     // 10000 : 채팅 성공 코드
-    GET_ALL_CHATTING(HttpStatus.OK,"10000", "채팅 내역이 조회되었습니다."),
-    CREATE_CHATROOM(HttpStatus.OK,"10001", "채팅방이 생성되었습니다."),
-    GET_ALL_CHATROOM(HttpStatus.OK,"10002", "채팅방 목록이 조회되었습니다."),
+    GET_ALL_CHATTING(HttpStatus.OK, "10000", "채팅 내역이 조회되었습니다."),
+    CREATE_CHATROOM(HttpStatus.OK, "10001", "채팅방이 생성되었습니다."),
+    GET_ALL_CHATROOM(HttpStatus.OK, "10002", "채팅방 목록이 조회되었습니다."),
 
     // 11000 : 리뷰 성공 코드
-    REVIEW_CREATE_SUCCESS(HttpStatus.CREATED,"11001", "리뷰 등록이 완료되었습니다."),
+    REVIEW_CREATE_SUCCESS(HttpStatus.CREATED, "11001", "리뷰 등록이 완료되었습니다."),
     REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "11002", "리뷰 수정이 완료되었습니다."),
     REVIEW_DELETE_SUCCESS(HttpStatus.NO_CONTENT, "11003", "리뷰 삭제가 완료되었습니다."),
     REVIEW_GET_SUCCESS(HttpStatus.OK, "11004", "리뷰 조회가 완료되었습니다."),
 
     // 12000 : 맴버십 성공 코드
-    POST_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12001", "이용권 등록이 완료되었습니다."),
-    GET_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12002", "이용권 조회가 완료되었습니다."),
-    PATCH_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12003", "이용권 수정이 완료되었습니다."),
-    DELETE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12004", "이용권 삭제가 완료되었습니다."),
-    PURCHASE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12005", "이용권 구매가 완료되었습니다."),
-    GET_MY_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12006", "구매 이력 조회가 완료되었습니다."),
-    GET_ACTIVE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12007", "활성화 된 이용권 조회가 완료되었습니다."),
-    START_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12008", "이용권 사용 시작"),
-    GET_NOT_STARTED_MEMBERSHIP_SUCCESS(HttpStatus.CREATED,"12009", "아직 시작하지 않은 이용권 목록 조회가 완료되었습니다."),
+    POST_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12001", "이용권 등록이 완료되었습니다."),
+    GET_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12002", "이용권 조회가 완료되었습니다."),
+    PATCH_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12003", "이용권 수정이 완료되었습니다."),
+    DELETE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12004", "이용권 삭제가 완료되었습니다."),
+    PURCHASE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12005", "이용권 구매가 완료되었습니다."),
+    GET_MY_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12006", "구매 이력 조회가 완료되었습니다."),
+    GET_ACTIVE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12007", "활성화 된 이용권 조회가 완료되었습니다."),
+    START_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12008", "이용권 사용 시작"),
+    GET_NOT_STARTED_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12009",
+        "아직 시작하지 않은 이용권 목록 조회가 완료되었습니다."),
 
     // 13000: 좋아요
-    LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "13001","좋아요 상태가 변경되었습니다."),
+    LIKE_TOGGLE_SUCCESS(HttpStatus.OK, "13001", "좋아요 상태가 변경되었습니다."),
 
     // 14000: 인기 검색어 조회
-    GET_POPULAR_KEYWORD_SUCCESS(HttpStatus.OK,"14001", "인기 검색어 조회가 완료되었습니다."),
-    GET_CHATROOM(HttpStatus.OK,"14002" ,"인기 검색어 조회가 완료되었습니다." ),
+    GET_POPULAR_KEYWORD_SUCCESS(HttpStatus.OK, "14001", "인기 검색어 조회가 완료되었습니다."),
+    GET_CHATROOM(HttpStatus.OK, "14002", "인기 검색어 조회가 완료되었습니다."),
 
     // 15000: 결제 성공 코드
     PAYMENT_PREPARE_SUCCESS(HttpStatus.OK, "14001", "결제 준비가 완료되었습니다."),

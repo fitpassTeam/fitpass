@@ -3,13 +3,16 @@ package org.example.fitpass.common.Image.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.common.s3.service.S3Service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,5 +73,29 @@ public class ImageController {
             ResponseMessage.success(SuccessCode.S3_DELETE_SUCCESS, "삭제 완료");
         return ResponseEntity.status(SuccessCode.S3_DELETE_SUCCESS.getHttpStatus())
             .body(responseMessage);
+    }
+
+    @Operation(
+        summary = "Presigned URL 생성",
+        description = "클라이언트가 S3에 직접 파일을 업로드할 수 있는 Presigned URL을 생성합니다."
+    )
+    @GetMapping("/presigned-url")
+    public ResponseEntity<ResponseMessage<Map<String, String>>> getPresignedUrl(
+        @Parameter(description = "업로드할 파일명 (확장자 포함)", required = true, example = "profile.jpg")
+        @RequestParam("filename") String filename,
+        @Parameter(description = "파일의 Content-Type", required = true, example = "image/jpeg")
+        @RequestParam("contentType") String contentType
+    ) {
+        String presignedUrl = s3Service.generatePresignedUrl(filename, contentType);
+        String fileName = s3Service.extractFileNameFromUrl(presignedUrl);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("presignedUrl", presignedUrl);
+        response.put("fileName", fileName);
+        response.put("contentType", contentType);
+        response.put("expiresIn", "300"); // 5분 (초 단위)
+
+        return ResponseEntity.status(SuccessCode.S3_PRESIGNED_URL_GENERATED.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.S3_PRESIGNED_URL_GENERATED, response));
     }
 }
