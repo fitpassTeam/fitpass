@@ -6,7 +6,6 @@ import org.example.fitpass.common.dto.PageResponse;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.gym.dto.response.GymResDto;
-import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.search.service.SearchGymService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

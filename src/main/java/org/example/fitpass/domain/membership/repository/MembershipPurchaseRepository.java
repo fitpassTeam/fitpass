@@ -1,11 +1,9 @@
 package org.example.fitpass.domain.membership.repository;
 
 import static org.example.fitpass.common.error.ExceptionCode.NOT_FOUND_PURCHASE;
-import static org.example.fitpass.common.error.ExceptionCode.TRAINER_NOT_FOUND;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.domain.membership.entity.MembershipPurchase;
 import org.example.fitpass.domain.user.entity.User;

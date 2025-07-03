@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.domain.fitnessGoal.dto.request.WeightRecordCreateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.dto.response.WeightRecordResponseDto;
 import org.example.fitpass.domain.fitnessGoal.entity.FitnessGoal;
 import org.example.fitpass.domain.fitnessGoal.entity.WeightRecord;

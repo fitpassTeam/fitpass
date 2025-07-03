@@ -9,8 +9,6 @@ import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.reservation.entity.Reservation;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.repository.ReservationRepository;
-import org.example.fitpass.domain.review.dto.request.ReviewCreateRequestDto;
-import org.example.fitpass.domain.review.dto.request.ReviewUpdateRequestDto;
 import org.example.fitpass.domain.review.dto.response.ReviewDetailResponseDto;
 import org.example.fitpass.domain.review.dto.response.ReviewResponseDto;
 import org.example.fitpass.domain.review.entity.Review;

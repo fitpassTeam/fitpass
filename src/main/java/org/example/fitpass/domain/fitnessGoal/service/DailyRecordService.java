@@ -5,11 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.common.s3.service.S3Service;
-import org.example.fitpass.domain.fitnessGoal.dto.request.DailyRecordCreateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.dto.response.DailyRecordResponseDto;
 import org.example.fitpass.domain.fitnessGoal.entity.DailyRecord;
 import org.example.fitpass.domain.fitnessGoal.entity.FitnessGoal;
@@ -25,7 +22,6 @@ public class DailyRecordService {
 
     private final DailyRecordRepository dailyRecordRepository;
     private final FitnessGoalRepository fitnessGoalRepository;
-    private final S3Service s3Service;
 
     // 일일 기록 생성
     @Transactional

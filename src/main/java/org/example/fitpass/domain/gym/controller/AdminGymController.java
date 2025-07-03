@@ -29,7 +29,8 @@ public class AdminGymController {
     // Admin용: 체육관 승인
     @PatchMapping("/admin/approve-gym/{gymId}")
     public ResponseEntity<ResponseMessage<GymResponseDto>> approveGym(
-        @PathVariable Long gymId) {
+        @PathVariable Long gymId
+    ) {
         GymResponseDto response = gymService.approveGym(gymId);
         return ResponseEntity.status(SuccessCode.GYM_APPROVE_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GYM_APPROVE_SUCCESS, response));
@@ -38,7 +39,8 @@ public class AdminGymController {
     // Admin용: 체육관 거절
     @PatchMapping("/admin/reject-gym/{gymId}")
     public ResponseEntity<ResponseMessage<GymResponseDto>> rejectGym(
-        @PathVariable Long gymId) {
+        @PathVariable Long gymId
+    ) {
         GymResponseDto response = gymService.rejectGym(gymId);
         return ResponseEntity.status(SuccessCode.GYM_REJECT_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GYM_REJECT_SUCCESS, response));
