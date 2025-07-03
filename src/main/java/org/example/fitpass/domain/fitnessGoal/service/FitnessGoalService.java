@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.domain.fitnessGoal.dto.request.FitnessGoalCreateRequestDto;
-import org.example.fitpass.domain.fitnessGoal.dto.request.FitnessGoalUpdateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.dto.response.FitnessGoalListResponseDto;
 import org.example.fitpass.domain.fitnessGoal.dto.response.FitnessGoalResponseDto;
 import org.example.fitpass.domain.fitnessGoal.entity.FitnessGoal;

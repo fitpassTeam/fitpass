@@ -1,7 +1,5 @@
 package org.example.fitpass.domain.membership.entity;
 
-import static org.example.fitpass.common.error.ExceptionCode.NOT_BELONG_TO_GYM;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,7 +12,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.fitpass.common.BaseEntity;
-import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.domain.gym.entity.Gym;
 
 @Getter

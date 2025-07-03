@@ -1,6 +1,7 @@
 package org.example.fitpass.domain.post.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import org.example.fitpass.domain.post.entity.Post;
 import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;

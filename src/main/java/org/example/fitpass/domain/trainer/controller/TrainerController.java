@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.common.security.CustomUserDetails;
+import org.example.fitpass.domain.trainer.dto.reqeust.TrainerRequestDto;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerUpdateRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerDetailResponseDto;
-import org.example.fitpass.domain.trainer.dto.reqeust.TrainerRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerResponseDto;
 import org.example.fitpass.domain.trainer.service.TrainerService;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,11 +37,11 @@ public class TrainerController {
     // 생성
     @PostMapping
     public ResponseEntity<ResponseMessage<TrainerResponseDto>> createTrainer(
-        @AuthenticationPrincipal CustomUserDetails user,
+        @AuthenticationPrincipal CustomUserDetails userDetails,
         @PathVariable("gymId") Long gymId,
         @Valid @RequestBody TrainerRequestDto dto) {
         TrainerResponseDto response = trainerService.createTrainer(
-            user.getId(),
+            userDetails.getId(),
             gymId,
             dto.name(),
             dto.price(),
@@ -78,12 +77,12 @@ public class TrainerController {
     // 수정
     @PatchMapping("/{trainerId}")
     public ResponseEntity<ResponseMessage<TrainerResponseDto>> updateTrainer(
-        @AuthenticationPrincipal CustomUserDetails user,
+        @AuthenticationPrincipal CustomUserDetails userDetails,
         @PathVariable("gymId") Long gymId,
         @PathVariable("trainerId") Long trainerId,
         @Valid @RequestBody TrainerUpdateRequestDto dto) {
         TrainerResponseDto response = trainerService.updateTrainer(
-            user.getId(),
+            userDetails.getId(),
             gymId,
             trainerId,
             dto.name(),
@@ -100,11 +99,11 @@ public class TrainerController {
     // 사진 수정
     @PatchMapping("/{trainerId}/photo")
     public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
-        @AuthenticationPrincipal CustomUserDetails user,
+        @AuthenticationPrincipal CustomUserDetails userDetails,
         @RequestParam("images")List<MultipartFile> files,
         @PathVariable("gymId") Long gymId,
         @PathVariable("trainerId") Long trainerId) {
-        List<String> response = trainerService.updatePhoto(user.getId(), files, gymId, trainerId);
+        List<String> response = trainerService.updatePhoto(userDetails.getId(), files, gymId, trainerId);
         return ResponseEntity.status(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.PATCH_TRAINER_IMAGE_SUCCESS, response));
     }
@@ -112,10 +111,10 @@ public class TrainerController {
     // 삭제
     @DeleteMapping("/{trainerId}")
     public ResponseEntity<ResponseMessage<Void>> deleteTrainer(
-        @AuthenticationPrincipal CustomUserDetails user,
+        @AuthenticationPrincipal CustomUserDetails userDetails,
         @PathVariable("gymId") Long gymId,
         @PathVariable("trainerId") Long trainerId) {
-        trainerService.deleteTrainer(user.getId(), gymId, trainerId);
+        trainerService.deleteTrainer(userDetails.getId(), gymId, trainerId);
         return ResponseEntity.status(SuccessCode.DELETE_TRAINER_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.DELETE_TRAINER_SUCCESS));
     }

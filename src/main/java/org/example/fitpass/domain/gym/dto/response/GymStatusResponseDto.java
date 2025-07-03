@@ -1,6 +1,6 @@
 package org.example.fitpass.domain.gym.dto.response;
+
 import java.time.LocalTime;
-import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.enums.GymPostStatus;
 
 public record GymStatusResponseDto(

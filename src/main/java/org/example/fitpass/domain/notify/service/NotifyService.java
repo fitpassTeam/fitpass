@@ -9,9 +9,9 @@ import org.example.fitpass.domain.notify.dto.NotifyDto;
 import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.notify.repository.EmitterRepository;
 import org.example.fitpass.domain.notify.repository.NotifyRepository;
-import org.example.fitpass.domain.trainer.entity.Trainer;
 import org.example.fitpass.domain.user.entity.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RequiredArgsConstructor
@@ -24,6 +24,7 @@ public class NotifyService {
     private final NotifyRepository notifyRepository;
     private final RedisDao redisDao;
 
+    @Transactional(readOnly = true)
     public SseEmitter subscribe(Long id, String lastEventId) {
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
         // 한 곳에서 key 생성
@@ -50,6 +51,7 @@ public class NotifyService {
     }
 
 
+    @Transactional
     public void send(User receiver, NotificationType notificationType, String content, String url) {
         Notify notification = notifyRepository.save(createNotification(receiver, notificationType, content, url));
 

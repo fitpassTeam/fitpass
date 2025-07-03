@@ -1,16 +1,12 @@
 package org.example.fitpass.domain.membership.service;
 
-import static org.example.fitpass.common.error.ExceptionCode.ALREADY_STARTED;
 import static org.example.fitpass.common.error.ExceptionCode.INVALID_GYM_MEMBERSHIP;
-import static org.example.fitpass.common.error.ExceptionCode.INVALID_TOKEN;
 import static org.example.fitpass.common.error.ExceptionCode.MEMBERSHIP_NOT_ACTIVE;
-import static org.example.fitpass.common.error.ExceptionCode.NOT_FOUND_PURCHASE;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.fitpass.common.error.BaseException;
@@ -23,9 +19,7 @@ import org.example.fitpass.domain.membership.entity.MembershipPurchase;
 import org.example.fitpass.domain.membership.repository.MembershipPurchaseRepository;
 import org.example.fitpass.domain.membership.repository.MembershipRepository;
 import org.example.fitpass.domain.point.service.PointService;
-import org.example.fitpass.domain.reservation.repository.ReservationRepository;
 import org.example.fitpass.domain.user.entity.User;
-import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -3,11 +3,9 @@ package org.example.fitpass.domain.post.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
+import java.util.List;
 import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
-
-import java.util.List;
 
 public record PostCreateRequestDto(
         @Schema(description = "게시물 상태 (ex. 공개, 삭제)", example = "ACTIVE")

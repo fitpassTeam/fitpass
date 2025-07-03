@@ -1,19 +1,18 @@
 package org.example.fitpass.domain.user.service;
 
-import com.nimbusds.openid.connect.sdk.UserInfoResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.s3.service.S3Service;
 import org.example.fitpass.config.RedisService;
-import org.example.fitpass.domain.user.enums.Gender;
-import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.dto.response.SigninResponseDto;
 import org.example.fitpass.domain.user.dto.response.UserResponseDto;
 import org.example.fitpass.domain.user.entity.User;
+import org.example.fitpass.domain.user.enums.Gender;
+import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.repository.UserRepository;
-import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -221,13 +220,14 @@ public class UserService {
             .map(UserResponseDto::from)
             .toList();
     }
-    @Transactional
+    @Transactional(readOnly = true)
     public void checkPassword(String rawPassword, String encodedPassword) {
         if (!passwordEncoder.matches(encodedPassword, rawPassword)) {
             throw new BaseException(ExceptionCode.INVALID_PASSWORD);
         }
     }
 
+    @Transactional(readOnly = true)
     public UserResponseDto getUser(Long userId) {
         User user = userRepository.findByIdOrElseThrow(userId);
         return UserResponseDto.from(user);
