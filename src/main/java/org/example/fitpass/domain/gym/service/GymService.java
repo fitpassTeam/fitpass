@@ -95,25 +95,6 @@ public class GymService {
     }
 
     @Transactional
-    public List<String> updatePhoto(List<MultipartFile> files, Long gymId, Long userId) {
-        // 유저 조회
-        User user = userRepository.findByIdOrElseThrow(userId);
-        // 체육관 조회
-        Gym gym = gymRepository.findByIdOrElseThrow(gymId);
-        // 오너인지 확인 여부
-        if (user.getUserRole() != UserRole.OWNER) {
-            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
-        }
-        for (Image image : gym.getImages()) {
-            s3Service.deleteFileFromS3(image.getUrl());
-        }
-        List<String> imageUrls = s3Service.uploadFiles(files);
-        gym.updatePhoto(imageUrls, gym);
-        gymRepository.save(gym);
-        return imageUrls;
-    }
-
-    @Transactional
     public GymResDto updateGym(String name, String number, String content, String city, String district, String detailAddress, LocalTime openTime, LocalTime closeTime, String summary,List<String> imgs,Long gymId,Long userId){
         // 유저 조회
         User user = userRepository.findByIdOrElseThrow(userId);

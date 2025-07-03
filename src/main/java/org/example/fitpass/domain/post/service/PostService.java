@@ -104,19 +104,6 @@ public class PostService {
                 post.getUpdatedAt()
         );
     }
-    //사진 수정
-    @Transactional
-    public List<String> updatePhoto(List<MultipartFile> files, Long postId, Long userId) {
-        Post post = postRepository.findByIdOrElseThrow(postId);
-        post.isOwner(userId);
-        for (Image image : post.getPostImages()) {
-            s3Service.deleteFileFromS3(image.getUrl());
-        }
-        List<String> imageUrls = s3Service.uploadFiles(files);
-        post.updatePhoto(imageUrls, post);
-        postRepository.save(post);
-        return imageUrls;
-    }
 
     //게시물 수정
     @Transactional

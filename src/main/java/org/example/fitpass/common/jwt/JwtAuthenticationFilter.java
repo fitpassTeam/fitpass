@@ -4,7 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.security.CustomUserDetailsService;
 import org.example.fitpass.config.RedisService;
@@ -13,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -23,13 +24,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+        HttpServletResponse response,
+        FilterChain filterChain) throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
 
-        // 인증이 필요없는 경로들은 필터를 건너뜀
-        if (shouldSkipAuthentication(requestURI)) {
+        if (requestURI.startsWith("/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (UsernameNotFoundException e) {
                 logger.warn("해당 이메일의 유저를 찾을 수 없습니다");
@@ -69,41 +69,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private boolean shouldSkipAuthentication(String requestURI) {
-        // 인증이 필요없는 경로들
-        String[] publicPaths = {
-            "/auth",
-            "/search",
-            "/gyms",
-            "/actuator/health",
-            "/health",
-            "/login",
-            "/ws",
-            "/error",
-            "/swagger-ui",
-            "/v3/api-docs",
-            "/api-docs",
-            "/memberships/purchases",
-            "/api/payments/confirm",
-            "/api/payments/fail",
-            "/payment",
-            "/auth/reissue"
-        };
-
-        for (String path : publicPaths) {
-            if (requestURI.startsWith(path)) {
-                return true;
-            }
-        }
-        
-        // GET 요청인 경우 특정 경로들 허용
-        if (requestURI.matches("/gyms/\\d+/trainers/.*") || 
-            requestURI.matches("/gyms/\\d+/memberships/.*")) {
-            return true;
-        }
-        
-        return false;
     }
 }

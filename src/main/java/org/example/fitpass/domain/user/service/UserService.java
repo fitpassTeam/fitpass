@@ -106,21 +106,6 @@ public class UserService {
         user.updateInfo(name, age, address, phone, img);
         return UserResponseDto.from(user);
     }
-    // 프로필 사진 업데이트
-    @Transactional
-    public String updateProfileImage(MultipartFile file, Long userId) {
-        User user = userRepository.findByIdOrElseThrow(userId);
-
-        // 기존 이미지 S3에서 삭제 (있다면)
-        if (user.getUserImage() != null && !user.getUserImage().isEmpty()) {
-            s3Service.deleteFileFromS3(user.getUserImage());
-        }
-
-        // 새 이미지 S3 업로드
-        String newImageUrl = s3Service.uploadSingleFile(file);
-
-        return newImageUrl;
-    }
 
     // 핸드폰 번호 업데이트
     @Transactional

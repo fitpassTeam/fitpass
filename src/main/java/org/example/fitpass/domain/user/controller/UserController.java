@@ -123,25 +123,6 @@ public class UserController {
                 .body(ResponseMessage.success(SuccessCode.USER_UPDATE_SUCCESS, response));
     }
 
-    // 유저 프로필 이미지 업데이트
-    @Operation(
-        summary = "프로필 이미지 수정",
-        description = "사용자의 프로필 이미지를 업데이트합니다."
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "프로필 이미지 수정 성공"),
-        @ApiResponse(responseCode = "400", description = "잘못된 파일 형식"),
-        @ApiResponse(responseCode = "401", description = "인증 실패")
-    })
-    @PatchMapping("/me/profile-image")
-    public ResponseEntity<ResponseMessage<String>> updateProfileImage(
-        @RequestParam("profileImage") MultipartFile file,
-        @AuthenticationPrincipal CustomUserDetails userDetails) {
-        String updatedImageUrl = userService.updateProfileImage(file, userDetails.getId());
-        return ResponseEntity.status(SuccessCode.USER_PROFILE_IMAGE_UPDATE_SUCCESS.getHttpStatus())
-            .body(ResponseMessage.success(SuccessCode.USER_PROFILE_IMAGE_UPDATE_SUCCESS, updatedImageUrl));
-    }
-
     // 전화번호 수정
     @Operation(
         summary = "전화번호 수정",

@@ -93,20 +93,6 @@ public class GymController {
     }
 
     @Operation(
-        summary = "체육관 이미지 수정",
-        description = "해당 체육관의 이미지를 수정합니다. 이미지 파일들을 multipart/form-data 형식으로 전송해야 합니다. 체육관 생성 당사자만 수정 가능합니다."
-    )
-    @PatchMapping("/{gymId}/photo")
-    public ResponseEntity<ResponseMessage<List<String>>> updatePhoto(
-        @RequestParam("images") List<MultipartFile> files,
-        @PathVariable Long gymId,
-        @AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<String> updatedImageUrls = gymService.updatePhoto(files, gymId, userDetails.getId());
-        return ResponseEntity.status(SuccessCode.GYM_EDIT_PHOTO_SUCCESS.getHttpStatus())
-            .body(ResponseMessage.success(SuccessCode.GYM_EDIT_PHOTO_SUCCESS, updatedImageUrls));
-    }
-
-    @Operation(
         summary = "체육관 정보 수정",
         description = "체육관 ID를 기준으로 체육관의 이름, 번호, 주소, 운영 시간 등의 정보를 수정합니다. 체육관 생성 당사자만 수정 가능합니다."
     )

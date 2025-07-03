@@ -243,29 +243,6 @@ class GymServiceTest {
     }
 
     @Test
-    @DisplayName("체육관 사진 업데이트 성공 테스트")
-    void updatePhoto_Success() {
-        // given
-        Long gymId = 1L;
-        Long ownerId = 1L;
-        List<MultipartFile> files = List.of(multipartFile);
-        List<String> newImageUrls = List.of("new_image1.jpg", "new_image2.jpg");
-
-        given(userRepository.findByIdOrElseThrow(ownerId)).willReturn(ownerUser);
-        given(gymRepository.findByIdOrElseThrow(gymId)).willReturn(gym);
-        given(s3Service.uploadFiles(files)).willReturn(newImageUrls);
-        given(gymRepository.save(any(Gym.class))).willReturn(gym);
-
-        // when
-        List<String> result = gymService.updatePhoto(files, gymId, ownerId);
-
-        // then
-        assertThat(result).containsExactlyElementsOf(newImageUrls);
-        verify(s3Service).uploadFiles(files);
-        verify(gymRepository).save(gym);
-    }
-
-    @Test
     @DisplayName("체육관 정보 업데이트 성공 테스트")
     void updateGym_Success() {
         // given
