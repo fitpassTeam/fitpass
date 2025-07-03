@@ -51,6 +51,7 @@ public class AdminGymController {
     public ResponseEntity<ResponseMessage<GymResponseDto>> approveGym(
         @Parameter(description = "승인할 체육관 ID", required = true)
         @PathVariable Long gymId) {
+
         GymResponseDto response = gymService.approveGym(gymId);
         return ResponseEntity.status(SuccessCode.GYM_APPROVE_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GYM_APPROVE_SUCCESS, response));

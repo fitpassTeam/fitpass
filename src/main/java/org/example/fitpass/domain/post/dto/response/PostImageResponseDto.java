@@ -1,10 +1,9 @@
 package org.example.fitpass.domain.post.dto.response;
 
-import org.example.fitpass.domain.post.enums.PostStatus;
-import org.example.fitpass.domain.post.enums.PostType;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import org.example.fitpass.domain.post.enums.PostStatus;
+import org.example.fitpass.domain.post.enums.PostType;
 
 public record PostImageResponseDto(
         Long postId,

@@ -1,6 +1,7 @@
 package org.example.fitpass.domain.gym.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalTime;
 import org.example.fitpass.domain.gym.enums.GymPostStatus;
 

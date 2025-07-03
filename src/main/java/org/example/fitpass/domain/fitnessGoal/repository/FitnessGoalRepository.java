@@ -2,7 +2,6 @@ package org.example.fitpass.domain.fitnessGoal.repository;
 
 import java.util.List;
 import java.util.Optional;
-import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.domain.fitnessGoal.entity.FitnessGoal;

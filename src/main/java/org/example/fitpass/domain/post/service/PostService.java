@@ -1,5 +1,7 @@
 package org.example.fitpass.domain.post.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.common.error.BaseException;
@@ -13,17 +15,14 @@ import org.example.fitpass.domain.post.entity.Post;
 import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
 import org.example.fitpass.domain.post.repository.PostRepository;
-import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.entity.User;
+import org.example.fitpass.domain.user.enums.UserRole;
 import org.example.fitpass.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

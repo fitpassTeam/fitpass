@@ -186,6 +186,7 @@ public class GymService {
         return GymResponseDto.from(gym, false);
     }
 
+    @Transactional(readOnly = true)
     public List<GymResponseDto> getAllMyGyms(Long id) {
         User user = userRepository.findByIdOrElseThrow(id);
         // 오너인지 확인 여부

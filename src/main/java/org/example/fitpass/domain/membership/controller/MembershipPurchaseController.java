@@ -1,5 +1,10 @@
 package org.example.fitpass.domain.membership.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +24,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "MembershipPurchase API", description = "이용권 사용에 대한 설명입니다.")
 public class MembershipPurchaseController {
 
     private final MembershipPurchaseService membershipPurchaseService;
 
-    // 이용권 구매
+    @Operation(summary = "이용권 구매",
+        description = "필요 파라미터 : 체육관 ID, 이용권 ID, 활성화 날짜")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "이용권 구매 성공"),
+        @ApiResponse(responseCode = "404", description = "체육관 또는 이용권을 찾을 수 없음"),
+        @ApiResponse(responseCode = "400", description = "잘못된 구매 요청"),
+        @ApiResponse(responseCode = "401", description = "인증이 필요함")
+    })
+    @Parameter(name = "gymId", description = "체육관 ID", example = "1")
+    @Parameter(name = "membershipId", description = "이용권 ID", example = "1")
+    @Parameter(name = "activationDate", description = "이용권 활성화 날짜 (yyyy-MM-dd 형식)", example = "2025-07-10")
     @PostMapping("/gyms/{gymId}/memberships/{membershipId}/purchase")
     public ResponseEntity<ResponseMessage<MembershipPurchaseResponseDto>> purchase(
         @PathVariable("membershipId") Long membershipId,
@@ -37,7 +53,12 @@ public class MembershipPurchaseController {
             .body(ResponseMessage.success(SuccessCode.PURCHASE_MEMBERSHIP_SUCCESS, response));
     }
 
-    // 사용 가능한 이용권 조회
+    @Operation(summary = "사용 가능한 이용권 조회",
+        description = "유저의 사용 가능한 이용권을 조회하는 기능입니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "사용 가능한 이용권 목록 조회 성공"),
+        @ApiResponse(responseCode = "401", description = "인증이 필요함")
+    })
     @GetMapping("/memberships/purchases/not-started")
     public ResponseEntity<ResponseMessage<List<MembershipPurchaseResponseDto>>> getNotStartedMemberships(
         @AuthenticationPrincipal CustomUserDetails userDetails
@@ -45,10 +66,17 @@ public class MembershipPurchaseController {
         List<MembershipPurchaseResponseDto> response =
             membershipPurchaseService.getNotStartedMemberships(userDetails.getId());
         return ResponseEntity.status(SuccessCode.GET_NOT_STARTED_MEMBERSHIP_SUCCESS.getHttpStatus())
-            .body(ResponseMessage.success(SuccessCode.GET_NOT_STARTED_MEMBERSHIP_SUCCESS, response));
+            .body(
+                ResponseMessage.success(SuccessCode.GET_NOT_STARTED_MEMBERSHIP_SUCCESS, response));
     }
 
-    // 구매 이력 조회
+    @Operation(summary = "구매 이력 조회",
+        description = "유저의 구매한 이용권을 조회하는 기능입니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "구매 이력 조회 성공"),
+        @ApiResponse(responseCode = "404", description = "활성화된 이용권이 없음"),
+        @ApiResponse(responseCode = "401", description = "인증이 필요함")
+    })
     @GetMapping("/memberships/purchases/me")
     public ResponseEntity<ResponseMessage<List<MembershipPurchaseResponseDto>>> getMyPurchases(
         @AuthenticationPrincipal CustomUserDetails userDetails
@@ -59,7 +87,12 @@ public class MembershipPurchaseController {
             .body(ResponseMessage.success(SuccessCode.GET_MY_MEMBERSHIP_SUCCESS, response));
     }
 
-    // 현재 활성 이용권
+    @Operation(summary = "현재 활성 이용권", description = "유저의 현재 활성화 된 이용권을 조회하는 기능입니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "활성 이용권 조회 성공"),
+        @ApiResponse(responseCode = "404", description = "활성화된 이용권이 없음"),
+        @ApiResponse(responseCode = "401", description = "인증이 필요함")
+    })
     @GetMapping("/memberships/purchases/active")
     public ResponseEntity<ResponseMessage<MembershipPurchaseResponseDto>> getMyActiveMembership(
         @AuthenticationPrincipal CustomUserDetails userDetails

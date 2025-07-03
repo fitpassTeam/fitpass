@@ -2,6 +2,8 @@ package org.example.fitpass.domain.notify.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.io.IOException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.notify.dto.request.NotificationEvent;
 import org.example.fitpass.domain.notify.dto.response.NotifyDto;
@@ -16,9 +18,6 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.io.IOException;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor

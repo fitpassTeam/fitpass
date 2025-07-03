@@ -32,9 +32,9 @@ public class LikeController {
         @Parameter(description = "좋아요를 누를 체육관 ID", required = true)
         @PathVariable Long gymId,
         @Parameter(hidden = true) // Swagger UI에 노출되지 않도록
-        @AuthenticationPrincipal CustomUserDetails user
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        likeService.postGymLike(user.getId(), gymId);
+        likeService.postGymLike(userDetails.getId(), gymId);
         return ResponseEntity.status(SuccessCode.LIKE_TOGGLE_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.LIKE_TOGGLE_SUCCESS));
     }
@@ -48,9 +48,9 @@ public class LikeController {
         @Parameter(description = "좋아요를 누를 게시물 ID", required = true)
         @PathVariable Long postId,
         @Parameter(hidden = true)
-        @AuthenticationPrincipal CustomUserDetails user
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        likeService.postLike(user.getId(), postId);
+        likeService.postLike(userDetails.getId(), postId);
         return ResponseEntity.status(SuccessCode.LIKE_TOGGLE_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.LIKE_TOGGLE_SUCCESS));
     }

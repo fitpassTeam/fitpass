@@ -11,6 +11,7 @@ import com.jayway.jsonpath.JsonPath;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
+import java.util.UUID;
 import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
@@ -31,7 +32,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,15 +85,15 @@ class ReviewScenarioTest {
         // GIVEN: 사용자, 체육관, 트레이너, 예약 데이터 준비
         Gym gym = new Gym(
             Collections.emptyList(), // 이미지 리스트
-            "헬스장",
-            "123-45-67890",
-            "좋은 헬스장입니다",
-            "서울",
-            "강남구",
-            "테헤란로 123",
-            LocalTime.of(6, 0),
-            LocalTime.of(23, 0),
-            "최고의 헬스장",
+            "헬스장", 
+            UUID.randomUUID().toString(), // 고유한 번호 생성
+            "좋은 헬스장입니다", 
+            "서울", 
+            "강남구", 
+            "테헤란로 123", 
+            LocalTime.of(6, 0), 
+            LocalTime.of(23, 0), 
+            "최고의 헬스장", 
             user
         );
         gym = gymRepository.save(gym); // 변경된 부분
