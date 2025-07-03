@@ -5,7 +5,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.config.RedisDao;
 import org.example.fitpass.domain.notify.NotificationType;
-import org.example.fitpass.domain.notify.dto.NotifyDto;
+import org.example.fitpass.domain.notify.dto.response.NotifyDto;
 import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.notify.repository.EmitterRepository;
 import org.example.fitpass.domain.notify.repository.NotifyRepository;

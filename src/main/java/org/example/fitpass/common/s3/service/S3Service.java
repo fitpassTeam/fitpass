@@ -1,7 +1,9 @@
 package org.example.fitpass.common.s3.service;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import jakarta.annotation.PostConstruct;
@@ -9,7 +11,11 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,6 +103,61 @@ public class S3Service {
     // 단일 파일 업로드 메서드
     public String uploadSingleFile(MultipartFile file) {
         return uploadFileToS3(file); // 내부 private 메서드 호출
+    }
+
+    public String generatePresignedUrl(String originalFilename, String contentType) {
+        // 파일 확장자 검증
+        if (!isAllowedFileType(originalFilename)) {
+            throw new BaseException(ExceptionCode.INVALID_FILE_TYPE);
+        }
+
+        String extension = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        String fileName = UUID.randomUUID().toString() + extension;
+
+        // URL 유효기간 설정 (예: 5분)
+        Date expiration = new Date();
+        expiration.setTime(expiration.getTime() + 1000 * 60 * 5);
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+            new GeneratePresignedUrlRequest(bucketName, fileName)
+                .withMethod(HttpMethod.PUT)
+                .withExpiration(expiration)
+                .withContentType(contentType);
+
+        String presignedUrl = amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
+        
+        log.info("Presigned URL 생성 완료: fileName={}, contentType={}", fileName, contentType);
+        return presignedUrl;
+    }
+
+    private boolean isAllowedFileType(String filename) {
+        if (filename == null || filename.trim().isEmpty()) {
+            return false;
+        }
+        
+        String[] allowedExtensions = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".tiff"};
+        String lowerFilename = filename.toLowerCase();
+        return Arrays.stream(allowedExtensions)
+                .anyMatch(lowerFilename::endsWith);
+    }
+
+    public String extractFileNameFromUrl(String presignedUrl) {
+        if (presignedUrl == null || !presignedUrl.contains("/")) {
+            return "";
+        }
+
+        String path = presignedUrl.split("\\?")[0];
+        int lastSlashIndex = path.lastIndexOf("/");
+
+        if (lastSlashIndex == -1 || lastSlashIndex == path.length() - 1) {
+            return "";
+        }
+
+        return path.substring(lastSlashIndex + 1);
     }
 
 }

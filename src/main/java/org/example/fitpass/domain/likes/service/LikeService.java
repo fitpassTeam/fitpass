@@ -34,7 +34,7 @@ public class LikeService {
         User user = userRepository.findByIdOrElseThrow(userId);
         Optional<Like> likeOptional = likeRepository.findByUserAndTargetId(user, postId);
         if(likeOptional.isEmpty()){
-            Like like = Like.of(user, LikeType.GYM, postId);
+            Like like = Like.of(user, LikeType.POST, postId);
             likeRepository.save(like);
         }else {
             likeRepository.delete(likeOptional.get());

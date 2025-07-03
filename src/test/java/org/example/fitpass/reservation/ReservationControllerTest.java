@@ -153,7 +153,7 @@ class ReservationControllerTest {
     @Test
     void updateReservation_success() throws Exception {
         // Given
-        LocalDate newDate = LocalDate.of(2025, 7, 2);
+        LocalDate newDate = LocalDate.of(2026, 7, 2);
         LocalTime newTime = LocalTime.of(15, 0);
         
         UpdateReservationRequestDto updateDto = new UpdateReservationRequestDto(

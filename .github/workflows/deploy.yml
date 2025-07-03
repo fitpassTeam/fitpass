@@ -1,135 +1,186 @@
-  name: Deploy
+name: CI-CD
 
-  on:
-    workflow_dispatch:
-    push:
-      branches:
-        - main
-        - dev
-        - fix/Authorization
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ main, dev ]
 
-  jobs:
-    deploy:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
+permissions:
+  checks: write
+  contents: read
 
-        - name: Set up JDK 17
-          uses: actions/setup-java@v4
-          with:
-            java-version: '17'
-            distribution: 'adopt'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Grant execute permission for gradlew
-          run: chmod +x ./gradlew
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
 
-        - name: gradlew bootJar
-          run: ./gradlew bootJar
+      - name: Create test application properties
+        run: |
+          mkdir -p src/test/resources
+          cat > src/test/resources/application-test.properties << EOF
+          spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+          spring.datasource.driver-class-name=org.h2.Driver
+          spring.datasource.username=sa
+          spring.datasource.password=
+          spring.jpa.hibernate.ddl-auto=create-drop
+          spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+          spring.h2.console.enabled=true
+          jwt.secret=${SECRET_KEY}
+          EOF
 
-        - name: Debug paths in GitHub Actions
-          run: |
-            echo "Checking paths to be copied"
-            ls -la ./build/libs
-            ls -la ./
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-        - name: Create .env file
-          run: |
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-            echo "SQL_PORT=${{ secrets.SQL_PORT }}" >> .env
-            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-            echo "ACCESS_KEY=${{ secrets.ACCESS_KEY }}" >> .env
-            echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
-            echo "OAUTH_NAVER_CLIENT_ID=${{ secrets.OAUTH_NAVER_CLIENT_ID }}" >> .env
-            echo "OAUTH_NAVER_CLIENT_SECRET=${{ secrets.OAUTH_NAVER_CLIENT_SECRET }}" >> .env
-            echo "REDIS_HOST=redis" >> .env
-            echo "REDIS_PORT=6379" >> .env
-            echo "RDS_ENDPOINT=${{ secrets.RDS_ENDPOINT }}" >> .env
-          shell: bash
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
 
-        - name: Debug check exact .env location
-          run: |
-            find . -name ".env"
+      - name: Run tests
+        run: ./gradlew test
 
-        - name: Copy all docker-related files to server
-          uses: appleboy/scp-action@master
-          with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ubuntu
-            key: ${{ secrets.SSH_KEY }}
-            port: 22
-            source: './build/libs/*.jar,./Dockerfile,./docker-compose-prod.yml,.env,src/main/resources/application.properties,src/main/resources/application-prod.properties'
-            target: "~/fitpass"
+      - name: Generate test report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Gradle Tests
+          path: build/test-results/test/*.xml
+          reporter: java-junit
 
-        - name: SSH and deploy via docker-compose (prod)
-          uses: appleboy/ssh-action@v0.1.6
-          with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ubuntu
-            key: ${{ secrets.SSH_KEY }}
-            port: 22
-            script_stop: false
-            script: |-
-              cd ~/fitpass
-              
-              echo "기존 컨테이너 중지 및 삭제"
-              docker-compose -f docker-compose-prod.yml down || true
-              
-              docker rm -f redis || true
-              docker rm -f spring-app || true
-              
-              echo "새 컨테이너 빌드 및 시작"
-              docker-compose -f docker-compose-prod.yml up --build -d
-              
-              echo "최근 로그 출력"
-              docker-compose -f docker-compose-prod.yml logs --tail=50
-              
-              echo "spring 컨테이너 시작 대기 (30초)"
-              sleep 30
-              
-              echo "spring 로그 확인 (초기 상태)"
-              docker-compose -f docker-compose-prod.yml logs spring-app --tail=50
-              
-              echo "서비스 헬스체크 시작..."
-              
-              success=false
-              
-              for i in $(seq 1 15); do
-                echo "($i/15) curl 시도 중..."
-              
-                RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" http://127.0.0.1:8080/actuator/health || echo "FAILED")
-              
-                echo "Raw RESPONSE:"
-                echo "$RESPONSE"
-              
-                if [[ "$RESPONSE" == *"FAILED"* ]]; then
-                  echo "curl 실행 자체 실패"
-                  STATUS="000"
-                  BODY=""
-                else
-                  STATUS=$(echo "$RESPONSE" | grep "HTTP_CODE" | cut -d':' -f2)
-                  BODY=$(echo "$RESPONSE" | sed '/^HTTP_CODE:/d')
-                fi
-              
-                echo "상태 코드: $STATUS"
-                echo "응답 본문: $BODY"
-              
-                if [ "$STATUS" = "200" ]; then
-                  echo "✅ Health check passed! (HTTP 200)"
-                  success=true
-                  break
-                else
-                  echo "아직 준비되지 않았습니다. 30초 후 재시도..."
-                  sleep 30
-                fi
-              done
-              
-              if [ "$success" = true ]; then
-                exit 0
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/feature/test-code' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build bootJar
+        run: ./gradlew bootJar
+
+      - name: Create .env file
+        run: |
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "SQL_PORT=${{ secrets.SQL_PORT }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "ACCESS_KEY=${{ secrets.ACCESS_KEY }}" >> .env
+          echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
+          echo "OAUTH_NAVER_CLIENT_ID=${{ secrets.OAUTH_NAVER_CLIENT_ID }}" >> .env
+          echo "OAUTH_NAVER_CLIENT_SECRET=${{ secrets.OAUTH_NAVER_CLIENT_SECRET }}" >> .env
+          echo "REDIS_HOST=redis" >> .env
+          echo "REDIS_PORT=6379" >> .env
+          echo "RDS_ENDPOINT=${{ secrets.RDS_ENDPOINT }}" >> .env
+          echo "TOSS_CLIENT_KEY=${{ secrets.TOSS_CLIENT_KEY }}" >> .env
+          echo "TOSS_SECRET_KEY=${{ secrets.TOSS_SECRET_KEY }}" >> .env
+          echo "TOSS_FAIL_URL=${{ secrets.TOSS_FAIL_URL }}" >> .env
+          echo "TOSS_SUCCESS_URL=${{ secrets.TOSS_SUCCESS_URL }}" >> .env
+
+      - name: Copy all docker-related files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: './build/libs/*.jar,./Dockerfile,./docker-compose-prod.yml,.env,src/main/resources/application.properties,src/main/resources/application-prod.properties'
+          target: "~/fitpass"
+
+      - name: SSH and deploy via docker-compose (prod)
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script_stop: false
+          script: |-
+            cd ~/fitpass
+            docker-compose -f docker-compose-prod.yml down || true
+            docker rm -f redis || true
+            docker rm -f spring-app || true
+            docker-compose -f docker-compose-prod.yml up --build -d
+            sleep 30
+            docker-compose -f docker-compose-prod.yml logs --tail=50
+            success=false
+            for i in $(seq 1 15); do
+              echo "($i/15) curl 시도 중..."
+              RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" http://127.0.0.1:8080/actuator/health || echo "FAILED")
+              if [[ "$RESPONSE" == *"FAILED"* ]]; then
+                STATUS="000"
+                BODY=""
               else
-                echo "❌ Health check failed after 15 tries."
-                docker-compose -f docker-compose-prod.yml logs
-                exit 1
+                STATUS=$(echo "$RESPONSE" | grep "HTTP_CODE" | cut -d':' -f2)
+                BODY=$(echo "$RESPONSE" | sed '/^HTTP_CODE:/d')
               fi
+              if [ "$STATUS" = "200" ]; then
+                echo "✅ Health check passed!"
+                success=true
+                break
+              else
+                echo "아직 준비되지 않았습니다. 30초 후 재시도..."
+                sleep 30
+              fi
+            done
+            if [ "$success" = true ]; then
+              exit 0
+            else
+              echo "❌ Health check failed"
+              docker-compose -f docker-compose-prod.yml logs
+              exit 1
+            fi

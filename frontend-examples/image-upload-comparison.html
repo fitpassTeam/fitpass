@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이미지 업로드 방식 비교 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .method {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .traditional {
+            border-left: 5px solid #ff4444;
+        }
+        .presigned {
+            border-left: 5px solid #44ff44;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .file-input {
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .stat {
+            text-align: center;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #495057;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: #28a745;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 이미지 업로드 방식 비교 테스트</h1>
+    
+    <div class="container">
+        <!-- 기존 방식 -->
+        <div class="method traditional">
+            <h2>🔴 기존 방식 (서버 경유)</h2>
+            <p><strong>흐름:</strong> 클라이언트 → 서버 → S3</p>
+            
+            <div class="file-input">
+                <input type="file" id="traditionalFile" accept="image/*">
+                <p>이미지 파일을 선택하세요</p>
+            </div>
+            
+            <button id="traditionalUpload" disabled>🔴 기존 방식으로 업로드</button>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="traditionalTime">-</div>
+                    <div class="stat-label">업로드 시간 (ms)</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="traditionalSize">-</div>
+                    <div class="stat-label">파일 크기</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="traditionalStatus">대기</div>
+                    <div class="stat-label">상태</div>
+                </div>
+            </div>
+            
+            <div class="progress">
+                <div class="progress-bar" id="traditionalProgress" style="width: 0%"></div>
+            </div>
+            
+            <div class="result" id="traditionalResult">결과가 여기에 표시됩니다...</div>
+        </div>
+
+        <!-- 신규 방식 -->
+        <div class="method presigned">
+            <h2>🟢 신규 방식 (Presigned URL)</h2>
+            <p><strong>흐름:</strong> 클라이언트 → S3 (직접)</p>
+            
+            <div class="file-input">
+                <input type="file" id="presignedFile" accept="image/*">
+                <p>이미지 파일을 선택하세요</p>
+            </div>
+            
+            <button id="presignedUpload" disabled>🟢 Presigned URL 방식으로 업로드</button>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="presignedTime">-</div>
+                    <div class="stat-label">총 시간 (ms)</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="presignedSize">-</div>
+                    <div class="stat-label">파일 크기</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="presignedStatus">대기</div>
+                    <div class="stat-label">상태</div>
+                </div>
+            </div>
+            
+            <div class="progress">
+                <div class="progress-bar" id="presignedProgress" style="width: 0%"></div>
+            </div>
+            
+            <div class="result" id="presignedResult">결과가 여기에 표시됩니다...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080'; // 백엔드 서버 주소로 변경
+        
+        // 서버 연결 테스트 함수
+        async function testServerConnection() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/actuator/health`);
+                if (response.ok) {
+                    console.log('✅ 서버 연결 성공');
+                    return true;
+                } else {
+                    console.error('❌ 서버 응답 오류:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ 서버 연결 실패:', error);
+                alert(`서버 연결 실패!\n1. 서버가 실행 중인지 확인하세요\n2. 포트 번호를 확인하세요 (현재: ${API_BASE_URL})\n3. CORS 설정을 확인하세요`);
+                return false;
+            }
+        }
+        
+        // 페이지 로드 시 서버 연결 테스트
+        window.addEventListener('load', testServerConnection);
+
+        // 파일 크기를 사람이 읽기 쉬운 형태로 변환
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 파일 선택 이벤트 리스너
+        document.getElementById('traditionalFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const uploadBtn = document.getElementById('traditionalUpload');
+            
+            if (file) {
+                uploadBtn.disabled = false;
+                document.getElementById('traditionalSize').textContent = formatFileSize(file.size);
+                document.getElementById('traditionalStatus').textContent = '준비완료';
+            } else {
+                uploadBtn.disabled = true;
+                document.getElementById('traditionalSize').textContent = '-';
+                document.getElementById('traditionalStatus').textContent = '대기';
+            }
+        });
+
+        document.getElementById('presignedFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const uploadBtn = document.getElementById('presignedUpload');
+            
+            if (file) {
+                uploadBtn.disabled = false;
+                document.getElementById('presignedSize').textContent = formatFileSize(file.size);
+                document.getElementById('presignedStatus').textContent = '준비완료';
+            } else {
+                uploadBtn.disabled = true;
+                document.getElementById('presignedSize').textContent = '-';
+                document.getElementById('presignedStatus').textContent = '대기';
+            }
+        });
+
+        // 🔴 기존 방식 업로드
+        document.getElementById('traditionalUpload').addEventListener('click', async function() {
+            const fileInput = document.getElementById('traditionalFile');
+            const file = fileInput.files[0];
+            const resultDiv = document.getElementById('traditionalResult');
+            const progressBar = document.getElementById('traditionalProgress');
+            const statusDiv = document.getElementById('traditionalStatus');
+            const timeDiv = document.getElementById('traditionalTime');
+
+            if (!file) {
+                alert('파일을 선택해주세요!');
+                return;
+            }
+
+            const startTime = Date.now();
+            statusDiv.textContent = '업로드중...';
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = '🔴 기존 방식으로 업로드 중...\n서버를 통해 S3에 업로드하고 있습니다.';
+
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                // XMLHttpRequest로 진행률 추적
+                const xhr = new XMLHttpRequest();
+                
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        progressBar.style.width = percentComplete + '%';
+                    }
+                });
+
+                const response = await new Promise((resolve, reject) => {
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            resolve(JSON.parse(xhr.responseText));
+                        } else {
+                            reject(new Error(`HTTP ${xhr.status}: ${xhr.statusText}`));
+                        }
+                    };
+                    xhr.onerror = () => reject(new Error('네트워크 오류'));
+                    
+                    xhr.open('POST', `${API_BASE_URL}/test/images/traditional`);
+                    xhr.send(formData);
+                });
+
+                const endTime = Date.now();
+                const totalTime = endTime - startTime;
+
+                progressBar.style.width = '100%';
+                statusDiv.textContent = '완료';
+                timeDiv.textContent = totalTime;
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `🎉 기존 방식 업로드 성공!\n\n${JSON.stringify(response, null, 2)}`;
+
+            } catch (error) {
+                const endTime = Date.now();
+                const totalTime = endTime - startTime;
+                
+                progressBar.style.width = '0%';
+                statusDiv.textContent = '실패';
+                timeDiv.textContent = totalTime;
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ 기존 방식 업로드 실패!\n\n오류: ${error.message}`;
+            }
+        });
+
+        // 🟢 Presigned URL 방식 업로드
+        document.getElementById('presignedUpload').addEventListener('click', async function() {
+            const fileInput = document.getElementById('presignedFile');
+            const file = fileInput.files[0];
+            const resultDiv = document.getElementById('presignedResult');
+            const progressBar = document.getElementById('presignedProgress');
+            const statusDiv = document.getElementById('presignedStatus');
+            const timeDiv = document.getElementById('presignedTime');
+
+            if (!file) {
+                alert('파일을 선택해주세요!');
+                return;
+            }
+
+            const startTime = Date.now();
+            statusDiv.textContent = '업로드중...';
+            resultDiv.className = 'result loading';
+            progressBar.style.width = '10%';
+
+            try {
+                // 1단계: Presigned URL 요청
+                resultDiv.textContent = '🟢 1단계: Presigned URL 요청 중...';
+                
+                const params = new URLSearchParams({
+                    filename: file.name,
+                    contentType: file.type,
+                    fileSize: file.size
+                });
+
+                const prepareResponse = await fetch(`${API_BASE_URL}/test/images/presigned-url-prepare?${params}`, {
+                    method: 'POST'
+                });
+
+                if (!prepareResponse.ok) {
+                    throw new Error(`Presigned URL 요청 실패: ${prepareResponse.status}`);
+                }
+
+                const prepareData = await prepareResponse.json();
+                const presignedUrl = prepareData.data.presignedUrl;
+                
+                progressBar.style.width = '30%';
+                resultDiv.textContent = `🟢 1단계 완료: Presigned URL 받음\n\n🟢 2단계: S3에 직접 업로드 중...`;
+
+                // 2단계: S3에 직접 업로드
+                const uploadXhr = new XMLHttpRequest();
+                
+                uploadXhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        const adjustedPercent = 30 + (percentComplete * 0.7); // 30%부터 100%까지
+                        progressBar.style.width = adjustedPercent + '%';
+                    }
+                });
+
+                await new Promise((resolve, reject) => {
+                    uploadXhr.onload = function() {
+                        if (uploadXhr.status === 200) {
+                            resolve();
+                        } else {
+                            reject(new Error(`S3 업로드 실패: ${uploadXhr.status}`));
+                        }
+                    };
+                    uploadXhr.onerror = () => reject(new Error('S3 업로드 네트워크 오류'));
+                    
+                    uploadXhr.open('PUT', presignedUrl);
+                    uploadXhr.setRequestHeader('Content-Type', file.type);
+                    uploadXhr.send(file);
+                });
+
+                const endTime = Date.now();
+                const totalTime = endTime - startTime;
+
+                // 최종 이미지 URL 구성
+                const finalImageUrl = `https://fit-pass-1.s3.ap-northeast-2.amazonaws.com/${prepareData.data.fileName}`;
+
+                progressBar.style.width = '100%';
+                statusDiv.textContent = '완료';
+                timeDiv.textContent = totalTime;
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `🎉 Presigned URL 방식 업로드 성공!\n\n최종 이미지 URL: ${finalImageUrl}\n\n상세 정보:\n${JSON.stringify({
+                    ...prepareData.data,
+                    finalImageUrl: finalImageUrl,
+                    totalUploadTime: totalTime + 'ms'
+                }, null, 2)}`;
+
+            } catch (error) {
+                const endTime = Date.now();
+                const totalTime = endTime - startTime;
+                
+                progressBar.style.width = '0%';
+                statusDiv.textContent = '실패';
+                timeDiv.textContent = totalTime;
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Presigned URL 방식 업로드 실패!\n\n오류: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

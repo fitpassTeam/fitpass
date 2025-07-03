@@ -4,7 +4,7 @@ package org.example.fitpass.domain.notify.service;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.notify.NotificationType;
-import org.example.fitpass.domain.notify.dto.NotificationEvent;
+import org.example.fitpass.domain.notify.dto.request.NotificationEvent;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
