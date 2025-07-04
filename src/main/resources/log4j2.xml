@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <!-- Console Appender -->
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
+    </Console>
+
+    <!-- File Appender -->
+    <File name="File" fileName="logs/app.log">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
+    </File>
+
+    <!-- Rolling File Appender -->
+    <RollingFile name="UserLogFile" fileName="logs/user.log" filePattern="logs/user-%d{yyyy-MM}-%i.log.gz">
+      <PatternLayout>
+        <Pattern>%d [%t] %-5level %logger{36} - %msg%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10MB" />
+        <TimeBasedTriggeringPolicy />
+      </Policies>
+      <DefaultRolloverStrategy max="10" />
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <!-- Application Logger -->
+    <Logger name="app.ebel" level="info" additivity="false">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="File" />
+    </Logger>
+
+    <!-- User Logger -->
+    <Logger name="UserLogger" level="info" additivity="false">
+      <AppenderRef ref="UserLogFile"/>
+    </Logger>
+
+    <!-- Root Logger -->
+    <Root level="info">
+      <AppenderRef ref="Console" />
+    </Root>
+  </Loggers>
+</Configuration>

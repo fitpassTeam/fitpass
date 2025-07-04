@@ -38,12 +38,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
 
+        log.info("[OAUTH2 SUCCESS HANDLER] OAuth2 인증 성공 핸들러 시작");
+
         try {
             // 사용자 정보 추출 (OAuth2User, UserDetails, CustomUser 모두 지원)
             UserInfo userInfo = extractUserInfo(authentication);
 
             if (userInfo.user == null && (userInfo.email == null || userInfo.role == null)) {
-                log.error("OAuth2 로그인 성공했지만 사용자 정보를 찾을 수 없습니다.");
+                log.error("[OAUTH2 SUCCESS HANDLER FAILED] OAuth2 로그인 성공했지만 사용자 정보를 찾을 수 없습니다.");
                 redirectToErrorPage(response, "user_not_found");
                 return;
             }
@@ -57,8 +59,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 accessToken = jwtTokenProvider.createAccessToken(userInfo.user.getEmail(), userInfo.user.getUserRole().name());
                 refreshToken = jwtTokenProvider.createRefreshToken(userInfo.user.getEmail(), userInfo.user.getUserRole().name());
 
-                log.info("OAuth2 로그인 성공: email = {}, UserRole = {}, socialType = {}",
-                    userInfo.user.getEmail(), userInfo.user.getUserRole().name(), getSocialType(authentication));
+                log.info("[OAUTH2 TOKEN GENERATED] OAuth2 JWT 토큰 생성 완료 - USER_ID: {}, EMAIL: {}, ROLE: {}, PROVIDER: {}",
+                    userInfo.user.getId(), userInfo.user.getEmail(), userInfo.user.getUserRole().name(), getSocialType(authentication));
 
                 // 추가 정보 입력이 필요한지 확인
                 boolean needsAdditionalInfo = isAdditionalInfoNeeded(userInfo.user);
@@ -66,7 +68,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 if (needsAdditionalInfo) {
                     // 추가 정보 입력 페이지로 리다이렉트
                     String targetUrl = buildAdditionalInfoUrl(accessToken, refreshToken, request);
-                    log.info("추가 정보 입력 필요 - 리다이렉트 URL: {}", targetUrl);
+                    log.info("[OAUTH2 ADDITIONAL INFO NEEDED] 추가 정보 입력 필요 - USER_ID: {}, EMAIL: {}, REDIRECT_URL: {}", 
+                            userInfo.user.getId(), userInfo.user.getEmail(), targetUrl);
                     getRedirectStrategy().sendRedirect(request, response, targetUrl);
                     return;
                 }
@@ -75,18 +78,19 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 accessToken = jwtTokenProvider.createAccessToken(userInfo.email, userInfo.role);
                 refreshToken = jwtTokenProvider.createRefreshToken(userInfo.email, userInfo.role);
 
-                log.info("OAuth2 로그인 성공: email = {}, role = {}", userInfo.email, userInfo.role);
+                log.info("[OAUTH2 TOKEN GENERATED] OAuth2 JWT 토큰 생성 완료 - EMAIL: {}, ROLE: {}", userInfo.email, userInfo.role);
             }
 
             // sociallogin 페이지로 리다이렉트 (OAuthSuccessHandler 방식)
             String targetUrl = buildSocialLoginUrl(accessToken, refreshToken, request);
 
-            log.info("OAuth2 성공 후 리다이렉트 URL: {}", targetUrl);
+            log.info("[OAUTH2 SUCCESS REDIRECT] OAuth2 성공 후 리다이렉트 - EMAIL: {}, TARGET_URL: {}", 
+                    userInfo.user != null ? userInfo.user.getEmail() : userInfo.email, targetUrl);
 
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
         } catch (Exception e) {
-            log.error("OAuth2 성공 핸들링 중 오류 발생: {}", e.getMessage(), e);
+            log.error("[OAUTH2 SUCCESS HANDLER ERROR] OAuth2 성공 핸들링 중 오류 발생 - ERROR: {}", e.getMessage(), e);
             redirectToErrorPage(response, "authentication_error");
         }
     }
@@ -202,18 +206,24 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         if (cookieRedirectUrl.isPresent()) {
             String redirectUrl = cookieRedirectUrl.get();
-            log.info("쿠키에서 리다이렉트 URL 발견: {}", redirectUrl);
+            log.info("[OAUTH2 REDIRECT] 쿠키에서 리다이렉트 URL 발견 - REDIRECT_URL: {}", redirectUrl);
 
             // URL에서 베이스 부분만 추출 (프로토콜://도메인:포트)
             try {
                 java.net.URI uri = java.net.URI.create(redirectUrl);
-                return uri.getScheme() + "://" + uri.getAuthority();
+                String baseUrl = uri.getScheme() + "://" + uri.getAuthority();
+                log.info("[OAUTH2 REDIRECT] 베이스 URL 추출 완료 - BASE_URL: {}", baseUrl);
+                return baseUrl;
             } catch (Exception e) {
-                log.warn("쿠키의 redirect_url 파싱 실패: {}, 기본 URL 사용", redirectUrl);
+                log.warn("[OAUTH2 REDIRECT FAILED] 쿠키의 redirect_url 파싱 실패 - REDIRECT_URL: {}, ERROR: {}, 기본 URL 사용", 
+                        redirectUrl, e.getMessage());
             }
+        } else {
+            log.info("[OAUTH2 REDIRECT] 쿠키에서 redirect_url 없음, 기본 URL 사용");
         }
 
         // 기본 프론트엔드 URL 사용 (LOCAL_REDIRECT_URL 우선)
+        log.info("[OAUTH2 REDIRECT] 기본 리다이렉트 URL 사용 - URL: {}", LOCAL_REDIRECT_URL);
         return LOCAL_REDIRECT_URL;
     }
 
@@ -222,6 +232,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String errorUrl = UriComponentsBuilder.fromUriString(LOCAL_REDIRECT_URL + "/login")
             .queryParam("error", errorType)
             .build().toUriString();
+
+        log.error("[OAUTH2 ERROR REDIRECT] OAuth2 오류로 인한 에러 페이지 리다이렉트 - ERROR_TYPE: {}, ERROR_URL: {}", 
+                errorType, errorUrl);
 
         response.sendRedirect(errorUrl);
     }
