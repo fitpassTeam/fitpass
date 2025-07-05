@@ -112,14 +112,14 @@ public enum SuccessCode implements BaseCode {
 
     // 12000 : 맴버십 성공 코드
     POST_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12001", "이용권 등록이 완료되었습니다."),
-    GET_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12002", "이용권 조회가 완료되었습니다."),
-    PATCH_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12003", "이용권 수정이 완료되었습니다."),
-    DELETE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12004", "이용권 삭제가 완료되었습니다."),
-    PURCHASE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12005", "이용권 구매가 완료되었습니다."),
-    GET_MY_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12006", "구매 이력 조회가 완료되었습니다."),
-    GET_ACTIVE_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12007", "활성화 된 이용권 조회가 완료되었습니다."),
-    START_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12008", "이용권 사용 시작"),
-    GET_NOT_STARTED_MEMBERSHIP_SUCCESS(HttpStatus.CREATED, "12009",
+    GET_MEMBERSHIP_SUCCESS(HttpStatus.OK, "12002", "이용권 조회가 완료되었습니다."),
+    PATCH_MEMBERSHIP_SUCCESS(HttpStatus.OK, "12003", "이용권 수정이 완료되었습니다."),
+    DELETE_MEMBERSHIP_SUCCESS(HttpStatus.OK, "12004", "이용권 삭제가 완료되었습니다."),
+    PURCHASE_MEMBERSHIP_SUCCESS(HttpStatus.OK, "12005", "이용권 구매가 완료되었습니다."),
+    GET_MY_MEMBERSHIP_SUCCESS(HttpStatus.OK, "12006", "구매 이력 조회가 완료되었습니다."),
+    GET_ACTIVE_MEMBERSHIP_SUCCESS(HttpStatus.OK, "12007", "활성화 된 이용권 조회가 완료되었습니다."),
+    START_MEMBERSHIP_SUCCESS(HttpStatus.OK, "12008", "이용권 사용 시작"),
+    GET_NOT_STARTED_MEMBERSHIP_SUCCESS(HttpStatus.OK, "12009",
         "아직 시작하지 않은 이용권 목록 조회가 완료되었습니다."),
 
     // 13000: 좋아요

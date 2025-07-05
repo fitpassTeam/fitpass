@@ -5,6 +5,7 @@ import static org.example.fitpass.common.error.ExceptionCode.NOT_FOUND_PURCHASE;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.membership.entity.MembershipPurchase;
 import org.example.fitpass.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -52,4 +53,6 @@ public interface MembershipPurchaseRepository extends JpaRepository<MembershipPu
     List<MembershipPurchase> findScheduledForActivation(
         @Param("startOfDay") LocalDateTime startOfDay,
         @Param("endOfDay") LocalDateTime endOfDay);
+
+    List<MembershipPurchase> findAllByGym(Gym gym1);
 }
