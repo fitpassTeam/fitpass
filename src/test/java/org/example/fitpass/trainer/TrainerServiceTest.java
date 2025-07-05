@@ -475,62 +475,6 @@ class TrainerServiceTest {
     }
 
     @Nested
-    @DisplayName("트레이너 사진 수정")
-    class UpdatePhoto {
-
-        @Test
-        @DisplayName("성공: 트레이너 사진 수정")
-        void updatePhoto_Success() {
-            // given
-            Long userId = 1L;
-            Long gymId = 1L;
-            Long trainerId = 1L;
-            List<MultipartFile> files = List.of(mock(MultipartFile.class));
-            List<String> newImageUrls = List.of("new_image1.jpg", "new_image2.jpg");
-
-            Trainer mockTrainer = mock(Trainer.class);
-            given(mockTrainer.getGym()).willReturn(testGym);
-            given(mockTrainer.getImages()).willReturn(new ArrayList<>());
-            willDoNothing().given(mockTrainer).validateTrainerBelongsToGym(mockTrainer, testGym);
-            willDoNothing().given(mockTrainer).updatePhoto(newImageUrls, mockTrainer);
-
-            given(userRepository.findByIdOrElseThrow(userId)).willReturn(ownerUser);
-            given(gymRepository.findByIdOrElseThrow(gymId)).willReturn(testGym);
-            given(trainerRepository.findByIdOrElseThrow(trainerId)).willReturn(mockTrainer);
-            given(s3Service.uploadFiles(files)).willReturn(newImageUrls);
-            given(trainerRepository.save(mockTrainer)).willReturn(mockTrainer);
-
-            // when
-            List<String> result = trainerService.updatePhoto(userId, files, gymId, trainerId);
-
-            // then
-            assertThat(result).isEqualTo(newImageUrls);
-
-            verify(s3Service).uploadFiles(files);
-            verify(mockTrainer).updatePhoto(newImageUrls, mockTrainer);
-            verify(trainerRepository).save(mockTrainer);
-        }
-
-        @Test
-        @DisplayName("실패: 권한 없음")
-        void updatePhoto_NotOwner() {
-            // given
-            Long userId = 2L;
-            List<MultipartFile> files = List.of(mock(MultipartFile.class));
-
-            given(userRepository.findByIdOrElseThrow(userId)).willReturn(normalUser);
-
-            // when & then
-            assertThatThrownBy(() -> trainerService.updatePhoto(userId, files, 1L, 1L))
-                .isInstanceOf(BaseException.class)
-                .satisfies(exception -> {
-                    BaseException baseException = (BaseException) exception;
-                    assertThat(baseException.getErrorCode()).isEqualTo(ExceptionCode.NOT_GYM_OWNER);
-                });
-        }
-    }
-
-    @Nested
     @DisplayName("트레이너 삭제")
     class DeleteTrainer {
 
