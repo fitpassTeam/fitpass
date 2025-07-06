@@ -1,6 +1,8 @@
 package org.example.fitpass.domain.search.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.domain.likes.LikeType;
+import org.example.fitpass.domain.likes.repository.LikeRepository;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.post.entity.Post;
 import org.example.fitpass.domain.post.repository.PostRepository;
@@ -19,6 +21,7 @@ public class SearchPostService {
 
     private final SearchPostRepository searchPostRepository;
     private final PostRepository postRepository;
+    private final LikeRepository likeRepository;
 
     @Transactional(readOnly = true)
     @Cacheable(
@@ -29,7 +32,10 @@ public class SearchPostService {
 
         Page<Post> postPage = postRepository.searchByTitleOrContent(keyword, pageable);
 
-        return postPage.map(PostResponseDto::from);
+        return postPage.map(post -> {
+            long likeCount = likeRepository.countByLikeTypeAndTargetId(LikeType.POST, post.getId());
+            return PostResponseDto.from(post, likeCount,null,null);
+        });
     }
 
     @Transactional

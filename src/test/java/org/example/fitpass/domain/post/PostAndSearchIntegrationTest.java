@@ -116,7 +116,7 @@ class PostAndSearchIntegrationTest {
         );
         PostResponseDto createdPost = PostResponseDto.of(
                 1L, PostStatus.ACTIVE, PostType.GENERAL, "제목", "내용", 1L, 10L,
-                LocalDateTime.now(), LocalDateTime.now()
+                LocalDateTime.now(), LocalDateTime.now(),null,null, null, null
         );
         when(postService.createPost(any(), any(), any(), anyString(), anyString(), anyLong(), anyLong()))
                 .thenReturn(createdPost);
@@ -144,7 +144,7 @@ class PostAndSearchIntegrationTest {
         Pageable pageable = PageRequest.of(0, 10);
         PostResponseDto searchDto = PostResponseDto.of(
                 1L, PostStatus.ACTIVE, PostType.GENERAL, "제목", "내용", 1L, 10L,
-                LocalDateTime.now(), LocalDateTime.now()
+                LocalDateTime.now(), LocalDateTime.now(),null,null,null,null
         );
         Page<PostResponseDto> searchResultPage = new PageImpl<>(List.of(searchDto), pageable, 1);
 

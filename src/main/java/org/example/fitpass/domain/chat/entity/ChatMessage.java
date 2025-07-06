@@ -37,10 +37,18 @@ public class ChatMessage extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private boolean isRead = false;
+
     public ChatMessage(ChatRoom chatRoom, String content, SenderType senderType) {
         this.chatRoom = chatRoom;
         this.content = content;
         this.senderType = senderType;
+        this.isRead = false;
+    }
+
+    public void markAsRead() {
+        this.isRead = true;
     }
 
     public static ChatMessage of(ChatRoom chatRoom, String content, SenderType senderType) {

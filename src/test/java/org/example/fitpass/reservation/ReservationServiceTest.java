@@ -112,7 +112,7 @@ class ReservationServiceTest {
         Long gymId = 1L;
         Long trainerId = 1L;
         Long reservationId = 1L;
-        LocalDate today = LocalDate.of(2025, 6, 30);
+        LocalDate today = LocalDate.of(2026, 6, 30);
         LocalDate existingReservationDate = today.plusDays(5);
         LocalDate newReservationDate = today.plusDays(6);
         LocalTime newTime = LocalTime.of(12, 0);
