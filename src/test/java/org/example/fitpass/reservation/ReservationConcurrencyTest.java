@@ -12,8 +12,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
+import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.reservation.dto.request.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.response.ReservationResponseDto;
 import org.example.fitpass.domain.reservation.service.ReservationService;
@@ -26,7 +29,10 @@ import org.example.fitpass.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +52,23 @@ class ReservationConcurrencyTest {
 
     @Autowired
     private GymRepository gymRepository;
+
+    @MockBean
+    private RedisService redisService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @MockBean
+    @Qualifier("customStringRedisTemplate")
+    private RedisTemplate<String, String> customStringRedisTemplate;
+
+    @MockBean
+    @Qualifier("notifyRedisTemplate")
+    private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
 
     private Gym testGym;
     private Trainer testTrainer;

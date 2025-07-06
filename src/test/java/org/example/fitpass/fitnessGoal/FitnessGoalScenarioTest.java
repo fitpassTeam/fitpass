@@ -10,12 +10,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import java.time.LocalDate;
 import java.util.List;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
+import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.fitnessGoal.dto.request.DailyRecordCreateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.dto.request.FitnessGoalCreateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.dto.request.FitnessGoalUpdateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.dto.request.WeightRecordCreateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.enums.GoalType;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.enums.Gender;
 import org.example.fitpass.domain.user.enums.UserRole;
@@ -23,8 +26,11 @@ import org.example.fitpass.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,6 +45,23 @@ public class FitnessGoalScenarioTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private UserRepository userRepository;
     @Autowired private ObjectMapper objectMapper;
+
+    @MockBean
+    private RedisService redisService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @MockBean
+    @Qualifier("customStringRedisTemplate")
+    private RedisTemplate<String, String> customStringRedisTemplate;
+
+    @MockBean
+    @Qualifier("notifyRedisTemplate")
+    private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
 
     private User user;
     private Long fitnessGoalId;

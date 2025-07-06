@@ -25,8 +25,10 @@ import java.util.Collections;
 import java.util.List;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.config.RedisService;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerRequestDto;
 import org.example.fitpass.domain.trainer.dto.reqeust.TrainerUpdateRequestDto;
 import org.example.fitpass.domain.trainer.dto.response.TrainerDetailResponseDto;
@@ -81,6 +83,13 @@ class TrainerControllerTest {
     // 이 RedisTemplate을 사용하는 서비스도 자동 주입됨 (RedisService 등)
     @MockBean
     private RedisService redisService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    @Qualifier("notifyRedisTemplate")
+    private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
 
     private TrainerRequestDto trainerRequestDto;
     private TrainerResponseDto trainerResponseDto;
