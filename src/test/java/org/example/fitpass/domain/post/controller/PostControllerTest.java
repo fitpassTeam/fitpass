@@ -68,6 +68,9 @@ class PostControllerTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @MockBean
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @MockBean
     @Qualifier("customStringRedisTemplate")
     private RedisTemplate<String, String> customStringRedisTemplate;
 
