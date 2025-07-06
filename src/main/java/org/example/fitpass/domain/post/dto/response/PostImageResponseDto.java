@@ -6,10 +6,6 @@ import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
-import java.util.List;
-import org.example.fitpass.domain.post.enums.PostStatus;
-import org.example.fitpass.domain.post.enums.PostType;
 
 @Schema(description = "이미지가 포함된 게시물 응답 DTO")
 public record PostImageResponseDto(
