@@ -14,10 +14,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
+import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.membership.controller.MembershipPurchaseController;
 import org.example.fitpass.domain.membership.dto.response.MembershipPurchaseResponseDto;
 import org.example.fitpass.domain.membership.service.MembershipPurchaseService;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.user.entity.User;
 import org.example.fitpass.domain.user.enums.Gender;
 import org.example.fitpass.domain.user.enums.UserRole;
@@ -25,9 +28,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,6 +46,22 @@ class MembershipPurchaseControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private RedisService redisService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @MockBean
+    @Qualifier("customStringRedisTemplate")
+    private RedisTemplate<String, String> customStringRedisTemplate;
+
+    @MockBean
+    @Qualifier("notifyRedisTemplate")
+    private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
 
     @MockBean
     private MembershipPurchaseService membershipPurchaseService;
