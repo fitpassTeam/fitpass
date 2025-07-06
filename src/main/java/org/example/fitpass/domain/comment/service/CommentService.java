@@ -4,7 +4,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
-import org.example.fitpass.domain.comment.dto.request.CommentRequestDto;
 import org.example.fitpass.domain.comment.dto.response.CommentResponseDto;
 import org.example.fitpass.domain.comment.entity.Comment;
 import org.example.fitpass.domain.comment.repository.CommentRepository;
