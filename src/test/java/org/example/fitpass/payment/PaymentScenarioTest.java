@@ -10,7 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
+import org.example.fitpass.config.RedisService;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.payment.client.TossPaymentClient;
 import org.example.fitpass.domain.payment.dto.request.PaymentRequestDto;
 import org.example.fitpass.domain.payment.dto.response.PaymentCancelResponseDto;
@@ -30,9 +33,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,6 +66,23 @@ public class PaymentScenarioTest {
 
     @MockBean
     private TossPaymentClient tossPaymentClient;
+
+    @MockBean
+    private RedisService redisService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @MockBean
+    @Qualifier("customStringRedisTemplate")
+    private RedisTemplate<String, String> customStringRedisTemplate;
+
+    @MockBean
+    @Qualifier("notifyRedisTemplate")
+    private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
 
     private User user;
 

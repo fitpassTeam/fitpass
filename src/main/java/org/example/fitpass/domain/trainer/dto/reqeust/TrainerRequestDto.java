@@ -18,11 +18,12 @@ public record TrainerRequestDto (
 
     @Schema(description = "트레이너 소개 정보", example = "10년 경력의 전문 트레이너입니다.")
     @NotBlank(message = "트레이너 정보를 입력해주세요.")
-    @Size(max = 200, message = "트레이너 소개는 200글자 내로 입력해주세요.")
+    @Size(max = 1000, message = "트레이너 소개는 1000글자 내로 입력해주세요.")
     String content,
 
     @Schema(description = "트레이너 경력", example = "헬스 전문 10년, 필라테스 자격증 보유")
     @NotBlank(message = "경력을 입력해주세요.")
+    @Size(max = 1000, message = "트레이너 경력은 1000글자 내로 입력해주세요.")
     String experience,
 
     @Schema(description = "트레이너 사진 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")

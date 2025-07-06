@@ -11,10 +11,14 @@ import com.jayway.jsonpath.JsonPath;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
+import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.reservation.entity.Reservation;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.reservation.repository.ReservationRepository;
@@ -27,8 +31,11 @@ import org.example.fitpass.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,6 +65,23 @@ class ReviewScenarioTest {
     private GymRepository gymRepository;
 
     private User user;
+
+    @MockBean
+    private RedisService redisService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    @Qualifier("customStringRedisTemplate")
+    private RedisTemplate<String, String> customStringRedisTemplate;
+
+    @MockBean
+    @Qualifier("notifyRedisTemplate")
+    private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
+
+    @MockBean
+    private RedisTemplate<String, Object> redisTemplate;
 
     @BeforeEach
     void setUp() {

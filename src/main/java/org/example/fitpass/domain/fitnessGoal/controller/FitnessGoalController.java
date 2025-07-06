@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/fitness-goals")
 @RequiredArgsConstructor
-@Tag(name = "피트니스 목표 관리", description = "피트니스 목표 생성, 조회, 수정, 삭제 관련 API")
+@Tag(name = "FitnessGoal API", description = "피트니스 목표 생성, 조회, 수정, 삭제 관련 API")
 public class FitnessGoalController {
 
     private final FitnessGoalService fitnessGoalService;
