@@ -79,14 +79,6 @@ public class Trainer extends BaseEntity {
         return new Trainer(images, name, price, content, experience);
     }
 
-    public void updatePhoto(List<String> imageUrls, Trainer trainer) {
-        this.images.clear();
-        List<Image> convertedImages = imageUrls.stream()
-            .map(url -> Image.from(url, trainer))
-            .toList();
-        this.images.addAll(convertedImages);
-    }
-
     public void update(String name, int price, String content,
         TrainerStatus trainerStatus, String experience, List<String> updatedImages) {
         this.name = name;

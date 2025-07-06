@@ -474,7 +474,6 @@ class TrainerServiceTest {
         }
     }
 
-
     @Nested
     @DisplayName("트레이너 삭제")
     class DeleteTrainer {
