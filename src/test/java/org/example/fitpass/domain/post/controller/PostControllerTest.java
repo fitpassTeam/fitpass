@@ -14,8 +14,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
-import org.example.fitpass.domain.payment.config.TossPaymentConfig;
+import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
 import org.example.fitpass.domain.post.dto.request.PostUpdateRequestDto;
 import org.example.fitpass.domain.post.dto.response.PostImageResponseDto;
@@ -56,6 +57,12 @@ class PostControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private RedisService redisService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
 
 
     @BeforeEach
