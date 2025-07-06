@@ -244,6 +244,9 @@ public class PaymentScenarioTest {
             .status(PaymentStatus.FAILED)
             .failureReason("결제 실패")
             .build();
+        paymentRepository.save(payment1);
+
+        Thread.sleep(10);
 
         Payment payment2 = Payment.builder()
             .user(user)
@@ -253,6 +256,9 @@ public class PaymentScenarioTest {
             .status(PaymentStatus.CONFIRMED)
             .paymentKey("test_key_1")
             .build();
+        paymentRepository.save(payment2);
+
+        Thread.sleep(10);
 
         Payment payment3 = Payment.builder()
             .user(user)
@@ -262,20 +268,21 @@ public class PaymentScenarioTest {
             .status(PaymentStatus.CONFIRMED)
             .paymentKey("test_key_0")
             .build();
-
-        paymentRepository.saveAll(List.of(payment1, payment2, payment3));
+        paymentRepository.save(payment3);
 
         // When & Then
         mockMvc.perform(get("/api/payments/history")
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.statusCode").value(200))
-            .andExpect(jsonPath("$.data[0].status").value("CONFIRMED"))
-            .andExpect(jsonPath("$.data[1].status").value("CONFIRMED"))
-            .andExpect(jsonPath("$.data[2].status").value("FAILED"))
+            .andExpect(jsonPath("$.data[0].orderId").value("ORDER_3"))    // 가장 최신
+            .andExpect(jsonPath("$.data[0].status").value("CONFIRMED"))   // payment3
+            .andExpect(jsonPath("$.data[1].orderId").value("ORDER_2"))    // 중간
+            .andExpect(jsonPath("$.data[1].status").value("CONFIRMED"))   // payment2
+            .andExpect(jsonPath("$.data[2].orderId").value("ORDER_1"))    // 가장 오래됨
+            .andExpect(jsonPath("$.data[2].status").value("FAILED"))      // payment1
             .andExpect(jsonPath("$.data.length()").value(3));
     }
-
 
     // JWT 토큰 발급 메서드 (필요 시 직접 구현 또는 무시)
     private String generateJwtToken(User user) {
