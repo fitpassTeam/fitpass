@@ -77,8 +77,8 @@ class TrainerControllerTest {
     private Object auditingHandler;
 
     @MockBean
-    @Qualifier("customStringRedisTemplate") // 문제되는 의존성 대상
-    private RedisTemplate<String, String> redisTemplate;
+    @Qualifier("redisTemplateObject") // 만약 NotificationPublisher에서 @Qualifier를 쓴다면 맞춰야 함
+    private RedisTemplate<String, Object> redisTemplateObject;
 
     // 이 RedisTemplate을 사용하는 서비스도 자동 주입됨 (RedisService 등)
     @MockBean

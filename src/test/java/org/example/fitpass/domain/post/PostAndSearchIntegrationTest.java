@@ -84,6 +84,9 @@ class PostAndSearchIntegrationTest {
     @Qualifier("notifyRedisTemplate")
     private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
 
+    @MockBean
+    private RedisTemplate<String, Object> redisTemplate;
+
     @BeforeEach
     void setUp() {
         // 1. 사용자 인증 설정
