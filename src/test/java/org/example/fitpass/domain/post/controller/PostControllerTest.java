@@ -57,8 +57,6 @@ class PostControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private TossPaymentConfig tossPaymentConfig;
 
     @BeforeEach
     void setup() {

@@ -62,9 +62,6 @@ class PostAndSearchIntegrationTest {
     @MockBean
     private SearchGymService searchGymService;
 
-    @MockBean
-    private TossPaymentConfig tossPaymentConfig;
-
     @Autowired
     private ObjectMapper objectMapper;
 
