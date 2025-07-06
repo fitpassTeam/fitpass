@@ -9,6 +9,8 @@ import java.time.LocalTime;
 import java.util.List;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
+import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.membership.dto.response.MembershipPurchaseResponseDto;
@@ -17,6 +19,7 @@ import org.example.fitpass.domain.membership.entity.MembershipPurchase;
 import org.example.fitpass.domain.membership.repository.MembershipPurchaseRepository;
 import org.example.fitpass.domain.membership.repository.MembershipRepository;
 import org.example.fitpass.domain.membership.service.MembershipPurchaseService;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.point.entity.Point;
 import org.example.fitpass.domain.point.enums.PointType;
 import org.example.fitpass.domain.point.repository.PointRepository;
@@ -28,7 +31,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +63,23 @@ class MembershipPurchaseServiceIntegrationTest {
 
     @Autowired
     private PointRepository pointRepository;
+
+    @MockBean
+    private RedisService redisService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @MockBean
+    @Qualifier("customStringRedisTemplate")
+    private RedisTemplate<String, String> customStringRedisTemplate;
+
+    @MockBean
+    @Qualifier("notifyRedisTemplate")
+    private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
 
     private User savedUser;
     private User savedOwner;
