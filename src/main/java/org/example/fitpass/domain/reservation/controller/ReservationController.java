@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "예약 관리", description = "트레이너 예약 생성, 수정, 취소 및 조회")
+@Tag(name = "Reservation API", description = "트레이너 예약 생성, 수정, 취소 및 조회")
 public class ReservationController {
 
     private final ReservationService reservationService;

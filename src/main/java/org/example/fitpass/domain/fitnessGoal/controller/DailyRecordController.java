@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/fitness-goals/{fitnessGoalId}/daily-records")
 @RequiredArgsConstructor
-@Tag(name = "일일 운동 기록", description = "피트니스 목표의 일일 운동 기록 관리 API")
+@Tag(name = "DailyRecord API", description = "피트니스 목표의 일일 운동 기록 관리 API")
 public class DailyRecordController {
 
     private final DailyRecordService dailyRecordService;

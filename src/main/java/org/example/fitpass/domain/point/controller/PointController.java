@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("users/points")
-@Tag(name = "포인트 관리", description = "포인트 충전, 사용, 환불, 현금화 등 포인트 관련 API")
+@Tag(name = "Point API", description = "포인트 충전, 사용, 환불, 현금화 등 포인트 관련 API")
 public class PointController {
 
     private final PointService pointService;
