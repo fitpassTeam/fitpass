@@ -20,23 +20,29 @@ public record ChatRoomResponseDto(
     String content,
     
     @Schema(description = "마지막 메시지 발신자 타입", example = "USER")
-    SenderType senderType
+    SenderType senderType,
+
+    @Schema(description = "읽지 않은 메세지 카운트", example = "1")
+    Integer unreadCount
+
 ) {
-    public ChatRoomResponseDto(Long chatRoomId, Long userId, Long gymId, String content, SenderType senderType){
+    public ChatRoomResponseDto(Long chatRoomId, Long userId, Long gymId, String content, SenderType senderType, Integer unreadCount) {
         this.chatRoomId = chatRoomId;
         this.userId = userId;
         this.gymId = gymId;
         this.content = content;
         this.senderType = senderType;
+        this.unreadCount = unreadCount;
     }
 
-    public static ChatRoomResponseDto from(ChatRoom chatRoom, ChatMessage lastMessage){
+    public static ChatRoomResponseDto from(ChatRoom chatRoom, ChatMessage lastMessage, int unreadCount){
         return new ChatRoomResponseDto(
             chatRoom.getId(),
             chatRoom.getUser().getId(), // userId
             chatRoom.getGym().getId(),  // gymId
             lastMessage != null ? lastMessage.getContent() : null,
-            lastMessage != null ? lastMessage.getSenderType() : null
+            lastMessage != null ? lastMessage.getSenderType() : null,
+            unreadCount
         );
     }
 }

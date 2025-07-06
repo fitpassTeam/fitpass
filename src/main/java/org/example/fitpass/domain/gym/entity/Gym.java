@@ -45,10 +45,10 @@ public class Gym extends BaseEntity {
     @Column(nullable = false ,unique = true)
     private String number;
 
-    @Column(nullable = false)
+    @Column(length = 1000)
     private String content;
 
-    @Column
+    @Column(length = 500)
     private String summary;
 
     @Column(nullable = false)

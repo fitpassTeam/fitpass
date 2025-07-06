@@ -80,6 +80,7 @@ public enum ExceptionCode implements BaseCode {
     NOT_REVIEW_OWNER(HttpStatus.FORBIDDEN, "403", "리뷰 작성자가 아닙니다."),
     NOT_HAS_AUTHORITY(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
     NO_TRAINER_AUTHORITY(HttpStatus.FORBIDDEN, "403", "트레이너 권한이 없습니다."),
+    COMMENT_NOT_AUTHOR(HttpStatus.FORBIDDEN,"403","댓글 작성자만 수정이 가능합니다."),
 
     // 404 Not Found
     NOT_FOUND(HttpStatus.NOT_FOUND,"404", "요청한 리소스를 찾을 수 없습니다."),
@@ -98,6 +99,7 @@ public enum ExceptionCode implements BaseCode {
     NOT_FOUND_PURCHASE(HttpStatus.NOT_FOUND, "404", "구매한 이용권을 찾을 수 없습니다."),
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "결제 정보를 찾을 수 없습니다."),
     CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND,"404","채팅방을 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"404","댓글을 찾을 수 없습니다."),
 
     // 409 Conflict = 서버와 충돌, 데이터가 이미 존재할때(400 보다 명확함)
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"409", "이미 등록된 회원입니다."),

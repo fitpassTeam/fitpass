@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/images/presigned-url").permitAll() // Presigned URL API 공개
                 .requestMatchers(HttpMethod.GET, "/gyms/{gymId}/trainers/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/gyms/{gymId}/memberships/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                 .requestMatchers("/actuator/health","/health").permitAll()
                 .requestMatchers(
                     "/auth/**",

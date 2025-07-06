@@ -7,10 +7,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.fitpass.common.error.BaseException;
+import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.chat.dto.ChatMessageResponseDto;
 import org.example.fitpass.domain.chat.dto.ChatRoomResponseDto;
+import org.example.fitpass.domain.chat.entity.ChatRoom;
+import org.example.fitpass.domain.chat.enums.SenderType;
 import org.example.fitpass.domain.chat.service.ChatService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -99,6 +103,18 @@ public class ChatController {
     ) {
         ChatRoomResponseDto chatRoom = chatService.getChatRoomById(chatRoomId);
         return ResponseEntity.ok(ResponseMessage.success(SuccessCode.GET_CHATROOM, chatRoom));
+    }
+
+    @Operation(summary = "채팅방 읽음 처리", description = "상대방의 메시지를 모두 읽음 처리합니다.")
+    @PostMapping("/{chatRoomId}/read")
+    public ResponseEntity<ResponseMessage<String>> markMessagesAsRead(
+        @PathVariable("chatRoomId") Long chatRoomId,
+        @RequestParam("receiverType") String receiverTypeStr
+    ) {
+        chatService.markMessagesAsRead(chatRoomId, receiverTypeStr);
+
+        return ResponseEntity.status(SuccessCode.GET_ALL_CHATTING.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.GET_ALL_CHATTING, "모든 메시지를 읽음 처리했습니다."));
     }
 
 }

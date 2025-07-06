@@ -52,7 +52,9 @@ public record GymRequestDto(
     @Schema(description = "체육관 이미지 URL 목록", example = "[\"https://s3.amazonaws.com/.../image1.jpg\"]")
     List<String> gymImage,
 
-    @Schema(description = "한 줄 소개", example = "강남 최고의 피트니스 센터")
+    @Schema(description = "썸네일 소개", example = "강남 최고의 피트니스 센터")
+    @Size(max = 300, message = "썸네일 소개는 300글자 내로 입력해주세요.")
+    @NotBlank(message = "소개를 적어주세요.")
     String summary
 
 ) {}

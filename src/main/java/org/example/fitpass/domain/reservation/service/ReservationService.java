@@ -148,7 +148,6 @@ public class ReservationService {
     }
 
     // 예약 생성
-    @Transactional
     public ReservationResponseDto createReservation(
         LocalDate reservationDate, LocalTime reservationTime,
         Long userId, Long gymId, Long trainerId) {

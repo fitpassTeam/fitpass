@@ -44,10 +44,10 @@ public class Trainer extends BaseEntity {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String content;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String experience;
 
     @Enumerated(EnumType.STRING)

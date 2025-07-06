@@ -10,6 +10,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import org.example.fitpass.domain.likes.LikeType;
+import org.example.fitpass.domain.likes.repository.LikeRepository;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.post.entity.Post;
 import org.example.fitpass.domain.post.repository.PostRepository;
@@ -35,6 +37,9 @@ class SearchPostServiceTest {
     @Mock
     private PostRepository postRepository;
 
+    @Mock
+    private LikeRepository likeRepository;
+
     @InjectMocks
     private SearchPostService searchPostService;
 
@@ -52,10 +57,11 @@ class SearchPostServiceTest {
         Page<Post> postPage = new PageImpl<>(List.of(post));
 
         when(postRepository.searchByTitleOrContent(keyword, pageable)).thenReturn(postPage);
+        when(likeRepository.countByLikeTypeAndTargetId(LikeType.POST, post.getId())).thenReturn(5L); // 좋아요 수 mock
 
         PostResponseDto dto = mock(PostResponseDto.class);
         try (MockedStatic<PostResponseDto> mockedStatic = mockStatic(PostResponseDto.class)) {
-            mockedStatic.when(() -> PostResponseDto.from(post)).thenReturn(dto);
+            mockedStatic.when(() -> PostResponseDto.from(post, 5L,null,null)).thenReturn(dto);
 
             // when
             Page<PostResponseDto> result = searchPostService.searchPost(keyword, pageable);
@@ -64,6 +70,7 @@ class SearchPostServiceTest {
             assertThat(result).hasSize(1);
             assertThat(result.getContent().get(0)).isEqualTo(dto);
             verify(postRepository).searchByTitleOrContent(keyword, pageable);
+            verify(likeRepository).countByLikeTypeAndTargetId(LikeType.POST, post.getId()); // 이 부분도 검증
         }
     }
 
