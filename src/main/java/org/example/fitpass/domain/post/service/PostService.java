@@ -42,6 +42,10 @@ public class PostService {
         if (postType == PostType.NOTICE && user.getUserRole() != UserRole.OWNER) {
             throw new BaseException(ExceptionCode.NOTICE_ONLY_OWNER);
         }
+        if (!user.getId().equals(gym.getUser().getId())) {
+            throw new BaseException(ExceptionCode.NOT_GYM_OWNER);
+        }
+
         Post post = Post.of(postStatus,postType,postImage,title,content,user,gym);
         postRepository.save(post);
         return PostResponseDto.of(
