@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "결제 관리", description = "토스페이먼츠를 통한 결제 처리 API")
+@Tag(name = "Payment API", description = "토스페이먼츠를 통한 결제 처리 API")
 public class PaymentController {
     
     private final PaymentService paymentService;

@@ -112,9 +112,9 @@ class ReservationServiceTest {
         Long gymId = 1L;
         Long trainerId = 1L;
         Long reservationId = 1L;
-        LocalDate today = LocalDate.of(2026, 6, 30);
-        LocalDate existingReservationDate = today.plusDays(5);
-        LocalDate newReservationDate = today.plusDays(6);
+        LocalDate today = LocalDate.now(); // 현재 날짜로 변경
+        LocalDate existingReservationDate = today.plusMonths(3).plusDays(5); // 3개월 + 5일 후
+        LocalDate newReservationDate = today.plusMonths(3).plusDays(6); // 3개월 + 6일 후
         LocalTime newTime = LocalTime.of(12, 0);
 
         // 유저
