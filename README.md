@@ -211,15 +211,16 @@ JWT 기반 회원가입/로그인, OAuth2 소셜 로그인, 프로필 관리
 ###  좋아요 기능
 헬스장, 게시글, 트레이너 등에 대한 좋아요 시스템
 
+### 댓글 기능
+게시물에 대한 실시간 댓글 작성과 대댓글(답글) 작성하는 시스템
+
 ---
 ## 프로젝트 문서
 ### API 문서 확인
 http://localhost:8080/swagger-ui/index.html
 
-
-### ERD
-
-
+## ERD
+#![FitPass ERD 최종](https://github.com/user-attachments/assets/0fbd05c4-1474-498e-a663-6f115ff0b0c3)
 
 ### API 명세서
 
