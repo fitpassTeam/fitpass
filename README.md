@@ -220,7 +220,7 @@ JWT 기반 회원가입/로그인, OAuth2 소셜 로그인, 프로필 관리
 http://localhost:8080/swagger-ui/index.html
 
 ## ERD
-#![FitPass ERD 최종](https://github.com/user-attachments/assets/0fbd05c4-1474-498e-a663-6f115ff0b0c3)
+![FitPass ERD 최종](https://github.com/user-attachments/assets/0fbd05c4-1474-498e-a663-6f115ff0b0c3)
 
 ### API 명세서
 
