@@ -18,6 +18,7 @@ import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.gym.dto.response.GymResDto;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.payment.config.TossPaymentConfig;
 import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
 import org.example.fitpass.domain.post.dto.response.PostImageResponseDto;
@@ -78,6 +79,10 @@ class PostAndSearchIntegrationTest {
     @MockBean
     @Qualifier("customStringRedisTemplate")
     private RedisTemplate<String, String> customStringRedisTemplate;
+
+    @MockBean
+    @Qualifier("notifyRedisTemplate")
+    private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
 
     @BeforeEach
     void setUp() {
