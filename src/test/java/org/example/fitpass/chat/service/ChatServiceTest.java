@@ -3,7 +3,9 @@ package org.example.fitpass.chat.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
@@ -11,6 +13,8 @@ import static org.mockito.Mockito.times;
 
 import java.lang.reflect.Field;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.example.fitpass.common.error.BaseException;
@@ -145,10 +149,15 @@ class ChatServiceTest {
     void getChatRoomsByUser_UserType_Success() {
         // given
         List<ChatRoom> chatRooms = List.of(chatRoom);
+        List<Object[]> unreadCountList = new ArrayList<>();
+        unreadCountList.add(new Object[]{1L, 0L});
+        
         given(userRepository.findByIdOrElseThrow(anyLong())).willReturn(user);
         given(chatRoomRepository.findByUser(any(User.class))).willReturn(chatRooms);
-        given(chatMessageRepository.findTopByChatRoomOrderByCreatedAtDesc(any(ChatRoom.class)))
-            .willReturn(Optional.of(chatMessage));
+        given(chatMessageRepository.findLastMessagesByChatRooms(eq(chatRooms)))
+            .willReturn(List.of(chatMessage));
+        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms), eq(SenderType.USER)))
+            .willReturn(unreadCountList);
 
         // when
         List<ChatRoomResponseDto> result = chatService.getChatRoomsByUser(1L, "USER");
@@ -160,6 +169,8 @@ class ChatServiceTest {
 
         then(userRepository).should().findByIdOrElseThrow(1L);
         then(chatRoomRepository).should().findByUser(user);
+        then(chatMessageRepository).should().findLastMessagesByChatRooms(chatRooms);
+        then(chatMessageRepository).should().countUnreadMessagesByChatRooms(chatRooms, SenderType.USER);
     }
 
     @Test
@@ -167,10 +178,15 @@ class ChatServiceTest {
     void getChatRoomsByUser_TrainerType_Success() {
         // given
         List<ChatRoom> chatRooms = List.of(chatRoom);
+        List<Object[]> unreadCountList = new ArrayList<>();
+        unreadCountList.add(new Object[]{1L, 0L});
+        
         given(gymRepository.findByIdOrElseThrow(anyLong())).willReturn(gym);
         given(chatRoomRepository.findByGym(any(Gym.class))).willReturn(chatRooms);
-        given(chatMessageRepository.findTopByChatRoomOrderByCreatedAtDesc(any(ChatRoom.class)))
-            .willReturn(Optional.of(chatMessage));
+        given(chatMessageRepository.findLastMessagesByChatRooms(eq(chatRooms)))
+            .willReturn(List.of(chatMessage));
+        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms), eq(SenderType.GYM)))
+            .willReturn(unreadCountList);
 
         // when - TRAINER 타입이므로 gymId를 전달
         List<ChatRoomResponseDto> result = chatService.getChatRoomsByUser(gym.getId(), "TRAINER");
@@ -183,6 +199,8 @@ class ChatServiceTest {
         then(gymRepository).should().findByIdOrElseThrow(gym.getId());
         then(chatRoomRepository).should().findByGym(gym);
         then(userRepository).should(never()).findByIdOrElseThrow(anyLong());
+        then(chatMessageRepository).should().findLastMessagesByChatRooms(chatRooms);
+        then(chatMessageRepository).should().countUnreadMessagesByChatRooms(chatRooms, SenderType.GYM);
     }
 
     @Test
@@ -192,8 +210,10 @@ class ChatServiceTest {
         List<ChatRoom> chatRooms = List.of(chatRoom);
         given(userRepository.findByIdOrElseThrow(anyLong())).willReturn(user);
         given(chatRoomRepository.findByUser(any(User.class))).willReturn(chatRooms);
-        given(chatMessageRepository.findTopByChatRoomOrderByCreatedAtDesc(any(ChatRoom.class)))
-            .willReturn(Optional.empty());
+        given(chatMessageRepository.findLastMessagesByChatRooms(eq(chatRooms)))
+            .willReturn(List.of()); // 빈 리스트 반환
+        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms), eq(SenderType.USER)))
+            .willReturn(List.of()); // 빈 리스트 반환
 
         // when
         List<ChatRoomResponseDto> result = chatService.getChatRoomsByUser(1L, "USER");
@@ -215,8 +235,12 @@ class ChatServiceTest {
         given(gymRepository.findByIdOrElseThrow(anyLong())).willReturn(gym);
         given(chatRoomRepository.findByUserAndGym(any(User.class), any(Gym.class)))
             .willReturn(Optional.of(chatRoom));
-        given(chatMessageRepository.findTopByChatRoomOrderByCreatedAtDesc(any(ChatRoom.class)))
+        // 기존 채팅방이므로 findById에서 존재함을 반환
+        given(chatRoomRepository.findById(chatRoom.getId())).willReturn(Optional.of(chatRoom));
+        given(chatMessageRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom))
             .willReturn(Optional.of(chatMessage));
+        given(chatMessageRepository.countUnreadMessages(chatRoom, SenderType.USER))
+            .willReturn(0L);
 
         // when
         ChatRoomResponseDto result = chatService.createOrGetChatRoom(1L, 1L);
@@ -234,13 +258,16 @@ class ChatServiceTest {
     @DisplayName("채팅방 생성 또는 가져오기 - 새 채팅방 생성")
     void createOrGetChatRoom_NewRoom_Success() {
         // given
+        ChatRoom newChatRoom = new ChatRoom(user, gym);
+        setId(newChatRoom, 1L);
+        
         given(userRepository.findByIdOrElseThrow(anyLong())).willReturn(user);
         given(gymRepository.findByIdOrElseThrow(anyLong())).willReturn(gym);
         given(chatRoomRepository.findByUserAndGym(any(User.class), any(Gym.class)))
             .willReturn(Optional.empty());
-        given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(chatRoom);
-        given(chatMessageRepository.findTopByChatRoomOrderByCreatedAtDesc(any(ChatRoom.class)))
-            .willReturn(Optional.empty());
+        given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(newChatRoom);
+        // 새로 생성된 채팅방이므로 findById에서 empty 반환해야 함
+        given(chatRoomRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when
         ChatRoomResponseDto result = chatService.createOrGetChatRoom(1L, 1L);
@@ -249,6 +276,8 @@ class ChatServiceTest {
         assertThat(result.chatRoomId()).isEqualTo(1L);
         assertThat(result.userId()).isEqualTo(1L);
         assertThat(result.gymId()).isEqualTo(1L);
+        assertThat(result.content()).isNull(); // 새 채팅방이므로 메시지 없음
+        assertThat(result.unreadCount()).isEqualTo(0); // 새 채팅방이므로 읽지 않은 메시지 없음
 
         then(chatRoomRepository).should().findByUserAndGym(user, gym);
         then(chatRoomRepository).should().save(any(ChatRoom.class));
@@ -356,20 +385,24 @@ class ChatServiceTest {
         setId(recentMessage, 2L);
 
         List<ChatRoom> chatRooms = List.of(chatRoom, chatRoom2);
+        List<Object[]> unreadCountList = new ArrayList<>();
+        unreadCountList.add(new Object[]{1L, 0L});
+        unreadCountList.add(new Object[]{2L, 1L});
+        
         given(userRepository.findByIdOrElseThrow(anyLong())).willReturn(user);
         given(chatRoomRepository.findByUser(any(User.class))).willReturn(chatRooms);
-        given(chatMessageRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom))
-            .willReturn(Optional.of(chatMessage));
-        given(chatMessageRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom2))
-            .willReturn(Optional.of(recentMessage));
+        given(chatMessageRepository.findLastMessagesByChatRooms(eq(chatRooms)))
+            .willReturn(List.of(chatMessage, recentMessage));
+        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms), eq(SenderType.USER)))
+            .willReturn(unreadCountList);
 
         // when
         List<ChatRoomResponseDto> result = chatService.getChatRoomsByUser(1L, "USER");
 
         // then
         assertThat(result).hasSize(2);
-        then(chatMessageRepository).should(times(2))
-            .findTopByChatRoomOrderByCreatedAtDesc(any(ChatRoom.class));
+        then(chatMessageRepository).should().findLastMessagesByChatRooms(chatRooms);
+        then(chatMessageRepository).should().countUnreadMessagesByChatRooms(chatRooms, SenderType.USER);
     }
 
     @Test

@@ -45,7 +45,7 @@ class ChatControllerTest {
     @BeforeEach
     void setUp() {
         chatRoomResponse = new ChatRoomResponseDto(
-            1L, 1L, 1L, "안녕하세요!", SenderType.USER
+            1L, 1L, 1L, "안녕하세요!", SenderType.USER, 0
         );
 
         chatMessageResponse = new ChatMessageResponseDto(
