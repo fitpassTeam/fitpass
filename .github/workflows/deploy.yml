@@ -4,7 +4,7 @@ on:
   push:
     branches: [ '**' ]
   pull_request:
-    branches: [ main, dev ]
+    branches: [ main, dev, feature/nested-comment ]
 
 permissions:
   checks: write
@@ -15,6 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,15 +34,46 @@ jobs:
         run: |
           mkdir -p src/test/resources
           cat > src/test/resources/application-test.properties << EOF
-          spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+          spring.datasource.url=jdbc:h2:mem:testdb;MODE=MySQL;DATABASE_TO_LOWER=TRUE
           spring.datasource.driver-class-name=org.h2.Driver
           spring.datasource.username=sa
           spring.datasource.password=
+
           spring.jpa.hibernate.ddl-auto=create-drop
           spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
-          spring.h2.console.enabled=true
-          jwt.secret=${SECRET_KEY}
+          spring.jpa.properties.hibernate.format_sql=true
+          spring.jpa.show-sql=true
+
+          # Redis
+          spring.data.redis.host=localhost
+          spring.data.redis.port=6379
+          spring.cache.type=none # <--- 캐시 완전 비활성화
+
+          # JWT & OAuth
+          jwt.secret=test-secret-key-for-testing-purpose-minimum-32-characters
+
+          # AWS (s3 호출 막기 위한 더미 값)
+          cloud.aws.credentials.access-key=dummy
+          cloud.aws.credentials.secret-key=dummy
+          cloud.aws.s3.bucket=test-bucket
+          cloud.aws.region.static=ap-northeast-2
+          cloud.aws.stack.auto=false
+
+          # OAuth Google/Naver
+          spring.security.oauth2.client.registration.google.client-id=test-id
+          spring.security.oauth2.client.registration.google.client-secret=test-secret
+          spring.security.oauth2.client.registration.naver.client-id=test-id
+          spring.security.oauth2.client.registration.naver.client-secret=test-secret
+
+          # Toss Payments
+          toss.payments.test-client-key=test-client-key
+          toss.payments.test-secret-key=test-secret-key
+          toss.payments.success-url=http://localhost:8080/test/success
+          toss.payments.fail-url=http://localhost:8080/test/fail
+
+          logging.level.root=WARN
           EOF
+
 
       - name: Cache Gradle packages
         uses: actions/cache@v3
@@ -95,7 +131,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/feature/test-code' }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/feature/test-code' || github.ref == 'refs/heads/feature/nested-comment' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

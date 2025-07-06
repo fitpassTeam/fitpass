@@ -21,6 +21,7 @@ import org.example.fitpass.common.BaseEntity;
 import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.domain.comment.entity.Comment;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
@@ -59,6 +60,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> postImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
     public Post(PostStatus postStatus, PostType postType, List<Image> postImage, String title, String content, User user, Gym gym) {
         this.postStatus = postStatus;
         this.postType = postType;
@@ -81,16 +85,25 @@ public class Post extends BaseEntity {
         this.content = content;
         this.user = user;
         this.gym = gym;
-
-
     }
 
 
-    public void update(PostStatus postStatus, PostType postType, String title, String content) {
+    public void update(PostStatus postStatus, PostType postType, String title, String content, List<String> postImage) {
         this.postStatus = postStatus;
         this.postType = postType;
         this.title = title;
         this.content = content;
+
+        if (postImage != null) {
+            List<Image> newImages = postImage.stream()
+                .map(url -> {
+                    Image img = new Image(url);
+                    img.assignToPost(this);
+                    return img;
+                })
+                .toList();
+            this.postImages.addAll(newImages);
+        }
 
     }
 

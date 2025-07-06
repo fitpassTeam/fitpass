@@ -33,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Tag(name = "사용자 관리", description = "사용자 정보 조회 및 수정")
+@Tag(name = "User API", description = "사용자 정보 조회 및 수정")
 public class UserController {
 
     private final UserService userService;

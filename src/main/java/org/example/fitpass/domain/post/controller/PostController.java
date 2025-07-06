@@ -18,12 +18,14 @@ import org.example.fitpass.domain.post.dto.response.PostImageResponseDto;
 import org.example.fitpass.domain.post.dto.response.PostResponseDto;
 import org.example.fitpass.domain.post.enums.PostType;
 import org.example.fitpass.domain.post.service.PostService;
+import org.example.fitpass.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Tag(name = "POST API", description = "게시물 관리에 대한 설명입니다.")
 @RequiredArgsConstructor
-@RequestMapping("gyms/{gymId}")
+@RequestMapping("/gyms/{gymId}")
 public class PostController {
 
     private final PostService postService;
@@ -62,7 +64,7 @@ public class PostController {
                 request.postImage(),
                 request.title(),
                 request.content(),
-            userDetails.getId(),
+                userDetails.getId(),
                 gymId
         );
         return ResponseEntity.status(SuccessCode.POST_CREATE_SUCCESS.getHttpStatus())
@@ -82,7 +84,8 @@ public class PostController {
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @PathVariable("gymId") Long gymId
     ) {
-        Page<PostResponseDto> findAllGeneralPost = postService.findAllPostByGeneral(pageable, userDetails.getUser(), gymId, PostType.GENERAL);
+        User user = (userDetails != null) ? userDetails.getUser() : null;
+        Page<PostResponseDto> findAllGeneralPost = postService.findAllPostByGeneral(pageable, user.getId(), gymId, PostType.GENERAL);
         PageResponse<PostResponseDto> pageResponse = new PageResponse<>(findAllGeneralPost);
 
         return ResponseEntity.status(SuccessCode.GET_ALL_GENERAL_POST_SUCCESS.getHttpStatus())
@@ -101,7 +104,8 @@ public class PostController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("gymId") Long gymId
     ) {
-        List<PostResponseDto> findAllNoticePost = postService.findAllPostByNotice(userDetails.getUser(), gymId, PostType.NOTICE);
+        User user = (userDetails != null) ? userDetails.getUser() : null;
+        List<PostResponseDto> findAllNoticePost = postService.findAllPostByNotice(user.getId(), gymId, PostType.NOTICE);
 
         return ResponseEntity.status(SuccessCode.GET_ALL_NOTICE_POST_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_ALL_NOTICE_POST_SUCCESS, findAllNoticePost));
@@ -152,12 +156,27 @@ public class PostController {
                 request.postType(),
                 request.title(),
                 request.content(),
-            userDetails.getId(),
-                gymId
+                userDetails.getId(),
+                gymId,
+                request.postImage()
         );
 
         return ResponseEntity.status(SuccessCode.POST_UPDATE_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.POST_UPDATE_SUCCESS, updateDto));
+    }
+
+    @DeleteMapping("/posts/{postId}")
+    @Parameter(name = "gymId", description = "체육관 ID", required = true)
+    @Parameter(name = "postId", description = "게시물 ID", required = true)
+    public ResponseEntity<ResponseMessage<Void>> deletePost(
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        @PathVariable("gymId") Long gymId,
+        @PathVariable("postId") Long postId
+    ) {
+        postService.deletePost(gymId, postId, userDetails.getId());
+
+        return ResponseEntity.status(SuccessCode.POST_UPDATE_SUCCESS.getHttpStatus())
+            .body(ResponseMessage.success(SuccessCode.POST_UPDATE_SUCCESS));
     }
 
 }

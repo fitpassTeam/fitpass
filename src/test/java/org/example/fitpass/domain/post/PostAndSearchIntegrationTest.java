@@ -14,8 +14,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
+import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.gym.dto.response.GymResDto;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.payment.config.TossPaymentConfig;
 import org.example.fitpass.domain.post.dto.request.PostCreateRequestDto;
 import org.example.fitpass.domain.post.dto.response.PostImageResponseDto;
@@ -32,6 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -39,6 +43,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,11 +67,25 @@ class PostAndSearchIntegrationTest {
     @MockBean
     private SearchGymService searchGymService;
 
-    @MockBean
-    private TossPaymentConfig tossPaymentConfig;
-
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private RedisService redisService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    @Qualifier("customStringRedisTemplate")
+    private RedisTemplate<String, String> customStringRedisTemplate;
+
+    @MockBean
+    @Qualifier("notifyRedisTemplate")
+    private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
+
+    @MockBean
+    private RedisTemplate<String, Object> redisTemplate;
 
     @BeforeEach
     void setUp() {
@@ -116,7 +135,7 @@ class PostAndSearchIntegrationTest {
         );
         PostResponseDto createdPost = PostResponseDto.of(
                 1L, PostStatus.ACTIVE, PostType.GENERAL, "제목", "내용", 1L, 10L,
-                LocalDateTime.now(), LocalDateTime.now()
+                LocalDateTime.now(), LocalDateTime.now(),null,null, null, null
         );
         when(postService.createPost(any(), any(), any(), anyString(), anyString(), anyLong(), anyLong()))
                 .thenReturn(createdPost);
@@ -144,7 +163,7 @@ class PostAndSearchIntegrationTest {
         Pageable pageable = PageRequest.of(0, 10);
         PostResponseDto searchDto = PostResponseDto.of(
                 1L, PostStatus.ACTIVE, PostType.GENERAL, "제목", "내용", 1L, 10L,
-                LocalDateTime.now(), LocalDateTime.now()
+                LocalDateTime.now(), LocalDateTime.now(),null,null,null,null
         );
         Page<PostResponseDto> searchResultPage = new PageImpl<>(List.of(searchDto), pageable, 1);
 

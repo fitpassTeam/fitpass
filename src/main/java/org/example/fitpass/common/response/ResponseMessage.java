@@ -1,6 +1,7 @@
 package org.example.fitpass.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.example.fitpass.common.error.SuccessCode;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "관리자 포인트 관리", description = "관리자 권한으로 포인트를 관리하는 API")
+@Tag(name = "Point Admin API", description = "관리자 권한으로 포인트를 관리하는 API")
 public class AdminPointController {
 
     private final PointService pointService;

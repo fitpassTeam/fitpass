@@ -1,12 +1,13 @@
 package org.example.fitpass.domain.post.dto.response;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.example.fitpass.domain.post.enums.PostStatus;
 import org.example.fitpass.domain.post.enums.PostType;
 
-@Schema(description = "게시물 이미지 포함 응답 DTO")
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "이미지가 포함된 게시물 응답 DTO")
 public record PostImageResponseDto(
 
     @Schema(description = "게시물 ID", example = "1")
@@ -15,28 +16,28 @@ public record PostImageResponseDto(
     @Schema(description = "게시물 이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
     List<String> postImage,
 
-    @Schema(description = "게시물 상태 (공개/비공개)", example = "PUBLIC")
+    @Schema(description = "게시물 상태", example = "ACTIVE")
     PostStatus status,
 
-    @Schema(description = "게시물 유형 (예: 공지사항, 일반글)", example = "NORMAL")
+    @Schema(description = "게시물 타입", example = "GENERAL")
     PostType postType,
 
-    @Schema(description = "게시물 제목", example = "헬스장 분위기 좋네요!")
+    @Schema(description = "게시물 제목", example = "오늘의 운동 공유합니다")
     String title,
 
-    @Schema(description = "게시물 내용", example = "오늘 처음 방문했는데 기구 상태도 좋고 조용해서 마음에 들었어요.")
+    @Schema(description = "게시물 내용", example = "오늘은 하체를 중점적으로 했습니다.")
     String content,
 
-    @Schema(description = "작성자 유저 ID", example = "10")
+    @Schema(description = "작성자 ID", example = "100")
     Long userId,
 
-    @Schema(description = "관련 체육관 ID", example = "3")
+    @Schema(description = "헬스장 ID", example = "10")
     Long gymId,
 
-    @Schema(description = "게시물 생성 시각", example = "2025-07-06T10:15:30")
+    @Schema(description = "생성일시", example = "2024-07-05T12:34:56")
     LocalDateTime createdAt,
 
-    @Schema(description = "게시물 수정 시각", example = "2025-07-06T11:00:00")
+    @Schema(description = "수정일시", example = "2024-07-05T14:20:00")
     LocalDateTime updatedAt
 
 ) {
@@ -52,6 +53,8 @@ public record PostImageResponseDto(
         LocalDateTime createdAt,
         LocalDateTime updatedAt
     ) {
-        return new PostImageResponseDto(postId, postImage, status, postType, title, content, userId, gymId, createdAt, updatedAt);
+        return new PostImageResponseDto(
+            postId, postImage, status, postType, title, content, userId, gymId, createdAt, updatedAt
+        );
     }
 }

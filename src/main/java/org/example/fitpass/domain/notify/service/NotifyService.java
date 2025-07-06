@@ -18,13 +18,12 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Service
 public class NotifyService {
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 30; // 30분으로 단축
 
     private final EmitterRepository emitterRepository;
     private final NotifyRepository notifyRepository;
     private final RedisDao redisDao;
 
-    @Transactional(readOnly = true)
     public SseEmitter subscribe(Long id, String lastEventId) {
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
         // 한 곳에서 key 생성
@@ -43,6 +42,7 @@ public class NotifyService {
         return emitter;
     }
 
+    @Transactional(readOnly = true)
     private void sendLostData(Long id, String lastEventId, String key, SseEmitter emitter) {
         Map<String, Object> eventCaches = emitterRepository.findAllEventCacheById(id);
         eventCaches.entrySet().stream()
