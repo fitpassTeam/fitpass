@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/reservations/{reservationId}/reviews")
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "리뷰 관리", description = "헬스장 및 트레이너 리뷰 작성, 수정, 삭제")
+@Tag(name = "Review API", description = "헬스장 및 트레이너 리뷰 작성, 수정, 삭제")
 public class ReviewController {
 
     private final ReviewService reviewService;

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/fitness-goals/{fitnessGoalId}/weight-records")
 @RequiredArgsConstructor
-@Tag(name = "체중 기록 관리", description = "피트니스 목표의 체중 기록 관리 API")
+@Tag(name = "WeightRecord API", description = "피트니스 목표의 체중 기록 관리 API")
 public class WeightRecordController {
 
     private final WeightRecordService weightRecordService;

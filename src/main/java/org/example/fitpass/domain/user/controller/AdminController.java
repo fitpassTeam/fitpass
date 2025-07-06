@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "관리자", description = "관리자 전용 기능")
+@Tag(name = "Admin API", description = "관리자 전용 기능")
 public class AdminController {
 
     private final UserService userService;

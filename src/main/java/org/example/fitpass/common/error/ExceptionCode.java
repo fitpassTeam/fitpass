@@ -52,8 +52,11 @@ public enum ExceptionCode implements BaseCode {
     RESERVATION_NOT_PENDING(HttpStatus.BAD_REQUEST, "400", "대기 중인 예약이 아닙니다."),
     INVALID_ACTIVATION_DATE_PAST(HttpStatus.BAD_REQUEST, "400", "활성화 날짜는 오늘 이후로 설정해주세요."),
     INVALID_ACTIVATION_DATE_TOO_FAR(HttpStatus.BAD_REQUEST, "400", "활성화 날짜는 구매일로부터 7일 이내로 설정해주세요."),
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "405", "지원하지 않는 HTTP 메서드입니다."),
+    FILE_SIZE_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "413", "파일 크기가 허용 한도를 초과했습니다."),
 
     // 401 Unauthorized = 인증이 안될 때
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"401","인증이 필요합니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰입니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED,"401","리프레시 토큰이 유효하지 않습니다."),
     INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED,"401", "유효하지 않는 JWT 서명입니다."),
@@ -61,6 +64,7 @@ public enum ExceptionCode implements BaseCode {
     INVALID_OLD_PASSWORD(HttpStatus.UNAUTHORIZED, "401", "기존 비밀번호가 일치하지 않습니다."),
 
     // 403 Forbidden = 권한이 없을 때
+    FORBIDDEN(HttpStatus.FORBIDDEN,"403", "접근 권한이 없습니다."),
     NO_OWNER_AUTHORITY(HttpStatus.FORBIDDEN,"403", "사장의 권한이 없습니다."),
     NOT_GYM_OWNER(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
     NOT_POST_OWNER(HttpStatus.FORBIDDEN,"403", "권한이 없습니다."),
@@ -78,6 +82,7 @@ public enum ExceptionCode implements BaseCode {
     NO_TRAINER_AUTHORITY(HttpStatus.FORBIDDEN, "403", "트레이너 권한이 없습니다."),
 
     // 404 Not Found
+    NOT_FOUND(HttpStatus.NOT_FOUND,"404", "요청한 리소스를 찾을 수 없습니다."),
     CANT_FIND_DATA(HttpStatus.NOT_FOUND,"404", "해당 데이터를 찾을 수 없습니다."),
     GYM_NOT_FOUND(HttpStatus.NOT_FOUND,"404","찾으시는 체육관이 존재하지 않습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND,"404","게시물이 존재하지 않습니다."),
