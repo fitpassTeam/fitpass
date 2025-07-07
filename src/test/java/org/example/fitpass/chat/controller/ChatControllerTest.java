@@ -13,17 +13,22 @@ import java.util.List;
 import java.time.LocalDateTime;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
+import org.example.fitpass.common.jwt.JwtTokenProvider;
+import org.example.fitpass.config.RedisService;
 import org.example.fitpass.domain.chat.dto.ChatMessageResponseDto;
 import org.example.fitpass.domain.chat.dto.ChatRoomResponseDto;
 import org.example.fitpass.domain.chat.enums.SenderType;
 import org.example.fitpass.domain.chat.service.ChatService;
+import org.example.fitpass.domain.notify.entity.Notify;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -38,6 +43,23 @@ class ChatControllerTest {
 
     @MockBean
     private ChatService chatService;
+
+    @MockBean
+    private RedisService redisService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @MockBean
+    @Qualifier("customStringRedisTemplate")
+    private RedisTemplate<String, String> customStringRedisTemplate;
+
+    @MockBean
+    @Qualifier("notifyRedisTemplate")
+    private RedisTemplate<String, List<Notify>> notifyRedisTemplate;
 
     private ChatRoomResponseDto chatRoomResponse;
     private ChatMessageResponseDto chatMessageResponse;
