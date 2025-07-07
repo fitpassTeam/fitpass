@@ -51,56 +51,209 @@ DDD (Domain-Driven Design) 원칙에 따라 도메인별로 모듈을 분리하�
 ### DDD 도메인 기반
 ```
 src/main/java/org/example/fitpass/
-├── common/                     # 공통 모듈
-│   ├── jwt/                   # JWT 인증
-│   ├── oauth2/                # OAuth2 소셜 로그인
-│   ├── security/              # Spring Security 설정
-│   ├── s3/                    # AWS S3 파일 업로드
-│   ├── error/                 # 예외 처리
-│   └── dto/                   # 공통 DTO
+├── FitpassApplication.java    # 메인 애플리케이션 클래스
 │
-├── domain/                     # 비즈니스 도메인
-│   ├── auth/                  # 인증 도메인
-│   │   ├── controller/        # 인증 API
-│   │   ├── service/           # 인증 비즈니스 로직
-│   │   ├── repository/        # 인증 데이터 접근
-│   │   ├── entity/            # 인증 엔티티
-│   │   └── dto/               # 인증 DTO
+├── common/                    # 공통 모듈
+│   ├── jwt/                  # JWT 인증
+│   │   ├── JwtAuthenticationFilter.java
+│   │   └── JwtTokenProvider.java
 │   │
-│   ├── user/                  # 사용자 도메인
-│   │   ├── controller/
-│   │   ├── service/
-│   │   ├── repository/
-│   │   ├── entity/
-│   │   └── dto/
+│   ├── oAuth2/               # OAuth2 소셜 로그인
+│   │   ├── CustomOAuth2User.java
+│   │   ├── CustomOAuth2UserService.java
+│   │   ├── OAuthAttributes.java
+│   │   └── OAuth2SuccessHandler.java
 │   │
-│   ├── gym/                   # 헬스장 도메인
-│   ├── trainer/               # 트레이너 도메인
-│   ├── reservation/           # 예약 도메인
-│   ├── membership/            # 멤버십 도메인
-│   ├── chat/                  # 채팅 도메인
-│   ├── post/                  # 게시글 도메인
-│   ├── review/                # 리뷰 도메인
-│   └── ...                    # 기타 도메인
+│   ├── security/             # Spring Security 설정
+│   │   ├── SecurityConfig.java
+│   │   ├── CustomUserDetails.java
+│   │   ├── CustomUserDetailsService.java
+│   │   └── RedirectUrlCookieFilter.java
+│   │
+│   ├── s3/                   # AWS S3 파일 업로드
+│   │   └── service/
+│   │
+│   ├── config/               # 공통 설정
+│   │   ├── CacheConfig.java
+│   │   ├── JPAConfig.java
+│   │   ├── NotificationConfig.java
+│   │   ├── RedisConfig.java
+│   │   ├── RedisDao.java
+│   │   ├── RedisService.java
+│   │   ├── RedissonConfig.java
+│   │   ├── S3Config.java
+│   │   └── SwaggerConfig.java
+│   │
+│   ├── error/                # 예외 처리
+│   │   ├── BaseCode.java
+│   │   ├── BaseException.java
+│   │   ├── ExceptionCode.java
+│   │   ├── GlobalExceptionHandler.java
+│   │   └── SuccessCode.java
+│   │
+│   ├── response/             # 공통 응답 포맷
+│   │   ├── PageResponse.java
+│   │   └── ResponseMessage.java
+│   │
+│   ├── entity/               # 공통 엔티티
+│   │   ├── BaseEntity.java
+│   │   └── DummyEntity.java
+│   │
+│   ├── logging/              # AOP 로깅
+│   │   └── LoggingAspect.java
+│   │
+│   └── Image/                # 이미지 처리
+│       ├── entity/
+│       └── controller/
 │
-└── config/                     # 설정 클래스
-    ├── SecurityConfig.java
-    ├── RedisConfig.java
-    ├── WebSocketConfig.java
-    ├── SwaggerConfig.java
-    └── DatabaseConfig.java
+└── domain/                    # 비즈니스 도메인
+    ├── auth/                 # 인증 도메인
+    │   └── controller/
+    │
+    ├── user/                 # 사용자 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   ├── dto/
+    │   └── enums/
+    │
+    ├── gym/                  # 헬스장 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   ├── dto/
+    │   └── enums/
+    │
+    ├── trainer/              # 트레이너 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   ├── dto/
+    │   └── enums/
+    │
+    ├── reservation/          # 예약 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   ├── dto/
+    │   ├── enums/
+    │   └── scheduler/
+    │
+    ├── membership/           # 멤버십 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   ├── dto/
+    │   ├── enums/
+    │   └── scheduler/
+    │
+    ├── chat/                 # 채팅 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   ├── dto/
+    │   ├── enums/
+    │   └── config/
+    │
+    ├── post/                 # 게시글 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   ├── dto/
+    │   └── enums/
+    │
+    ├── comment/              # 댓글 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   └── dto/
+    │
+    ├── likes/                # 좋아요 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   └── LikeType.java
+    │
+    ├── review/               # 리뷰 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   └── dto/
+    │
+    ├── payment/              # 결제 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   ├── dto/
+    │   ├── enums/
+    │   ├── config/
+    │   └── client/
+    │
+    ├── point/                # 포인트 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   ├── dto/
+    │   └── enums/
+    │
+    ├── fitnessGoal/          # 운동 목표 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── entity/
+    │   ├── dto/
+    │   ├── enums/
+    │   └── scheduler/
+    │
+    ├── search/               # 검색 도메인
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   └── entity/
+    │
+    └── notify/               # 알림 도메인
+        ├── controller/
+        ├── service/
+        ├── repository/
+        ├── entity/
+        ├── dto/
+        ├── NotificationType.java
+        └── ReceiverType.java
 ```
 
 ### 계층형 아키텍처
 ```
 ┌─────────────────────────────────────┐
-│            Presentation Layer       │ ← Controller
+│        Presentation Layer           │ ← @Controller, @RestController
+│  • HTTP 요청/응답 처리                  │   • API 엔드포인트 정의
+│  • 입력 검증 및 데이터 변환               │   • DTO ↔ Entity 변환
+│  • 인증/인가 체크                       │   • 예외 처리
 ├─────────────────────────────────────┤
-│            Business Layer           │ ← Service
+│         Business Layer              │ ← @Service, @Component  
+│  • 비즈니스 로직 구현                    │   • 트랜잭션 관리
+│  • 도메인 규칙 적용                     │   • 비즈니스 검증
+│  • 여러 Repository 조합 사용           │   • 외부 API 호출
 ├─────────────────────────────────────┤  
-│            Persistence Layer        │ ← Repository
+│        Persistence Layer            │ ← @Repository, JPA
+│  • 데이터 접근 로직                     │   • CRUD 연산
+│  • 쿼리 작성 및 실행                    │   • Entity 매핑
+│  • 캐싱 처리                          │   • 트랜잭션 경계
 ├─────────────────────────────────────┤
-│            Database Layer           │ ← MySQL, Redis
+│         Database Layer              │ ← MySQL, Redis, etc.
+│  • 데이터 저장소                        │   • 실제 데이터 보관
+│  • 데이터 무결성 보장                    │   • 백업/복구
 └─────────────────────────────────────┘
 ```
 ---
