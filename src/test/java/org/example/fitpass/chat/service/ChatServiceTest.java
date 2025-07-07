@@ -3,18 +3,15 @@ package org.example.fitpass.chat.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 
 import java.lang.reflect.Field;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.example.fitpass.common.error.BaseException;
@@ -151,12 +148,13 @@ class ChatServiceTest {
         List<ChatRoom> chatRooms = List.of(chatRoom);
         List<Object[]> unreadCountList = new ArrayList<>();
         unreadCountList.add(new Object[]{1L, 0L});
-        
+
         given(userRepository.findByIdOrElseThrow(anyLong())).willReturn(user);
         given(chatRoomRepository.findByUser(any(User.class))).willReturn(chatRooms);
         given(chatMessageRepository.findLastMessagesByChatRooms(eq(chatRooms)))
             .willReturn(List.of(chatMessage));
-        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms), eq(SenderType.USER)))
+        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms),
+            eq(SenderType.USER)))
             .willReturn(unreadCountList);
 
         // when
@@ -170,7 +168,8 @@ class ChatServiceTest {
         then(userRepository).should().findByIdOrElseThrow(1L);
         then(chatRoomRepository).should().findByUser(user);
         then(chatMessageRepository).should().findLastMessagesByChatRooms(chatRooms);
-        then(chatMessageRepository).should().countUnreadMessagesByChatRooms(chatRooms, SenderType.USER);
+        then(chatMessageRepository).should()
+            .countUnreadMessagesByChatRooms(chatRooms, SenderType.USER);
     }
 
     @Test
@@ -180,12 +179,13 @@ class ChatServiceTest {
         List<ChatRoom> chatRooms = List.of(chatRoom);
         List<Object[]> unreadCountList = new ArrayList<>();
         unreadCountList.add(new Object[]{1L, 0L});
-        
+
         given(gymRepository.findByIdOrElseThrow(anyLong())).willReturn(gym);
         given(chatRoomRepository.findByGym(any(Gym.class))).willReturn(chatRooms);
         given(chatMessageRepository.findLastMessagesByChatRooms(eq(chatRooms)))
             .willReturn(List.of(chatMessage));
-        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms), eq(SenderType.GYM)))
+        given(
+            chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms), eq(SenderType.GYM)))
             .willReturn(unreadCountList);
 
         // when - TRAINER 타입이므로 gymId를 전달
@@ -200,7 +200,8 @@ class ChatServiceTest {
         then(chatRoomRepository).should().findByGym(gym);
         then(userRepository).should(never()).findByIdOrElseThrow(anyLong());
         then(chatMessageRepository).should().findLastMessagesByChatRooms(chatRooms);
-        then(chatMessageRepository).should().countUnreadMessagesByChatRooms(chatRooms, SenderType.GYM);
+        then(chatMessageRepository).should()
+            .countUnreadMessagesByChatRooms(chatRooms, SenderType.GYM);
     }
 
     @Test
@@ -212,7 +213,8 @@ class ChatServiceTest {
         given(chatRoomRepository.findByUser(any(User.class))).willReturn(chatRooms);
         given(chatMessageRepository.findLastMessagesByChatRooms(eq(chatRooms)))
             .willReturn(List.of()); // 빈 리스트 반환
-        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms), eq(SenderType.USER)))
+        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms),
+            eq(SenderType.USER)))
             .willReturn(List.of()); // 빈 리스트 반환
 
         // when
@@ -260,7 +262,7 @@ class ChatServiceTest {
         // given
         ChatRoom newChatRoom = new ChatRoom(user, gym);
         setId(newChatRoom, 1L);
-        
+
         given(userRepository.findByIdOrElseThrow(anyLong())).willReturn(user);
         given(gymRepository.findByIdOrElseThrow(anyLong())).willReturn(gym);
         given(chatRoomRepository.findByUserAndGym(any(User.class), any(Gym.class)))
@@ -388,12 +390,13 @@ class ChatServiceTest {
         List<Object[]> unreadCountList = new ArrayList<>();
         unreadCountList.add(new Object[]{1L, 0L});
         unreadCountList.add(new Object[]{2L, 1L});
-        
+
         given(userRepository.findByIdOrElseThrow(anyLong())).willReturn(user);
         given(chatRoomRepository.findByUser(any(User.class))).willReturn(chatRooms);
         given(chatMessageRepository.findLastMessagesByChatRooms(eq(chatRooms)))
             .willReturn(List.of(chatMessage, recentMessage));
-        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms), eq(SenderType.USER)))
+        given(chatMessageRepository.countUnreadMessagesByChatRooms(eq(chatRooms),
+            eq(SenderType.USER)))
             .willReturn(unreadCountList);
 
         // when
@@ -402,7 +405,8 @@ class ChatServiceTest {
         // then
         assertThat(result).hasSize(2);
         then(chatMessageRepository).should().findLastMessagesByChatRooms(chatRooms);
-        then(chatMessageRepository).should().countUnreadMessagesByChatRooms(chatRooms, SenderType.USER);
+        then(chatMessageRepository).should()
+            .countUnreadMessagesByChatRooms(chatRooms, SenderType.USER);
     }
 
     @Test
