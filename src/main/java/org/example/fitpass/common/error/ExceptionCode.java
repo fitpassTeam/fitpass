@@ -106,6 +106,9 @@ public enum ExceptionCode implements BaseCode {
     RESERVATION_TIME_CONFLICT(HttpStatus.CONFLICT, "409", "해당 시간에 이미 다른 예약이 있습니다."),
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "409", "이미 존재하는 이메일입니다."),
 
+    // 422 = 내 정보 수정 및 로그인시 비밀번호가 일치하지 않을때 사용
+    PASSWORD_NOT_MATCH(HttpStatus.UNPROCESSABLE_ENTITY,"422", "비밀번호가 일치하지 않습니다."),
+
     // 500 Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"500", "서버 내부 오류 혹은 예기치 못한 예외가 발생했습니다."),
     S3_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"500", "S3 업로드를 실패하였습니다."),
