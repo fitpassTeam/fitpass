@@ -31,7 +31,11 @@ public class CustomOAuth2User implements OAuth2User {
 
     @Override
     public String getName() {
-        return attributes.get(nameAttributeKey).toString();
+        Object nameValue = attributes.get(nameAttributeKey);
+        if (nameValue == null && attributes.get("response") instanceof Map responseMap) {
+            nameValue = responseMap.get(nameAttributeKey);
+        }
+        return nameValue != null ? nameValue.toString() : "UNKNOWN";
     }
 
     public String getEmail() {
