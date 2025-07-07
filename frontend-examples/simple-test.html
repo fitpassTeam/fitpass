@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>간단한 업로드 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🧪 간단한 업로드 테스트</h1>
+    
+    <!-- 1. 서버 연결 테스트 -->
+    <div class="test-section">
+        <h3>1️⃣ 서버 연결 테스트</h3>
+        <button onclick="testServerConnection()">서버 연결 확인</button>
+        <div id="connectionResult" class="result info">서버 연결을 테스트하세요</div>
+    </div>
+
+    <!-- 2. 기존 API 테스트 -->
+    <div class="test-section">
+        <h3>2️⃣ 기존 API 테스트</h3>
+        <input type="file" id="traditionalFile" accept="image/*">
+        <button onclick="testTraditionalUpload()" id="traditionalBtn" disabled>기존 방식 테스트</button>
+        <div id="traditionalResult" class="result info">파일을 선택하세요</div>
+    </div>
+
+    <!-- 3. Presigned URL 테스트 -->
+    <div class="test-section">
+        <h3>3️⃣ Presigned URL 테스트</h3>
+        <input type="file" id="presignedFile" accept="image/*">
+        <button onclick="testPresignedUpload()" id="presignedBtn" disabled>Presigned URL 테스트</button>
+        <div id="presignedResult" class="result info">파일을 선택하세요</div>
+    </div>
+
+    <script>
+        // 서버 주소 설정 (포트 번호 확인하세요!)
+        const API_BASE_URL = 'http://localhost:8080';
+        
+        // 서버 연결 테스트
+        async function testServerConnection() {
+            const resultDiv = document.getElementById('connectionResult');
+            resultDiv.textContent = '서버 연결 중...';
+            resultDiv.className = 'result info';
+            
+            try {
+                // 1단계: Health check
+                const healthResponse = await fetch(`${API_BASE_URL}/actuator/health`);
+                if (!healthResponse.ok) {
+                    throw new Error(`Health check 실패: ${healthResponse.status}`);
+                }
+                
+                // 2단계: Swagger 페이지 확인
+                const swaggerResponse = await fetch(`${API_BASE_URL}/swagger-ui`);
+                if (!swaggerResponse.ok) {
+                    throw new Error(`Swagger 접근 실패: ${swaggerResponse.status}`);
+                }
+                
+                resultDiv.textContent = `✅ 서버 연결 성공!\n서버 주소: ${API_BASE_URL}\nSwagger UI: ${API_BASE_URL}/swagger-ui`;
+                resultDiv.className = 'result success';
+                
+                // 테스트 버튼 활성화
+                enableTestButtons();
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ 서버 연결 실패!\n\n오류: ${error.message}\n\n해결 방법:\n1. 스프링 부트 서버가 실행 중인지 확인\n2. 포트 번호 확인 (8080? 다른 포트?)\n3. CORS 설정 확인\n4. 방화벽 확인`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // 파일 선택 이벤트
+        document.getElementById('traditionalFile').addEventListener('change', function(e) {
+            const btn = document.getElementById('traditionalBtn');
+            btn.disabled = !e.target.files[0];
+        });
+        
+        document.getElementById('presignedFile').addEventListener('change', function(e) {
+            const btn = document.getElementById('presignedBtn');
+            btn.disabled = !e.target.files[0];
+        });
+        
+        function enableTestButtons() {
+            const traditionalFile = document.getElementById('traditionalFile').files[0];
+            const presignedFile = document.getElementById('presignedFile').files[0];
+            
+            document.getElementById('traditionalBtn').disabled = !traditionalFile;
+            document.getElementById('presignedBtn').disabled = !presignedFile;
+        }
+        
+        // 기존 방식 테스트
+        async function testTraditionalUpload() {
+            const fileInput = document.getElementById('traditionalFile');
+            const file = fileInput.files[0];
+            const resultDiv = document.getElementById('traditionalResult');
+            
+            if (!file) {
+                alert('파일을 선택해주세요!');
+                return;
+            }
+            
+            resultDiv.textContent = '기존 방식 업로드 중...';
+            resultDiv.className = 'result info';
+            
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                const response = await fetch(`${API_BASE_URL}/images`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                resultDiv.textContent = `✅ 기존 방식 업로드 성공!\n\n${JSON.stringify(result, null, 2)}`;
+                resultDiv.className = 'result success';
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ 기존 방식 업로드 실패!\n\n오류: ${error.message}\n\n확인사항:\n1. /images API가 존재하는지\n2. 파일 크기 제한 확인\n3. 네트워크 상태 확인`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // Presigned URL 방식 테스트
+        async function testPresignedUpload() {
+            const fileInput = document.getElementById('presignedFile');
+            const file = fileInput.files[0];
+            const resultDiv = document.getElementById('presignedResult');
+            
+            if (!file) {
+                alert('파일을 선택해주세요!');
+                return;
+            }
+            
+            resultDiv.textContent = 'Presigned URL 테스트 중...';
+            resultDiv.className = 'result info';
+            
+            try {
+                // 1단계: Presigned URL 요청
+                const params = new URLSearchParams({
+                    filename: file.name,
+                    contentType: file.type,
+                    fileSize: file.size
+                });
+                
+                const prepareResponse = await fetch(`${API_BASE_URL}/images/presigned-url?${params}`, {
+                    method: 'GET'  // GET 메서드로 변경
+                });
+                
+                if (!prepareResponse.ok) {
+                    throw new Error(`Presigned URL 요청 실패: ${prepareResponse.status}`);
+                }
+                
+                const prepareData = await prepareResponse.json();
+                resultDiv.textContent = `1단계 완료: Presigned URL 받음\n2단계: S3에 직접 업로드 중...`;
+                
+                // 2단계: S3에 직접 업로드
+                const presignedUrl = prepareData.data.presignedUrl;
+                const uploadResponse = await fetch(presignedUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': file.type
+                    },
+                    body: file
+                });
+                
+                if (!uploadResponse.ok) {
+                    throw new Error(`S3 업로드 실패: ${uploadResponse.status}`);
+                }
+                
+                const finalImageUrl = `https://fit-pass-1.s3.ap-northeast-2.amazonaws.com/${prepareData.data.fileName}`;
+                
+                resultDiv.textContent = `✅ Presigned URL 방식 업로드 성공!\n\n최종 이미지 URL: ${finalImageUrl}\n\n상세 정보:\n${JSON.stringify(prepareData.data, null, 2)}`;
+                resultDiv.className = 'result success';
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ Presigned URL 방식 업로드 실패!\n\n오류: ${error.message}\n\n확인사항:\n1. /images/presigned-url API가 존재하는지\n2. AWS 자격 증명 확인\n3. S3 버킷 권한 확인`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // 페이지 로드 시 안내
+        window.addEventListener('load', function() {
+            alert('🧪 테스트 가이드\n\n1. 먼저 "서버 연결 확인" 버튼을 클릭하세요\n2. 연결 성공 후 파일을 선택하세요\n3. 각 방식으로 업로드 테스트하세요');
+        });
+    </script>
+</body>
+</html>

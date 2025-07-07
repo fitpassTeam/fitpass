@@ -27,26 +27,40 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
 //    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     runtimeOnly 'com.mysql:mysql-connector-j'
+    testRuntimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    //WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    //JSON
+    implementation 'org.json:json:20240303'
 
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.27.0'
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate6:2.18.3'
 
     // jwt
-    compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
@@ -64,6 +78,33 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
 
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+
+    // s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
+    // OAuth2 Client (구글, 카카오, 네이버 등 소셜 로그인용)
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // OAuth2 Resource Server (API 서버가 토큰을 검증해야 할 때)
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    
+    // HTTP 클라이언트 (토스페이먼츠 API 호출용)
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+
+    // log4j2
+    implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+    implementation ('org.apache.logging.log4j:log4j-slf4j-impl:2.20.0') {
+        exclude group: 'ch.qos.logback'
+    }
 }
 
 // Querydsl 빌드 옵션 설정
@@ -86,4 +127,14 @@ clean {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-Xlint:deprecation', '-Xlint:unchecked']
+}
+test{
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+    }
 }

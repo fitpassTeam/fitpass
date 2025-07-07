@@ -1,5 +1,5 @@
 ---
-name: Legend-Book-feature
+name: fitpass-feature
 about: feature(개발)
 title: "[Feature]"
 labels: feature
@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-## 🧩 작업 목적
+## 🧩 개요 (또는 작업 개요, 작업 목표)
 -
 
 ## ✅ 할 일 목록

@@ -1,15 +1,137 @@
-name: Deploy
+name: CI-CD
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
-      - dev
+    branches: [ '**' ]
+  pull_request:
+    branches: [ main, dev ]
+
+permissions:
+  checks: write
+  contents: read
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Create test application properties
+        run: |
+          mkdir -p src/test/resources
+          cat > src/test/resources/application-test.properties << EOF
+          spring.datasource.url=jdbc:h2:mem:testdb;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+          spring.datasource.driver-class-name=org.h2.Driver
+          spring.datasource.username=sa
+          spring.datasource.password=
+
+          spring.jpa.hibernate.ddl-auto=create-drop
+          spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+          spring.jpa.properties.hibernate.format_sql=true
+          spring.jpa.show-sql=true
+
+          # Redis
+          spring.data.redis.host=localhost
+          spring.data.redis.port=6379
+          spring.cache.type=none # <--- 캐시 완전 비활성화
+
+          # JWT & OAuth
+          jwt.secret=test-secret-key-for-testing-purpose-minimum-32-characters
+
+          # AWS (s3 호출 막기 위한 더미 값)
+          cloud.aws.credentials.access-key=dummy
+          cloud.aws.credentials.secret-key=dummy
+          cloud.aws.s3.bucket=test-bucket
+          cloud.aws.region.static=ap-northeast-2
+          cloud.aws.stack.auto=false
+
+          # OAuth Google/Naver
+          spring.security.oauth2.client.registration.google.client-id=test-id
+          spring.security.oauth2.client.registration.google.client-secret=test-secret
+          spring.security.oauth2.client.registration.naver.client-id=test-id
+          spring.security.oauth2.client.registration.naver.client-secret=test-secret
+
+          # Toss Payments
+          toss.payments.test-client-key=test-client-key
+          toss.payments.test-secret-key=test-secret-key
+          toss.payments.success-url=http://localhost:8080/test/success
+          toss.payments.fail-url=http://localhost:8080/test/fail
+
+          logging.level.root=WARN
+          EOF
+
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Generate test report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Gradle Tests
+          path: build/test-results/test/*.xml
+          reporter: java-junit
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,14 +145,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: gradlew bootJar
+      - name: Build bootJar
         run: ./gradlew bootJar
-
-      - name: Debug paths in GitHub Actions
-        run: |
-          echo "Checking paths to be copied"
-          ls -la ./build/libs
-          ls -la ./
 
       - name: Create .env file
         run: |
@@ -39,11 +155,17 @@ jobs:
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
           echo "SQL_PORT=${{ secrets.SQL_PORT }}" >> .env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-        shell: bash
-
-      - name: Debug check exact .env location
-        run: |
-          find . -name ".env" 
+          echo "ACCESS_KEY=${{ secrets.ACCESS_KEY }}" >> .env
+          echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
+          echo "OAUTH_NAVER_CLIENT_ID=${{ secrets.OAUTH_NAVER_CLIENT_ID }}" >> .env
+          echo "OAUTH_NAVER_CLIENT_SECRET=${{ secrets.OAUTH_NAVER_CLIENT_SECRET }}" >> .env
+          echo "REDIS_HOST=redis" >> .env
+          echo "REDIS_PORT=6379" >> .env
+          echo "RDS_ENDPOINT=${{ secrets.RDS_ENDPOINT }}" >> .env
+          echo "TOSS_CLIENT_KEY=${{ secrets.TOSS_CLIENT_KEY }}" >> .env
+          echo "TOSS_SECRET_KEY=${{ secrets.TOSS_SECRET_KEY }}" >> .env
+          echo "TOSS_FAIL_URL=${{ secrets.TOSS_FAIL_URL }}" >> .env
+          echo "TOSS_SUCCESS_URL=${{ secrets.TOSS_SUCCESS_URL }}" >> .env
 
       - name: Copy all docker-related files to server
         uses: appleboy/scp-action@master
@@ -52,33 +174,49 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: './build/libs/*.jar,./Dockerfile,./docker-compose.yml,.env'
+          source: './build/libs/*.jar,./Dockerfile,./docker-compose-prod.yml,.env,src/main/resources/application.properties,src/main/resources/application-prod.properties'
           target: "~/fitpass"
 
-      - name: SSH and deploy via docker-compose
+      - name: SSH and deploy via docker-compose (prod)
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          script_stop: true
-          script: |
+          script_stop: false
+          script: |-
             cd ~/fitpass
-
-            # 중지 및 제거
-            docker-compose down || true
-            
-            # "이전 네트워크 제거 (없으면 무시)"
-            docker network rm legend-book_default || true
-
-            # 이전 이미지 삭제 (선택 사항)
-            docker rm -f mysql || true
+            docker-compose -f docker-compose-prod.yml down || true
             docker rm -f redis || true
             docker rm -f spring-app || true
-
-            # 재빌드 및 실행
-            docker-compose up --build -d
-
-            # 로그 확인
-            docker-compose logs --tail=30
+            docker-compose -f docker-compose-prod.yml up --build -d
+            sleep 30
+            docker-compose -f docker-compose-prod.yml logs --tail=50
+            success=false
+            for i in $(seq 1 15); do
+              echo "($i/15) curl 시도 중..."
+              RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" http://127.0.0.1:8080/actuator/health || echo "FAILED")
+              if [[ "$RESPONSE" == *"FAILED"* ]]; then
+                STATUS="000"
+                BODY=""
+              else
+                STATUS=$(echo "$RESPONSE" | grep "HTTP_CODE" | cut -d':' -f2)
+                BODY=$(echo "$RESPONSE" | sed '/^HTTP_CODE:/d')
+              fi
+              if [ "$STATUS" = "200" ]; then
+                echo "✅ Health check passed!"
+                success=true
+                break
+              else
+                echo "아직 준비되지 않았습니다. 30초 후 재시도..."
+                sleep 30
+              fi
+            done
+            if [ "$success" = true ]; then
+              exit 0
+            else
+              echo "❌ Health check failed"
+              docker-compose -f docker-compose-prod.yml logs
+              exit 1
+            fi

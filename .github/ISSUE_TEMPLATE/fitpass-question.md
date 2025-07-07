@@ -1,5 +1,5 @@
 ---
-name: Legend-Book-question
+name: fitpass-question
 about: 질문
 title: "[Question]"
 labels: question

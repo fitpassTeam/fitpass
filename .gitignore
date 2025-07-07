@@ -35,9 +35,12 @@ out/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/application.properties
 /gradle/wrapper/
 /src/main/resources/application.yml
+
+# QueryDSL
+**/generated/
+/src/main/generated/
 
 # 디폴트 무시된 파일
 /shelf/
@@ -53,3 +56,9 @@ out/
 .idea/
 
 .env
+
+# AWS credentials (properties)
+src/main/resources/application-local.properties
+src/test/resources/application-*.properties
+
+

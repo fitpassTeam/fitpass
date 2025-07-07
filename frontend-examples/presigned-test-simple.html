@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presigned URL 간단 테스트</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Presigned URL 단계별 테스트</h1>
+    
+    <div>
+        <h3>1단계: Presigned URL 받기</h3>
+        <input type="file" id="fileInput" accept="image/*">
+        <button onclick="getPresignedUrl()">Presigned URL 받기</button>
+        <div id="urlResult" class="result info">파일을 선택하고 버튼을 클릭하세요</div>
+    </div>
+
+    <div>
+        <h3>2단계: 받은 URL로 업로드 (수동)</h3>
+        <div id="uploadInstructions" class="result info">
+            1단계를 먼저 완료하세요
+        </div>
+        <button onclick="testS3Upload()" id="uploadBtn" disabled>S3 업로드 테스트</button>
+        <div id="uploadResult" class="result info">업로드 결과가 여기에 표시됩니다</div>
+    </div>
+
+    <script>
+        let currentPresignedUrl = null;
+        let currentFile = null;
+        let currentFileName = null;
+
+        async function getPresignedUrl() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const resultDiv = document.getElementById('urlResult');
+            
+            if (!file) {
+                alert('파일을 선택해주세요!');
+                return;
+            }
+
+            currentFile = file;
+            resultDiv.textContent = 'Presigned URL 요청 중...';
+            resultDiv.className = 'result info';
+
+            try {
+                const params = new URLSearchParams({
+                    filename: file.name,
+                    contentType: file.type
+                });
+
+                const response = await fetch(`http://localhost:8080/images/presigned-url?${params}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                currentPresignedUrl = data.data.presignedUrl;
+                currentFileName = data.data.fileName;
+
+                resultDiv.innerHTML = `
+                    <strong>✅ Presigned URL 받기 성공!</strong><br><br>
+                    <strong>파일명:</strong> ${currentFileName}<br>
+                    <strong>Content-Type:</strong> ${data.data.contentType}<br>
+                    <strong>만료시간:</strong> ${data.data.expiresIn}초<br><br>
+                    <strong>Presigned URL:</strong><br>
+                    <textarea readonly style="width: 100%; height: 60px; font-size: 10px;">${currentPresignedUrl}</textarea>
+                `;
+                resultDiv.className = 'result success';
+
+                // 업로드 버튼 활성화
+                document.getElementById('uploadBtn').disabled = false;
+                document.getElementById('uploadInstructions').innerHTML = `
+                    <strong>📋 수동 테스트 방법:</strong><br>
+                    1. 위의 Presigned URL을 복사하세요<br>
+                    2. 새 브라우저 탭에서 개발자 도구 열기 (F12)<br>
+                    3. Console 탭에서 다음 코드 실행:<br><br>
+                    <code style="background: #f8f9fa; padding: 10px; display: block; font-size: 12px;">
+// 파일 선택<br>
+const input = document.createElement('input');<br>
+input.type = 'file';<br>
+input.accept = 'image/*';<br>
+input.click();<br><br>
+input.onchange = async (e) => {<br>
+&nbsp;&nbsp;const file = e.target.files[0];<br>
+&nbsp;&nbsp;const response = await fetch('${currentPresignedUrl}', {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;method: 'PUT',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;headers: { 'Content-Type': '${file.type}' },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;body: file<br>
+&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;console.log('업로드 결과:', response.status, response.statusText);<br>
+};
+                    </code>
+                `;
+                document.getElementById('uploadInstructions').className = 'result info';
+
+            } catch (error) {
+                resultDiv.textContent = `❌ Presigned URL 요청 실패: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testS3Upload() {
+            if (!currentPresignedUrl || !currentFile) {
+                alert('먼저 Presigned URL을 받아야 합니다!');
+                return;
+            }
+
+            const resultDiv = document.getElementById('uploadResult');
+            resultDiv.textContent = 'S3 업로드 중...';
+            resultDiv.className = 'result info';
+
+            try {
+                const response = await fetch(currentPresignedUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': currentFile.type
+                    },
+                    body: currentFile
+                });
+
+                console.log('S3 Response:', response);
+                console.log('Response Headers:', [...response.headers.entries()]);
+
+                if (response.ok) {
+                    const finalUrl = `https://fit-pass-1.s3.ap-northeast-2.amazonaws.com/${currentFileName}`;
+                    resultDiv.innerHTML = `
+                        <strong>🎉 S3 업로드 성공!</strong><br><br>
+                        <strong>HTTP 상태:</strong> ${response.status} ${response.statusText}<br>
+                        <strong>최종 이미지 URL:</strong><br>
+                        <a href="${finalUrl}" target="_blank">${finalUrl}</a><br><br>
+                        <strong>🏆 Presigned URL 방식 완전 성공!</strong>
+                    `;
+                    resultDiv.className = 'result success';
+                } else {
+                    throw new Error(`S3 업로드 실패: ${response.status} ${response.statusText}`);
+                }
+
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <strong>❌ S3 업로드 실패!</strong><br><br>
+                    <strong>오류:</strong> ${error.message}<br><br>
+                    <strong>🔧 해결 방법:</strong><br>
+                    1. S3 버킷의 CORS 설정 확인<br>
+                    2. AWS 콘솔에서 fit-pass-1 버킷 → Permissions → CORS 설정<br>
+                    3. 필요한 CORS 정책을 추가하세요<br><br>
+                    <strong>📋 필요한 CORS 설정:</strong><br>
+                    <code style="background: #f8f9fa; padding: 10px; display: block; font-size: 12px;">
+[{<br>
+&nbsp;&nbsp;"AllowedHeaders": ["*"],<br>
+&nbsp;&nbsp;"AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],<br>
+&nbsp;&nbsp;"AllowedOrigins": ["*"],<br>
+&nbsp;&nbsp;"ExposeHeaders": ["ETag"]<br>
+}]
+                    </code>
+                `;
+                resultDiv.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html>
