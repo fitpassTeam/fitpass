@@ -1,4 +1,4 @@
-package org.example.fitpass.config;
+package org.example.fitpass.common.config;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;

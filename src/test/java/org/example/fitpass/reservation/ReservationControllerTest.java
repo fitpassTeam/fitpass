@@ -20,7 +20,7 @@ import java.time.LocalTime;
 import java.util.List;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
-import org.example.fitpass.config.RedisService;
+import org.example.fitpass.common.config.RedisService;
 import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.reservation.dto.request.ReservationRequestDto;
 import org.example.fitpass.domain.reservation.dto.request.UpdateReservationRequestDto;

@@ -3,7 +3,7 @@ package org.example.fitpass.domain.notify.service;
 import java.io.IOException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.config.RedisDao;
+import org.example.fitpass.common.config.RedisDao;
 import org.example.fitpass.domain.notify.NotificationType;
 import org.example.fitpass.domain.notify.dto.response.NotifyDto;
 import org.example.fitpass.domain.notify.entity.Notify;

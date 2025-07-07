@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
-import org.example.fitpass.config.RedisService;
+import org.example.fitpass.common.config.RedisService;
 import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.point.dto.request.PointUseRefundRequestDto;
 import org.example.fitpass.domain.point.service.PointService;

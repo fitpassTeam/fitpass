@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.common.entity.BaseEntity;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.reservation.enums.ReservationStatus;
 import org.example.fitpass.domain.trainer.entity.Trainer;

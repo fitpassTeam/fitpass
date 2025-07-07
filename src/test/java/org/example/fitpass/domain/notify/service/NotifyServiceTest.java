@@ -5,7 +5,7 @@ import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.notify.repository.EmitterRepository;
 import org.example.fitpass.domain.notify.repository.NotifyRepository;
 import org.example.fitpass.domain.user.entity.User;
-import org.example.fitpass.config.RedisDao;
+import org.example.fitpass.common.config.RedisDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

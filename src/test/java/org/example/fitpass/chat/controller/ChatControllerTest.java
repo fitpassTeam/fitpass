@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import org.example.fitpass.common.error.BaseException;
 import org.example.fitpass.common.error.ExceptionCode;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
-import org.example.fitpass.config.RedisService;
+import org.example.fitpass.common.config.RedisService;
 import org.example.fitpass.domain.chat.dto.ChatMessageResponseDto;
 import org.example.fitpass.domain.chat.dto.ChatRoomResponseDto;
 import org.example.fitpass.domain.chat.enums.SenderType;

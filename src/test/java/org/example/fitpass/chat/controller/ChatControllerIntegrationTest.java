@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalTime;
 import java.util.List;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
-import org.example.fitpass.config.RedisService;
+import org.example.fitpass.common.config.RedisService;
 import org.example.fitpass.domain.chat.entity.ChatMessage;
 import org.example.fitpass.domain.chat.entity.ChatRoom;
 import org.example.fitpass.domain.chat.enums.SenderType;

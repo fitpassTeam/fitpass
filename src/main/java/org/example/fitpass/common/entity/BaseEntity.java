@@ -1,4 +1,4 @@
-package org.example.fitpass.common;
+package org.example.fitpass.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

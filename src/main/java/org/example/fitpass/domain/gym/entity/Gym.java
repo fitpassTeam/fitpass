@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.common.entity.BaseEntity;
 import org.example.fitpass.common.Image.entity.Image;
 import org.example.fitpass.domain.gym.enums.GymPostStatus;
 import org.example.fitpass.domain.gym.enums.GymStatus;

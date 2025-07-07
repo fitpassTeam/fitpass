@@ -1,4 +1,4 @@
-package org.example.fitpass.config;
+package org.example.fitpass.common.config;
 
 import jakarta.annotation.PostConstruct;
 import org.redisson.Redisson;

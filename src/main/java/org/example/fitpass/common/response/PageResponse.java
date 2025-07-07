@@ -1,4 +1,4 @@
-package org.example.fitpass.common.dto;
+package org.example.fitpass.common.response;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
-import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.common.entity.BaseEntity;
 import org.example.fitpass.domain.notify.NotificationType;
 import org.example.fitpass.domain.notify.ReceiverType;
 import org.example.fitpass.domain.trainer.entity.Trainer;

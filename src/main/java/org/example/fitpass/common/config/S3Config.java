@@ -1,4 +1,4 @@
-package org.example.fitpass.config;
+package org.example.fitpass.common.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

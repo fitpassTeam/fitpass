@@ -1,6 +1,7 @@
 package org.example.fitpass.config;
 
 import com.amazonaws.services.s3.AmazonS3;
+import org.example.fitpass.common.config.S3Config;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
