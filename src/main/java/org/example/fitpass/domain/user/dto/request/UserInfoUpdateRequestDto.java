@@ -17,7 +17,10 @@ public record UserInfoUpdateRequestDto(
     String phone,
     
     @Schema(description = "프로필 이미지 URL", example = "https://s3.amazonaws.com/.../new_profile.jpg")
-    String userImage
-) {
+    String userImage,
+
+    @Schema(description = "비밀번호", example = "!Fitpass1234")
+    String password
+    ) {
 
 }

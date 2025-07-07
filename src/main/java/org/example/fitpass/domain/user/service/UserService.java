@@ -34,7 +34,7 @@ public class UserService {
     public List<UserResponseDto> getAllUser(String email) {
         User user = userRepository.findByEmailOrElseThrow(email);
 
-        if (user.getUserRole() != UserRole.PENDING_OWNER) {
+        if (user.getUserRole() != UserRole.ADMIN) {
             throw new BaseException(ExceptionCode.INVALID_REJECTION_REQUEST);
         }
 
@@ -86,7 +86,7 @@ public class UserService {
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             log.warn("[USER LOGIN FAILED] 비밀번호 불일치 - EMAIL: {}, USER_ID: {}", email, user.getId());
-            throw new BaseException(ExceptionCode.INVALID_PASSWORD);
+            throw new BaseException(ExceptionCode.PASSWORD_NOT_MATCH);
         }
 
         String accessToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getUserRole().name());
@@ -114,40 +114,19 @@ public class UserService {
         int age,
         String address,
         String phone,
-        String img
+        String img,
+        String password
     ) {
         User user = userRepository.findByIdOrElseThrow(userId);
 
-        user.updateInfo(name, age, address, phone, img);
-        return UserResponseDto.from(user);
-    }
+        String encodedPassword = null;
 
-    // 핸드폰 번호 업데이트
-    @Transactional
-    public UserResponseDto updatePhone(String email, String newPhone) {
-        User user = userRepository.findByEmailOrElseThrow(email);
-
-        user.updatePhone(newPhone);
-        return UserResponseDto.from(user);
-    }
-
-    // 비밀번호 업데이트
-    @Transactional
-    public void updatePassword(String email, String oldPassword, String newPassword) {
-        log.info("[USER PASSWORD UPDATE] 비밀번호 변경 시도 - EMAIL: {}", email);
-        
-        User user = userRepository.findByEmailOrElseThrow(email);
-
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            log.warn("[USER PASSWORD UPDATE FAILED] 기존 비밀번호 불일치 - EMAIL: {}, USER_ID: {}", 
-                    email, user.getId());
-            throw new BaseException(ExceptionCode.INVALID_OLD_PASSWORD);
+        if (password != null && !password.isBlank()) {
+            encodedPassword = passwordEncoder.encode(password);
         }
 
-        user.updatePassword(passwordEncoder.encode(newPassword));
-        
-        log.info("[USER PASSWORD UPDATE SUCCESS] 비밀번호 변경 완료 - USER_ID: {}, EMAIL: {}", 
-                user.getId(), email);
+        user.updateInfo(name, age, address, phone, img, encodedPassword);
+        return UserResponseDto.from(user);
     }
 
     // 토큰 재발급
@@ -207,7 +186,7 @@ public class UserService {
 
         user.requestOwnerUpgrade();
         
-        log.info("[OWNER UPGRADE REQUEST SUCCESS] 사업자 전환 요청 완료 - USER_ID: {}, EMAIL: {}", 
+        log.info("[OWNER UPGRADE REQUEST SUCCESS] 사 업자 전환 요청 완료 - USER_ID: {}, EMAIL: {}",
                 user.getId(), email);
         
         return UserResponseDto.from(user);
@@ -265,7 +244,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public void checkPassword(String rawPassword, String encodedPassword) {
         if (!passwordEncoder.matches(encodedPassword, rawPassword)) {
-            throw new BaseException(ExceptionCode.INVALID_PASSWORD);
+            throw new BaseException(ExceptionCode.PASSWORD_NOT_MATCH);
         }
     }
 

@@ -110,12 +110,15 @@ public class User extends BaseEntity {
         this.pointBalance = 0;
     }
 
-    public void updateInfo(String name, int age, String address, String phone, String userImage) {
+    public void updateInfo(String name, int age, String address, String phone, String userImage, String password) {
         this.name = name;
         this.age = age;
         this.address = address;
         this.phone = phone;
         this.userImage = userImage;
+        if (password != null && !password.isBlank()) {
+            this.password = password;
+        }
     }
 
     public void updatePhone(String newPhone) {

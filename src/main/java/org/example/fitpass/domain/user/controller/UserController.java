@@ -13,8 +13,6 @@ import org.example.fitpass.common.security.CustomUserDetails;
 import org.example.fitpass.domain.gym.dto.response.GymResponseDto;
 import org.example.fitpass.domain.gym.service.GymService;
 import org.example.fitpass.domain.user.dto.request.PasswordCheckRequestDto;
-import org.example.fitpass.domain.user.dto.request.UpdatePasswordRequestDto;
-import org.example.fitpass.domain.user.dto.request.UpdatePhoneRequestDto;
 import org.example.fitpass.domain.user.dto.request.UserInfoUpdateRequestDto;
 import org.example.fitpass.domain.user.dto.response.UserResponseDto;
 import org.example.fitpass.domain.user.service.UserService;
@@ -117,48 +115,11 @@ public class UserController {
             request.age(),
             request.address(),
             request.phone(),
-            request.userImage()
+            request.userImage(),
+            request.password()
             );
         return ResponseEntity.status(SuccessCode.USER_UPDATE_SUCCESS.getHttpStatus())
                 .body(ResponseMessage.success(SuccessCode.USER_UPDATE_SUCCESS, response));
-    }
-
-    // 전화번호 수정
-    @Operation(
-        summary = "전화번호 수정",
-        description = "사용자의 전화번호를 수정합니다."
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "전화번호 수정 성공"),
-        @ApiResponse(responseCode = "400", description = "잘못된 전화번호 형식"),
-        @ApiResponse(responseCode = "401", description = "인증 실패")
-    })
-    @PatchMapping("/me/phone")
-    public ResponseEntity<ResponseMessage<UserResponseDto>> updatePhone(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @RequestBody UpdatePhoneRequestDto request) {
-        UserResponseDto response = userService.updatePhone(userDetails.getUsername(), request.phone());
-        return ResponseEntity.status(SuccessCode.USER_PHONE_EDIT_SUCCESS.getHttpStatus())
-                .body(ResponseMessage.success(SuccessCode.USER_PHONE_EDIT_SUCCESS, response));
-    }
-
-    // 비밀번호 수정
-    @Operation(
-        summary = "비밀번호 수정",
-        description = "사용자의 비밀번호를 수정합니다."
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "비밀번호 수정 성공"),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터"),
-        @ApiResponse(responseCode = "401", description = "기존 비밀번호 불일치")
-    })
-    @PatchMapping("/me/password")
-    public ResponseEntity<ResponseMessage<Void>> updatePassword(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @RequestBody UpdatePasswordRequestDto request) {
-        userService.updatePassword(userDetails.getUsername(), request.oldPassword(), request.newPassword());
-        return ResponseEntity.status(SuccessCode.USER_PASSWORD_EDIT_SUCCESS.getHttpStatus())
-                .body(ResponseMessage.success(SuccessCode.USER_PASSWORD_EDIT_SUCCESS));
     }
 
     // Owner로 전환 신청
