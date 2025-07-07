@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
-import org.example.fitpass.config.RedisService;
+import org.example.fitpass.common.config.RedisService;
 import org.example.fitpass.domain.fitnessGoal.dto.request.DailyRecordCreateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.dto.request.FitnessGoalCreateRequestDto;
 import org.example.fitpass.domain.fitnessGoal.dto.request.FitnessGoalUpdateRequestDto;

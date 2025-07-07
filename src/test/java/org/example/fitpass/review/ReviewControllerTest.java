@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
-import org.example.fitpass.config.RedisService;
+import org.example.fitpass.common.config.RedisService;
 import org.example.fitpass.domain.notify.entity.Notify;
 import org.example.fitpass.domain.review.dto.response.ReviewResponseDto;
 import org.example.fitpass.domain.review.service.ReviewService;

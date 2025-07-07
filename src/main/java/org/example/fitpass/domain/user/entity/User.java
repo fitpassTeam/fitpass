@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.common.entity.BaseEntity;
 import org.example.fitpass.domain.likes.entity.Like;
 import org.example.fitpass.domain.user.enums.Gender;
 import org.example.fitpass.domain.user.enums.UserRole;

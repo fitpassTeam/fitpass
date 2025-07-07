@@ -1,4 +1,4 @@
-package org.example.fitpass.config;
+package org.example.fitpass.common.config;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;

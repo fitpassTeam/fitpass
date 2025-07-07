@@ -3,16 +3,14 @@ package org.example.fitpass.membership.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
-import org.example.fitpass.config.RedisService;
+import org.example.fitpass.common.config.RedisService;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.membership.dto.response.MembershipPurchaseResponseDto;
 import org.example.fitpass.domain.membership.dto.response.MembershipResponseDto;
-import org.example.fitpass.domain.membership.entity.Membership;
 import org.example.fitpass.domain.membership.entity.MembershipPurchase;
 import org.example.fitpass.domain.membership.repository.MembershipPurchaseRepository;
 import org.example.fitpass.domain.membership.repository.MembershipRepository;

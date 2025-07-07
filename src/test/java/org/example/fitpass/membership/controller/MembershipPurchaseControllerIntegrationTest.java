@@ -12,7 +12,7 @@ import java.time.LocalTime;
 import java.util.List;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.security.CustomUserDetails;
-import org.example.fitpass.config.RedisService;
+import org.example.fitpass.common.config.RedisService;
 import org.example.fitpass.domain.gym.entity.Gym;
 import org.example.fitpass.domain.gym.repository.GymRepository;
 import org.example.fitpass.domain.membership.entity.Membership;

@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.example.fitpass.common.dto.PageResponse;
+import org.example.fitpass.common.response.PageResponse;
 import org.example.fitpass.common.error.SuccessCode;
 import org.example.fitpass.common.response.ResponseMessage;
 import org.example.fitpass.domain.search.service.SearchTrainerService;

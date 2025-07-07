@@ -1,5 +1,5 @@
 
-package org.example.fitpass.config;
+package org.example.fitpass.common.config;
 
 import lombok.RequiredArgsConstructor;
 import org.example.fitpass.domain.notify.service.NotificationSubscriber;

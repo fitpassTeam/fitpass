@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.common.entity.BaseEntity;
 
 @Getter
 @Entity

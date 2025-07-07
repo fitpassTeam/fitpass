@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.common.entity.BaseEntity;
 
 @Entity
 @Getter

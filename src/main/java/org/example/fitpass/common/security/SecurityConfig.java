@@ -7,7 +7,7 @@ import org.example.fitpass.common.jwt.JwtAuthenticationFilter;
 import org.example.fitpass.common.jwt.JwtTokenProvider;
 import org.example.fitpass.common.oAuth2.CustomOAuth2UserService;
 import org.example.fitpass.common.oAuth2.OAuth2SuccessHandler;
-import org.example.fitpass.config.RedisService;
+import org.example.fitpass.common.config.RedisService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

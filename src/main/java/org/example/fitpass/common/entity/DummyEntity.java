@@ -1,4 +1,4 @@
-package org.example.fitpass.domain;
+package org.example.fitpass.common.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

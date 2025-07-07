@@ -131,7 +131,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/feature/test-code' || github.ref == 'refs/heads/fix/admin,user' }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/feature/test-code' || github.ref == 'refs/heads/fix/deploy'}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

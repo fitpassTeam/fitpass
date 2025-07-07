@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.fitpass.common.BaseEntity;
+import org.example.fitpass.common.entity.BaseEntity;
 import org.example.fitpass.domain.likes.LikeType;
 import org.example.fitpass.domain.user.entity.User;
 
