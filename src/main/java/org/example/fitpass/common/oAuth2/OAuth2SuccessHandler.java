@@ -30,9 +30,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtTokenProvider jwtTokenProvider;
 
     // 개발환경과 운영환경 프론트엔드 URL 설정
-    private static final String DEV_FRONTEND_URL = "http://localhost:3000";
     private static final String LOCAL_REDIRECT_URL = "http://localhost:5173";
-    private static final String PROD_FRONTEND_URL = "https://your-production-domain.com"; // 운영환경 URL로 변경
+    private static final String PROD_FRONTEND_URL = "https://www.fitpass-13.com"; // 운영환경 URL로 변경
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -66,10 +65,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 boolean needsAdditionalInfo = isAdditionalInfoNeeded(userInfo.user);
 
                 if (needsAdditionalInfo) {
-                    // 추가 정보 입력 페이지로 리다이렉트
-                    String targetUrl = buildAdditionalInfoUrl(accessToken, refreshToken, request);
-                    log.info("[OAUTH2 ADDITIONAL INFO NEEDED] 추가 정보 입력 필요 - USER_ID: {}, EMAIL: {}, REDIRECT_URL: {}", 
-                            userInfo.user.getId(), userInfo.user.getEmail(), targetUrl);
+                    // 추가 정보 입력이 필요해도 무조건 /sociallogin 으로 리다이렉트
+                    String targetUrl = buildSocialLoginUrl(accessToken, refreshToken, request);
+                    log.info("[OAUTH2 ADDITIONAL INFO NEEDED] 추가 정보 입력 필요 → 무조건 /sociallogin 으로 리다이렉트 - USER_ID: {}, EMAIL: {}, REDIRECT_URL: {}",
+                        userInfo.user.getId(), userInfo.user.getEmail(), targetUrl);
                     getRedirectStrategy().sendRedirect(request, response, targetUrl);
                     return;
                 }
@@ -84,8 +83,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             // sociallogin 페이지로 리다이렉트 (OAuthSuccessHandler 방식)
             String targetUrl = buildSocialLoginUrl(accessToken, refreshToken, request);
 
-            log.info("[OAUTH2 SUCCESS REDIRECT] OAuth2 성공 후 리다이렉트 - EMAIL: {}, TARGET_URL: {}", 
-                    userInfo.user != null ? userInfo.user.getEmail() : userInfo.email, targetUrl);
+            log.info("[OAUTH2 SUCCESS REDIRECT] OAuth2 성공 후 리다이렉트 - EMAIL: {}, TARGET_URL: {}",
+                userInfo.user != null ? userInfo.user.getEmail() : userInfo.email, targetUrl);
 
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
@@ -169,8 +168,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private String buildAdditionalInfoUrl(String accessToken, String refreshToken, HttpServletRequest request) {
         String baseUrl = getRedirectBaseUrl(request);
 
-        return UriComponentsBuilder.fromUriString(baseUrl + "/auth/additional-info")
-            .queryParam("accessToken", accessToken)
+        return UriComponentsBuilder.fromUriString(baseUrl + "/sociallogin")
+            .queryParam("token", accessToken)
             .queryParam("refreshToken", refreshToken)
             .queryParam("needsInfo", "true")
             .build().toUriString();
@@ -195,7 +194,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         return targetUrl;
     }
 
-    // 리다이렉트 베이스 URL 결정
+    // 리다이렉트 베이스 URL 결정 (수정된 버전)
     private String getRedirectBaseUrl(HttpServletRequest request) {
         // 쿠키에서 redirect_url 찾기
         Optional<String> cookieRedirectUrl = Optional.ofNullable(request.getCookies())
@@ -208,33 +207,53 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             String redirectUrl = cookieRedirectUrl.get();
             log.info("[OAUTH2 REDIRECT] 쿠키에서 리다이렉트 URL 발견 - REDIRECT_URL: {}", redirectUrl);
 
-            // URL에서 베이스 부분만 추출 (프로토콜://도메인:포트)
+            // URL 유효성 검사 및 파싱
             try {
+                // URL이 null이거나 빈 문자열인지 확인
+                if (redirectUrl == null || redirectUrl.trim().isEmpty()) {
+                    log.warn("[OAUTH2 REDIRECT] 쿠키의 redirect_url이 null이거나 빈 문자열 - 기본 URL 사용");
+                    return PROD_FRONTEND_URL;
+                }
+
+                // URL 형식 검증
+                if (!redirectUrl.startsWith("http://") && !redirectUrl.startsWith("https://")) {
+                    log.warn("[OAUTH2 REDIRECT] 쿠키의 redirect_url이 유효한 URL 형식이 아님 - REDIRECT_URL: {}, 기본 URL 사용", redirectUrl);
+                    return PROD_FRONTEND_URL;
+                }
+
                 java.net.URI uri = java.net.URI.create(redirectUrl);
+
+                // scheme과 authority가 null인지 확인
+                if (uri.getScheme() == null || uri.getAuthority() == null) {
+                    log.warn("[OAUTH2 REDIRECT] 쿠키의 redirect_url에서 scheme 또는 authority가 null - REDIRECT_URL: {}, 기본 URL 사용", redirectUrl);
+                    return PROD_FRONTEND_URL;
+                }
+
                 String baseUrl = uri.getScheme() + "://" + uri.getAuthority();
                 log.info("[OAUTH2 REDIRECT] 베이스 URL 추출 완료 - BASE_URL: {}", baseUrl);
                 return baseUrl;
+
             } catch (Exception e) {
-                log.warn("[OAUTH2 REDIRECT FAILED] 쿠키의 redirect_url 파싱 실패 - REDIRECT_URL: {}, ERROR: {}, 기본 URL 사용", 
-                        redirectUrl, e.getMessage());
+                log.warn("[OAUTH2 REDIRECT FAILED] 쿠키의 redirect_url 파싱 실패 - REDIRECT_URL: {}, ERROR: {}, 기본 URL 사용",
+                    redirectUrl, e.getMessage());
             }
         } else {
             log.info("[OAUTH2 REDIRECT] 쿠키에서 redirect_url 없음, 기본 URL 사용");
         }
 
-        // 기본 프론트엔드 URL 사용 (LOCAL_REDIRECT_URL 우선)
-        log.info("[OAUTH2 REDIRECT] 기본 리다이렉트 URL 사용 - URL: {}", LOCAL_REDIRECT_URL);
-        return LOCAL_REDIRECT_URL;
+        // 기본 프론트엔드 URL 사용
+        log.info("[OAUTH2 REDIRECT] 기본 리다이렉트 URL 사용 - URL: {}", PROD_FRONTEND_URL);
+        return PROD_FRONTEND_URL;
     }
 
     // 오류 페이지로 리다이렉트
     private void redirectToErrorPage(HttpServletResponse response, String errorType) throws IOException {
-        String errorUrl = UriComponentsBuilder.fromUriString(LOCAL_REDIRECT_URL + "/login")
+        String errorUrl = UriComponentsBuilder.fromUriString(PROD_FRONTEND_URL + "/login")
             .queryParam("error", errorType)
             .build().toUriString();
 
-        log.error("[OAUTH2 ERROR REDIRECT] OAuth2 오류로 인한 에러 페이지 리다이렉트 - ERROR_TYPE: {}, ERROR_URL: {}", 
-                errorType, errorUrl);
+        log.error("[OAUTH2 ERROR REDIRECT] OAuth2 오류로 인한 에러 페이지 리다이렉트 - ERROR_TYPE: {}, ERROR_URL: {}",
+            errorType, errorUrl);
 
         response.sendRedirect(errorUrl);
     }
