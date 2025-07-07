@@ -295,12 +295,14 @@ public class PaymentIntegrationTest {
 
     @Test
     @DisplayName("결제 내역 조회 시나리오")
-    void 결제_내역_조회_시나리오() {
+    void 결제_내역_조회_시나리오() throws InterruptedException {
         // Given: 다양한 상태의 결제 생성
         PaymentUrlResponseDto response1 = paymentService.preparePayment(
             user.getId(), 10000, "성공 결제"
         );
-        
+
+        Thread.sleep(10);
+
         PaymentUrlResponseDto response2 = paymentService.preparePayment(
             user.getId(), 20000, "실패 결제"
         );
