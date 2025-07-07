@@ -4,7 +4,7 @@ on:
   push:
     branches: [ '**' ]
   pull_request:
-    branches: [ main, dev, fix/admin,user ]
+    branches: [ main, dev ]
 
 permissions:
   checks: write
@@ -131,7 +131,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/feature/test-code' || github.ref == 'refs/heads/fix/deploy'}}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
