@@ -116,7 +116,9 @@ public class User extends BaseEntity {
         this.address = address;
         this.phone = phone;
         this.userImage = userImage;
-        this.password = password;
+        if (password != null && !password.isBlank()) {
+            this.password = password;
+        }
     }
 
     public void updatePhone(String newPhone) {

@@ -119,7 +119,13 @@ public class UserService {
     ) {
         User user = userRepository.findByIdOrElseThrow(userId);
 
-        user.updateInfo(name, age, address, phone, img, passwordEncoder.encode(password));
+        String encodedPassword = null;
+
+        if (password != null && !password.isBlank()) {
+            encodedPassword = passwordEncoder.encode(password);
+        }
+
+        user.updateInfo(name, age, address, phone, img, encodedPassword);
         return UserResponseDto.from(user);
     }
 
