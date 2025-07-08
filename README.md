@@ -10,6 +10,12 @@
 ## 배포 주소
 www.fitpass-13.com
 
+## 프로젝트 브로셔
+https://teamsparta.notion.site/13-2162dc3ef51480cc9b63d9e581a359b0?source=copy_link
+
+## 프로젝트 발표자료
+https://www.canva.com/design/DAGsd95Jx-E/7QZye8KlknRxGxt_-UNMOA/edit?utm_content=DAGsd95Jx-E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 ## 프로젝트 소개
 
 헬스장과 개인 트레이너, 회원을 연결하는 **통합 플랫폼**입니다.
@@ -467,4 +473,6 @@ http://localhost:8080/swagger-ui/index.html
 * [체육관 검색 API 성능 비교 보고서 (v1: 캐시 vs v2: 인메모리)](https://github.com/fitpassTeam/fitpass/wiki/%EC%B2%B4%EC%9C%A1%EA%B4%80-%EA%B2%80%EC%83%89-API-%EC%84%B1%EB%8A%A5-%EB%B9%84%EA%B5%90-%EB%B3%B4%EA%B3%A0%EC%84%9C-(v1:-%EC%BA%90%EC%8B%9C-vs-v2:-%EC%9D%B8%EB%A9%94%EB%AA%A8%EB%A6%AC))
 
 ## 테스트코드 커버리지
-![image.png](attachment:d92722a1-98cd-40fa-92c0-e666a2e4aeb4:image.png)
+<img width="503" alt="KakaoTalk_Photo_2025-07-08-21-24-08" src="https://github.com/user-attachments/assets/f870db32-5f16-482f-979f-be597be88791" />
+
+
