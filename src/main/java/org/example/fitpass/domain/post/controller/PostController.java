@@ -83,7 +83,8 @@ public class PostController {
         @PathVariable("gymId") Long gymId
     ) {
         User user = (userDetails != null) ? userDetails.getUser() : null;
-        Page<PostResponseDto> findAllGeneralPost = postService.findAllPostByGeneral(pageable, user.getId(), gymId, PostType.GENERAL);
+        Long userId = (user != null) ? user.getId() : null;
+        Page<PostResponseDto> findAllGeneralPost = postService.findAllPostByGeneral(pageable, userId, gymId, PostType.GENERAL);
         PageResponse<PostResponseDto> pageResponse = new PageResponse<>(findAllGeneralPost);
 
         return ResponseEntity.status(SuccessCode.GET_ALL_GENERAL_POST_SUCCESS.getHttpStatus())
@@ -103,7 +104,8 @@ public class PostController {
             @PathVariable("gymId") Long gymId
     ) {
         User user = (userDetails != null) ? userDetails.getUser() : null;
-        List<PostResponseDto> findAllNoticePost = postService.findAllPostByNotice(user.getId(), gymId, PostType.NOTICE);
+        Long userId = (user != null) ? user.getId() : null;
+        List<PostResponseDto> findAllNoticePost = postService.findAllPostByNotice(userId, gymId, PostType.NOTICE);
 
         return ResponseEntity.status(SuccessCode.GET_ALL_NOTICE_POST_SUCCESS.getHttpStatus())
             .body(ResponseMessage.success(SuccessCode.GET_ALL_NOTICE_POST_SUCCESS, findAllNoticePost));

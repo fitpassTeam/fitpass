@@ -26,7 +26,7 @@ public record GymRequestDto(
 
     @Schema(description = "체육관 소개", example = "최신 장비와 다양한 프로그램이 있는 체육관입니다.")
     @NotBlank(message = "체육관 소개를 적어주세요.")
-    @Size(max = 500, message = "체육관 소개는 500글자 내로 입력해주세요.")
+    @Size(max = 1000, message = "체육관 소개는 500글자 내로 입력해주세요.")
     String content,
 
     @Schema(description = "시/도", example = "서울특별시")

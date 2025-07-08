@@ -21,7 +21,7 @@ public record PostUpdateRequestDto(
 
     @Schema(description = "게시물 제목 (최대 50자)", example = "오늘의 운동 후기")
     @NotBlank(message = "게시물의 제목이 없습니다.")
-    @Size(max = 50, message = "게시물 제목은 50글자까지 작성 가능 합니다.")
+    @Size(max = 100, message = "게시물 제목은 50글자까지 작성 가능 합니다.")
     String title,
 
     @Schema(description = "게시물 내용", example = "오늘은 하체 위주로 운동을 했습니다.")

@@ -43,7 +43,7 @@ public class NotifyService {
     }
 
     @Transactional(readOnly = true)
-    private void sendLostData(Long id, String lastEventId, String key, SseEmitter emitter) {
+    public void sendLostData(Long id, String lastEventId, String key, SseEmitter emitter) {
         Map<String, Object> eventCaches = emitterRepository.findAllEventCacheById(id);
         eventCaches.entrySet().stream()
             .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)

@@ -74,8 +74,6 @@ public class PostService {
     @Transactional(readOnly = true)
     public Page<PostResponseDto> findAllPostByGeneral(Pageable pageable, Long userId, Long gymId, PostType postType) {
 
-        User finduser = userRepository.findByIdOrElseThrow(userId);
-
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
 
         Page<Post> posts = postRepository.findByGymIdAndPostType(gymId, postType, pageable);
@@ -97,8 +95,6 @@ public class PostService {
     //Notice 게시물 조회
     @Transactional(readOnly = true)
     public List<PostResponseDto> findAllPostByNotice(Long userId, Long gymId, PostType postType) {
-
-        User finduser = userRepository.findByIdOrElseThrow(userId);
 
         Gym gym = gymRepository.findByIdOrElseThrow(gymId);
 
